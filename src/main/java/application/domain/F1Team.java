@@ -1,7 +1,7 @@
+package application.domain;
+
 import java.util.ArrayList;
 import java.util.List;
-
-enum TeamStatus { ACTIVE, INACTIVE, LEGENDARY }
 
 public class F1Team {
     private int id;

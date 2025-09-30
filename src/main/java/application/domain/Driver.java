@@ -1,8 +1,8 @@
+package application.domain;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-enum ContractStatus { ACTIVE, RESERVE, RETIRED }
 
 public class Driver {
     private int id;

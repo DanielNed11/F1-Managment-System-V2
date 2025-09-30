@@ -1,18 +1,24 @@
+package application.repository;
+
+import application.domain.*;
+import org.springframework.stereotype.Repository;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class DataFactory {
     public static List<Driver> drivers = new ArrayList<>();
     public static List<Track> tracks = new ArrayList<>();
 
-    public static void seed() {
+    private static void seed() {
         // Tracks
-        Track monaco = new Track(1, "Monaco GP", "Monaco", 3.337, 1929, "monaco.jpg");
-        Track silverstone = new Track(2, "Silverstone", "UK", 5.891, 1948, "silverstone.jpg");
-        Track spa = new Track(3, "Spa-Francorchamps", "Belgium", 7.004, 1921, "spa.jpg");
-        Track monza = new Track(4, "Monza", "Italy", 5.793, 1922, "monza.jpg");
-        Track suzuka = new Track(5, "Suzuka", "Japan", 5.807, 1962, "suzuka.jpg");
+        Track monaco = new Track(1, "Monaco GP", "Monaco", 3.337, 1929);
+        Track silverstone = new Track(2, "Silverstone", "UK", 5.891, 1948);
+        Track spa = new Track(3, "Spa-Francorchamps", "Belgium", 7.004, 1921);
+        Track monza = new Track(4, "Monza", "Italy", 5.793, 1922);
+        Track suzuka = new Track(5, "Suzuka", "Japan", 5.807, 1962);
 
         tracks.addAll(List.of(monaco, silverstone, spa, monza, suzuka));
 
@@ -55,5 +61,9 @@ public class DataFactory {
         bottas.addTrack(suzuka);
 
         drivers.addAll(List.of(hamilton, verstappen, leclerc, sainz, bottas));
+    }
+
+    static {
+        seed();
     }
 }

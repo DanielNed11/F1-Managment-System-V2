@@ -1,3 +1,5 @@
+package application.domain;
+
 import java.util.ArrayList;
 import java.util.List;
 
