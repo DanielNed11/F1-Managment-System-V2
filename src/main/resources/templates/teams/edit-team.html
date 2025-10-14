@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{page.team.edit.title}">Edit Team</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{fragments/menu :: menu}"></nav>
+
+<h1 th:text="#{page.team.edit.heading}">Edit Team</h1>
+
+<form th:action="@{/teams/edit/{id}(id=${team.id})}" th:object="${team}" method="post">
+
+    <label th:text="#{label.name} + ':'">Name</label>
+    <input type="text" th:field="*{name}" required>
+
+    <br>
+
+    <label th:text="#{label.foundedYear} + ':'">Founded in</label>
+    <input type="number" th:field="*{foundedYear}" required>
+
+    <br>
+
+    <label th:text="#{label.league} + ':'">League</label>
+    <select th:field="*{league}">
+        <option th:value="Formula_1" th:text="#{league.formula1}">Formula 1</option>
+        <option th:value="Formula_2" th:text="#{league.formula2}">Formula 2</option>
+        <option th:value="Formula_3" th:text="#{league.formula3}">Formula 3</option>
+        <option th:value="Formula_4" th:text="#{league.formula4}">Formula 4</option>
+        <option th:value="Formula_E" th:text="#{league.formulaE}">Formula E</option>
+    </select>
+
+    <br>
+
+    <label th:text="#{label.budget} + ':'">World Championships</label>
+    <input type="number" th:field="*{budgetInMillions}" required>
+
+    <br>
+
+    <button type="submit" th:text="#{button.updateTeam}">Update Team</button>
+</form>
+
+</body>
+</html>

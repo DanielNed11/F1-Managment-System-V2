@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{page.driver.edit.title}">Edit Driver</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{fragments/menu :: menu}"></nav>
+
+<h1 th:text="#{page.driver.edit.heading}">Edit Driver</h1>
+
+<form th:action="@{/drivers/edit/{id}(id=${driver.id})}" th:object="${driver}" method="post">
+
+    <label th:text="#{label.name}"></label>
+        <input type="text" th:field="*{name}" required>
+
+
+    <label th:text="#{label.setTeam}"></label>
+        <select th:field="*{teamId}">
+            <option th:value="0" th:selected="${driver.team == null}" th:text="#{option.noTeam}">No Team</option>
+            <option th:each="team : ${teams}"
+                    th:value="${team.id}"
+                    th:text="${team.name}"
+                    th:selected="${driver.team != null and driver.team.id == team.id}">
+            </option>
+        </select>
+
+
+    <label th:text="#{label.nationality}"></label>
+        <input type="text" th:field="*{nationality}" required />
+
+
+    <label th:text="#{label.worldChampionships}"></label>
+        <input type="number" th:field="*{worldChampionships}" required />
+
+
+    <button type="submit" th:text="#{button.updateDriver}">Update Driver</button>
+</form>
+
+</body>
+</html>

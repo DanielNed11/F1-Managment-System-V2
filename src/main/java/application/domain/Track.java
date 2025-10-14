@@ -1,31 +1,44 @@
 package application.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Objects;
 
 public class Track {
+    @Getter @Setter
     private int id;
+    @Getter @Setter
     private String name;
+    @Getter @Setter
     private String location;
+    @Getter @Setter
     private double lengthKm;
+    @Getter @Setter
     private int openedYear;
 
-    private List<Driver> drivers = new ArrayList<>();
+    public Track() {
 
-    public Track(int id, String name, String location, double lengthKm, int openedYear) {
-        this.id = id;
+    }
+
+    public Track(String name, String location, double lengthKm, int openedYear) {
         this.name = name;
         this.location = location;
         this.lengthKm = lengthKm;
         this.openedYear = openedYear;
     }
 
-    public int getId() { return id; }
-    public String getName() { return name; }
-    public String getLocation() { return location; }
-    public double getLengthKm() { return lengthKm; }
-    public int getOpenedYear() { return openedYear; }
-    public List<Driver> getDrivers() { return drivers; }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Track track)) return false;
+        return id == track.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
     @Override
     public String toString() {

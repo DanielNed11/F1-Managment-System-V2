@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{menu.title}">Menu</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:fragment="menu">
+    <menu>
+        <li><a th:href="@{/drivers}" th:text="#{menu.allDrivers}">All Drivers</a></li>
+        <li><a th:href="@{/teams}" th:text="#{menu.allTeams}">All Teams</a></li>
+        <li><a th:href="@{/tracks}" th:text="#{menu.allTracks}">All Tracks</a></li>
+        <li><a th:href="@{/races}" th:text="#{menu.allRaces}">All Races</a></li>
+
+        <li><a th:href="@{/drivers/add}" th:text="#{menu.addDriver}">Add Driver</a></li>
+        <li><a th:href="@{/teams/add}" th:text="#{menu.addTeam}">Add Team</a></li>
+        <li><a th:href="@{/tracks/add}" th:text="#{menu.addTrack}">Add Track</a></li>
+        <li><a th:href="@{/races/add}" th:text="#{menu.addRace}">Add Race</a></li>
+    </menu>
+    <hr>
+    <p>
+        🌐
+        <a href='?lang=en' th:text="#{menu.lang.en}">English</a> |
+        <a href='?lang=bg' th:text="#{menu.lang.bg}">Bulgarian</a>
+    </p>
+
+
+</nav>
+</body>
+</html>

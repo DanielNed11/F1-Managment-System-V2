@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{page.teams.title}">All Teams</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{fragments/menu :: menu}"></nav>
+
+<h1 th:text="#{page.teams.heading}">Teams</h1>
+<form th:action="@{/teams}" method="get">
+    <label th:text="#{label.league} + ':'"></label>
+    <select name="league" th:value="${league}">
+        <option value="" th:text="#{option.allLeagues}">All Leagues</option>
+        <option th:value="Formula_1" th:text="#{league.formula1}">Formula 1</option>
+        <option th:value="Formula_2" th:text="#{league.formula2}">Formula 2</option>
+        <option th:value="Formula_3" th:text="#{league.formula3}">Formula 3</option>
+        <option th:value="Formula_4" th:text="#{league.formula4}">Formula 4</option>
+        <option th:value="Formula_E" th:text="#{league.formulaE}">Formula E</option>
+    </select>
+
+    <button type="submit" th:text="#{button.filter}">Filter</button>
+    <a th:href="@{/teams}" th:text="#{button.clear}">Clear</a>
+</form>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th th:text="#{table.header.id}">ID</th>
+        <th th:text="#{table.header.name}">Name</th>
+        <th th:text="#{table.header.drivers}">Drivers</th>
+        <th th:text="#{table.header.league}">League</th>
+        <th th:text="#{table.header.founded}">Founded</th>
+        <th th:text="#{table.header.budget}">Budget</th>
+        <th th:text="#{table.header.edit}">Edit</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="team : ${teams}">
+        <td th:text="${team.id}"></td>
+        <td th:text="${team.name}"></td>
+        <td>
+            <details>
+                <summary th:text="#{details.showDrivers}">Show Drivers</summary>
+                <ul>
+                    <li th:each="driver : ${team.drivers}" th:text="${driver.name}"></li>
+                </ul>
+            </details>
+        </td>
+        <td th:text="${team.league}"></td>
+        <td th:text="${team.foundedYear}"></td>
+        <td th:text="${team.budgetInMillions}"></td>
+        <td>
+            <a th:href="@{/teams/edit/{id}(id=${team.id})}" th:text="#{table.header.edit}">Edit</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<p>
+    <strong th:text="#{label.totalTeams} + ': ' + ${#lists.size(teams)}">Total teams: 0</strong>
+</p>
+
+</body>
+</html>

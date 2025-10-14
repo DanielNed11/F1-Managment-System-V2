@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{page.track.add.title}">Add Track</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{fragments/menu :: menu}"></nav>
+
+<h1 th:text="#{page.track.add.heading}">Add Track</h1>
+
+<form th:object="${track}" th:action="@{/tracks/add}" method="post">
+    <label th:text="#{label.trackName}"></label>
+        <input type="text" th:field="*{name}" required />
+
+
+    <label th:text="#{label.trackLocation}"></label>
+        <input type="text" th:field="*{location}" required />
+
+
+    <label th:text="#{label.length}"></label>
+        <input type="number" th:field="*{lengthKm}" step="0.001" required />
+
+
+    <label th:text="#{label.openedYear}"></label>
+        <input type="number" th:field="*{openedYear}" required />
+
+
+    <button type="submit" th:text="#{button.addTrack}">Add Track</button>
+</form>
+</body>
+</html>

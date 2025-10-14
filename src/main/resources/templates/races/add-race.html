@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{page.race.add.title}">Add Race</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{fragments/menu :: menu}"></nav>
+
+<h1 th:text="#{page.race.add.heading}">Add Race</h1>
+
+<form th:action="@{/races/add}" method="post">
+
+    <label th:text="#{label.name} + ':'">Name:</label>
+    <input type="text" name="name" required>
+
+    <br>
+
+    <label th:text="#{label.date} + ':'">Date:</label>
+    <input type="date" name="date" required>
+
+    <br>
+
+    <label th:text="#{label.track} + ':'">Track:</label>
+    <select name="trackId">
+        <option th:each="track : ${tracks}"
+                th:value="${track.id}"
+                th:text="${track.name}">
+        </option>
+    </select>
+
+    <br>
+
+    <label th:text="#{label.addDrivers} + ':'">Add Drivers:</label>
+    <select name="driverIds" multiple>
+        <option th:each="driver : ${drivers}"
+                th:value="${driver.id}"
+                th:text="${driver.name}">
+        </option>
+    </select>
+
+    <br><br>
+
+    <button type="submit" th:text="#{button.addRace}">Add Race</button>
+</form>
+
+</body>
+</html>

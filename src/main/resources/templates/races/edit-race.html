@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{page.race.edit.title}">Edit Race</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<nav th:replace="~{fragments/menu :: menu}"></nav>
+
+<h1 th:text="#{page.race.edit.heading}">Edit Race</h1>
+
+<form th:action="@{/races/edit/{id}(id=${race.id})}" th:object="${race}" method="post">
+
+    <label th:text="#{label.name} + ':'">Name:</label>
+    <input type="text" th:field="*{name}" />
+
+    <br>
+
+    <label th:text="#{label.track} + ':'">Track:</label>
+    <select th:field="*{track.id}">
+        <option th:each="track : ${tracks}"
+                th:value="${track.id}"
+                th:text="${track.name}">
+        </option>
+    </select>
+
+    <br>
+
+    <h3 th:text="#{section.addDrivers}">Add Driver:</h3>
+    <label th:text="#{label.drivers} + ':'">Drivers:</label>
+    <select name="driverIds" multiple>
+        <option th:each="driver : ${drivers}"
+                th:value="${driver.id}"
+                th:text="${driver.name}"
+                th:selected="${race.drivers.contains(driver)}">
+        </option>
+    </select>
+
+
+    <br><br>
+    <button type="submit" th:text="#{button.updateRace}">Update Race</button>
+</form>
+
+<h3 th:text="#{section.driversInRace}">Drivers in this race:</h3>
+<ul>
+    <li th:each="driver : ${race.drivers}">
+        <span th:text="${driver.name}"></span>
+        <form th:action="@{/races/{raceId}/remove-driver/{driverId}(raceId=${race.id}, driverId=${driver.id})}" method="post" style="display:inline;">
+            <button type="submit" th:text="#{button.remove}">Remove</button>
+        </form>
+    </li>
+</ul>
+
+<br>
+</body>
+</html>
