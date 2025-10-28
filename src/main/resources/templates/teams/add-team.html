@@ -1,14 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{page.team.add.title}">Add Team</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
+<head th:replace="~{fragments/head :: head(#{page.team.add.title})}"></head>
 <body>
-<nav th:replace="~{fragments/menu :: menu}"></nav>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<h1 th:text="#{page.team.add.heading}">Add Team</h1>
+<h1 th:text="#{page.team.add.heading}"></h1>
 
 <form th:action="@{/teams/add}" th:object="${team}" method="post">
 
@@ -34,7 +30,8 @@
         <input type="number" th:field="*{budgetInMillions}" required />
 
 
-    <button type="submit" th:text="#{button.addTeam}">Add Team</button>
+    <button type="submit" th:text="#{button.addTeam}"></button>
 </form>
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

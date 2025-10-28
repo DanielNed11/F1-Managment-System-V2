@@ -2,43 +2,40 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{page.driver.add.title}">Add Driver</title>
+    <title th:text="#{page.driver.add.title}"></title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<nav th:replace="~{fragments/menu :: menu}"></nav>
+<nav th:replace="~{fragments/navbar :: menu}"></nav>
 
-<h1 th:text="#{page.driver.add.heading}">Add New Driver</h1>
+<h1 th:text="#{page.driver.add.heading}"></h1>
 
 <form th:action="@{/drivers/add}" th:object="${driver}" method="post">
 
-    <label th:text="#{label.name} + ':'">
+    <label th:text="#{label.name} + ':'" />
         <input type="text" th:field="*{name}" required />
-    </label>
 
-    <label th:text="#{label.setTeam} + ':'">
+
+    <label th:text="#{label.setTeam} + ':'" />
         <select th:field="*{teamId}">
-            <option th:value="0" selected th:text="#{option.noTeam}">No team</option>
+            <option th:value="0" selected th:text="#{option.noTeam}"></option>
             <option th:each="team : ${teams}"
                     th:value="${team.id}"
                     th:text="${team.name}">
             </option>
         </select>
-    </label>
 
-    <label th:text="#{label.nationality} + ':'">
+
+    <label th:text="#{label.nationality} + ':'" />
         <input type="text" th:field="*{nationality}" required />
-    </label>
 
-    <label th:text="#{label.dateOfBirth} + ':'">
+    <label th:text="#{label.dateOfBirth} + ':'" />
         <input type="date" th:field="*{dateOfBirth}" required />
-    </label>
 
-    <label th:text="#{label.worldChampionships} + ':'">
+    <label th:text="#{label.worldChampionships} + ':'" />
         <input type="number" th:field="*{worldChampionships}" />
-    </label>
 
-    <button type="submit" th:text="#{button.addDriver}">Add Driver</button>
+    <button type="submit" th:text="#{button.addDriver}"></button>
 </form>
 
 </body>

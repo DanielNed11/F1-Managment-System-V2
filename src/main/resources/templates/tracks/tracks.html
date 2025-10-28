@@ -2,23 +2,23 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{page.tracks.title}">Tracks</title>
+    <title th:text="#{page.tracks.title}"></title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<nav th:replace="~{fragments/menu :: menu}"></nav>
+<nav th:replace="~{fragments/navbar :: menu}"></nav>
 
-<h1 th:text="#{page.tracks.heading}">Tracks</h1>
+<h1 th:text="#{page.tracks.heading}"></h1>
 
-<table border="1">
+<table>
     <thead>
     <tr>
-        <th th:text="#{table.header.id}">ID</th>
-        <th th:text="#{table.header.name}">Name</th>
-        <th th:text="#{table.header.location}">Location</th>
-        <th th:text="#{table.header.length}">Length</th>
-        <th th:text="#{table.header.opened}">Opened in</th>
-        <th th:text="#{table.header.edit}">Edit</th>
+        <th th:text="#{table.header.id}"></th>
+        <th th:text="#{table.header.name}"></th>
+        <th th:text="#{table.header.location}"></th>
+        <th th:text="#{table.header.length}"></th>
+        <th th:text="#{table.header.opened}"></th>
+        <th th:text="#{table.header.edit}"></th>
     </tr>
     </thead>
     <tbody>
@@ -29,13 +29,13 @@
         <td th:text="${track.lengthKm}"></td>
         <td th:text="${track.openedYear}"></td>
         <td>
-            <a th:href="@{/tracks/edit/{id}(id=${track.id})}" th:text="#{table.header.edit}">Edit</a>
+            <a th:href="@{/tracks/edit/{id}(id=${track.id})}" th:text="#{table.header.edit}"></a>
         </td>
     </tr>
     </tbody>
 </table>
 <p>
-    <strong th:text="#{label.totalTracks} + ': ' + ${#lists.size(tracks)}">Total teams: 0</strong>
+    <strong th:text="#{label.totalTracks} + ': ' + ${#lists.size(tracks)}"></strong>
 </p>
 </body>
 </html>

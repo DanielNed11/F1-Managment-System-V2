@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+<footer th:fragment="footer" class="bg-light border-top mt-5">
+    <div class="container py-3">
+        <div class="small text-muted">
+            <div class="d-none d-lg-block mb-2">
+                <i class="bi bi-lightning-charge me-1"></i>
+                <span th:text="#{footer.largeOnly}"></span>
+            </div>
+            <div>
+                © <span th:text="${#calendars.format(#calendars.createNow(),'yyyy')}"></span>
+                <span th:text="#{footer.rights}"></span>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+</footer>
+</body>
+</html>

@@ -19,6 +19,7 @@ repositories {
 }
 
 dependencies {
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
@@ -26,8 +27,10 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 
+    implementation("org.webjars:bootstrap:5.3.3")
+    implementation("org.webjars:webjars-locator-core")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    "developmentOnly"("org.springframework.boot:spring-boot-devtools")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

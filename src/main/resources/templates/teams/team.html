@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/head :: head(#{page.team.title})}"></head>
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<h1 th:text="#{page.teams.heading}">Team</h1>
+
+
+<table class="table">
+    <thead>
+    <tr>
+        <th th:text="#{table.header.id}"></th>
+        <th th:text="#{table.header.name}"></th>
+        <th th:text="#{table.header.drivers}"></th>
+        <th th:text="#{table.header.league}"></th>
+        <th th:text="#{table.header.founded}"></th>
+        <th th:text="#{table.header.budget}"></th>
+        <th th:text="#{table.header.edit}"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td th:text="${team.id}"></td>
+        <td th:text="${team.name}"></td>
+        <td>
+            <details>
+                <summary th:text="#{details.showDrivers}">Show Drivers</summary>
+                <ul>
+                    <li th:each="driver : ${team.drivers}" th:text="${driver.name}"></li>
+                </ul>
+            </details>
+        </td>
+        <td th:text="${team.league}"></td>
+        <td th:text="${team.foundedYear}"></td>
+        <td th:text="${team.budgetInMillions}"></td>
+        <td>
+            <a th:href="@{/teams/edit/{id}(id=${team.id})}" th:text="#{table.header.edit}">Edit</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

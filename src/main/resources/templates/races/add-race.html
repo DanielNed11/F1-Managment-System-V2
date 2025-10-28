@@ -2,27 +2,27 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{page.race.add.title}">Add Race</title>
+    <title th:text="#{page.race.add.title}"></title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<nav th:replace="~{fragments/menu :: menu}"></nav>
+<nav th:replace="~{fragments/navbar :: menu}"></nav>
 
-<h1 th:text="#{page.race.add.heading}">Add Race</h1>
+<h1 th:text="#{page.race.add.heading}"></h1>
 
 <form th:action="@{/races/add}" method="post">
 
-    <label th:text="#{label.name} + ':'">Name:</label>
+    <label th:text="#{label.name} + ':'"></label>
     <input type="text" name="name" required>
 
     <br>
 
-    <label th:text="#{label.date} + ':'">Date:</label>
+    <label th:text="#{label.date} + ':'"></label>
     <input type="date" name="date" required>
 
     <br>
 
-    <label th:text="#{label.track} + ':'">Track:</label>
+    <label th:text="#{label.track} + ':'"></label>
     <select name="trackId">
         <option th:each="track : ${tracks}"
                 th:value="${track.id}"
@@ -32,7 +32,7 @@
 
     <br>
 
-    <label th:text="#{label.addDrivers} + ':'">Add Drivers:</label>
+    <label th:text="#{label.addDrivers} + ':'"></label>
     <select name="driverIds" multiple>
         <option th:each="driver : ${drivers}"
                 th:value="${driver.id}"
@@ -42,7 +42,7 @@
 
     <br><br>
 
-    <button type="submit" th:text="#{button.addRace}">Add Race</button>
+    <button type="submit" th:text="#{button.addRace}"></button>
 </form>
 
 </body>

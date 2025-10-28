@@ -35,9 +35,9 @@ public class TeamController {
 
     @GetMapping("/{id}")
     public String getTeam(Model model, @PathVariable int id) {
-        model.addAttribute("teams", teamService.getById(id));
+        model.addAttribute("team", teamService.getById(id));
         log.info("Getting team with id " + id);
-        return "teams/teams";
+        return "teams/team";
     }
 
     @GetMapping("/add")

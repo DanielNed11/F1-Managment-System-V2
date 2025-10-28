@@ -2,13 +2,13 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{page.track.add.title}">Add Track</title>
+    <title th:text="#{page.track.add.title}"></title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<nav th:replace="~{fragments/menu :: menu}"></nav>
+<nav th:replace="~{fragments/navbar :: menu}"></nav>
 
-<h1 th:text="#{page.track.add.heading}">Add Track</h1>
+<h1 th:text="#{page.track.add.heading}"></h1>
 
 <form th:object="${track}" th:action="@{/tracks/add}" method="post">
     <label th:text="#{label.trackName}"></label>
@@ -27,7 +27,7 @@
         <input type="number" th:field="*{openedYear}" required />
 
 
-    <button type="submit" th:text="#{button.addTrack}">Add Track</button>
+    <button type="submit" th:text="#{button.addTrack}"></button>
 </form>
 </body>
 </html>

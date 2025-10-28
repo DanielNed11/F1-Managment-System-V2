@@ -2,22 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{page.race.edit.title}">Edit Race</title>
+    <title th:text="#{page.race.edit.title}"></title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<nav th:replace="~{fragments/menu :: menu}"></nav>
+<nav th:replace="~{fragments/navbar :: menu}"></nav>
 
-<h1 th:text="#{page.race.edit.heading}">Edit Race</h1>
+<h1 th:text="#{page.race.edit.heading}"></h1>
 
 <form th:action="@{/races/edit/{id}(id=${race.id})}" th:object="${race}" method="post">
 
-    <label th:text="#{label.name} + ':'">Name:</label>
+    <label th:text="#{label.name} + ':'"></label>
     <input type="text" th:field="*{name}" />
 
     <br>
 
-    <label th:text="#{label.track} + ':'">Track:</label>
+    <label th:text="#{label.track} + ':'"></label>
     <select th:field="*{track.id}">
         <option th:each="track : ${tracks}"
                 th:value="${track.id}"
@@ -27,8 +27,8 @@
 
     <br>
 
-    <h3 th:text="#{section.addDrivers}">Add Driver:</h3>
-    <label th:text="#{label.drivers} + ':'">Drivers:</label>
+    <h3 th:text="#{section.addDrivers}"></h3>
+    <label th:text="#{label.drivers} + ':'"></label>
     <select name="driverIds" multiple>
         <option th:each="driver : ${drivers}"
                 th:value="${driver.id}"
@@ -39,15 +39,15 @@
 
 
     <br><br>
-    <button type="submit" th:text="#{button.updateRace}">Update Race</button>
+    <button type="submit" th:text="#{button.updateRace}"></button>
 </form>
 
-<h3 th:text="#{section.driversInRace}">Drivers in this race:</h3>
+<h3 th:text="#{section.driversInRace}"></h3>
 <ul>
     <li th:each="driver : ${race.drivers}">
         <span th:text="${driver.name}"></span>
         <form th:action="@{/races/{raceId}/remove-driver/{driverId}(raceId=${race.id}, driverId=${driver.id})}" method="post" style="display:inline;">
-            <button type="submit" th:text="#{button.remove}">Remove</button>
+            <button type="submit" th:text="#{button.remove}"></button>
         </form>
     </li>
 </ul>

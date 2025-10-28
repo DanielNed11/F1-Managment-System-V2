@@ -2,22 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{page.races.title}">Races</title>
+    <title th:text="#{page.races.title}"></title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<nav th:replace="~{fragments/menu :: menu}"></nav>
+<nav th:replace="~{fragments/navbar :: menu}"></nav>
 
-<h1 th:text="#{page.races.title}">Races</h1>
-<table border="1">
+<h1 th:text="#{page.races.title}"></h1>
+<table>
     <tr>
-        <th th:text="#{table.header.id}">ID</th>
-        <th th:text="#{table.header.name}">Name</th>
-        <th th:text="#{table.header.drivers}">Drivers</th>
-        <th th:text="#{table.header.date}">Date</th>
-        <th th:text="#{table.header.track}">Track</th>
-        <th th:text="#{table.header.winner}">Winner</th>
-        <th th:text="#{table.header.edit}">Edit</th>
+        <th th:text="#{table.header.id}"></th>
+        <th th:text="#{table.header.name}"></th>
+        <th th:text="#{table.header.drivers}"></th>
+        <th th:text="#{table.header.date}"></th>
+        <th th:text="#{table.header.track}"></th>
+        <th th:text="#{table.header.winner}"></th>
+        <th th:text="#{table.header.edit}"></th>
     </tr>
 
     <tr th:each="race : ${races}">
@@ -25,7 +25,7 @@
         <td th:text="${race.name}"></td>
         <td>
             <details>
-                <summary th:text="#{details.showDrivers}">Show Drivers</summary>
+                <summary th:text="#{details.showDrivers}"></summary>
                 <ul>
                     <li th:each="driver : ${race.drivers}" th:text="${driver.name}"></li>
                 </ul>
@@ -34,11 +34,11 @@
         <td th:text="${race.date}"></td>
         <td th:text="${race.track?.name}"></td>
         <td th:text="${race.winner?.name}"></td>
-        <td><a th:href="@{/races/edit/{id}(id=${race.id})}" th:text="#{table.header.edit}">Edit</a></td>
+        <td><a th:href="@{/races/edit/{id}(id=${race.id})}" th:text="#{table.header.edit}"></a></td>
     </tr>
 </table>
 <p>
-    <strong th:text="#{label.totalRaces} + ': ' + ${#lists.size(races)}">Total teams: 0</strong>
+    <strong th:text="#{label.totalRaces} + ': ' + ${#lists.size(races)}"></strong>
 </p>
 </body>
 </html>

@@ -2,13 +2,13 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{page.track.edit.title}">Edit Track</title>
+    <title th:text="#{page.track.edit.title}"></title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<nav th:replace="~{fragments/menu :: menu}"></nav>
+<nav th:replace="~{fragments/navbar :: menu}"></nav>
 
-<h1 th:text="#{page.track.edit.heading}">Edit Track</h1>
+<h1 th:text="#{page.track.edit.heading}"></h1>
 
 <form th:action="@{/tracks/edit/{id}(id=${track.id})}" th:object="${track}" method="post">
 
@@ -27,7 +27,7 @@
         <input th:field="*{openedYear}" type="number" required>
 
 
-    <button type="submit" th:text="#{button.updateTrack}">Update Track</button>
+    <button type="submit" th:text="#{button.updateTrack}"></button>
 </form>
 
 </body>

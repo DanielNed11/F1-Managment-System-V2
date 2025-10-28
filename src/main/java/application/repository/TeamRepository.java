@@ -13,9 +13,12 @@ public class TeamRepository implements IRepository<Team> {
     private static final List<Team> teams = new ArrayList<>();
 
     public TeamRepository() {
-        this.add(new Team("Mercedes", 1954, League.Formula_1, "mercedes.png", 10));
-        this.add(new Team("Ferrari", 1929, League.Formula_1, "ferrari.png", 30));
-        this.add(new Team("Red Bull Racing", 2005, League.Formula_1, "redbull.png", 20));
+        this.add(new Team("Mercedes", 1954, League.Formula_1,
+                "/img/mercedesLogo.png", 10));
+        this.add(new Team("Ferrari", 1929, League.Formula_1,
+                "/img/ferrariLogo.png", 30));
+        this.add(new Team("Red Bull Racing", 2005, League.Formula_1,
+                "/img/redBullLogo.png", 20));
     }
 
     @Override

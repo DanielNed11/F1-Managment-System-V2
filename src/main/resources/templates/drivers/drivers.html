@@ -6,7 +6,7 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<nav th:replace="~{fragments/menu :: menu}"></nav>
+<nav th:replace="~{fragments/navbar :: menu}"></nav>
 
 <h1 th:text="#{page.drivers.heading}">Drivers</h1>
 
@@ -24,16 +24,16 @@
     <a th:href="@{/drivers}" th:text="#{button.clear}">Clear</a>
 </form>
 
-<table border="1">
+<table>
     <thead>
     <tr>
-        <th th:text="#{table.header.id}">ID</th>
-        <th th:text="#{table.header.name}">Name</th>
-        <th th:text="#{table.header.team}">Team</th>
-        <th th:text="#{table.header.races}">Races</th>
-        <th th:text="#{table.header.nationality}">Nationality</th>
-        <th th:text="#{table.header.dateOfBirth}">Date of Birth</th>
-        <th th:text="#{table.header.worldChampionships}">World Championships</th>
+        <th th:text="#{table.header.id}"></th>
+        <th th:text="#{table.header.name}"></th>
+        <th th:text="#{table.header.team}"></th>
+        <th th:text="#{table.header.races}"></th>
+        <th th:text="#{table.header.nationality}"></th>
+        <th th:text="#{table.header.dateOfBirth}"></th>
+        <th th:text="#{table.header.worldChampionships}"></th>
         <th th:text="#{table.header.edit}">Edit</th>
     </tr>
     </thead>
@@ -44,7 +44,7 @@
         <td th:text="${driver.team?.name ?: 'No Team'}"></td>
         <td>
             <details>
-                <summary th:text="#{details.showRaces}">Show Races</summary>
+                <summary th:text="#{details.showRaces}"></summary>
                 <ul>
                     <li th:each="race : ${driver.races}" th:text="${race.name}"></li>
                 </ul>
@@ -53,12 +53,12 @@
         <td th:text="${driver.nationality}"></td>
         <td th:text="${driver.dateOfBirth}"></td>
         <td th:text="${driver.worldChampionships}"></td>
-        <td><a th:href="@{/drivers/edit/{id}(id=${driver.id})}" th:text="#{table.header.edit}">Edit</a></td>
+        <td><a th:href="@{/drivers/edit/{id}(id=${driver.id})}" th:text="#{table.header.edit}"></a></td>
     </tr>
     </tbody>
 </table>
 <p>
-    <strong th:text="#{label.totalDrivers} + ': ' + ${#lists.size(drivers)}">Total teams: 0</strong>
+    <strong th:text="#{label.totalDrivers} + ': ' + ${#lists.size(drivers)}"></strong>
 </p>
 </body>
 </html>

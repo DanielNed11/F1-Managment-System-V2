@@ -1,65 +1,56 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{page.teams.title}">All Teams</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
+<head th:replace="~{fragments/head :: head(#{page.teams.title})}"></head>
 <body>
-<nav th:replace="~{fragments/menu :: menu}"></nav>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<h1 th:text="#{page.teams.heading}">Teams</h1>
-<form th:action="@{/teams}" method="get">
-    <label th:text="#{label.league} + ':'"></label>
-    <select name="league" th:value="${league}">
-        <option value="" th:text="#{option.allLeagues}">All Leagues</option>
-        <option th:value="Formula_1" th:text="#{league.formula1}">Formula 1</option>
-        <option th:value="Formula_2" th:text="#{league.formula2}">Formula 2</option>
-        <option th:value="Formula_3" th:text="#{league.formula3}">Formula 3</option>
-        <option th:value="Formula_4" th:text="#{league.formula4}">Formula 4</option>
-        <option th:value="Formula_E" th:text="#{league.formulaE}">Formula E</option>
-    </select>
+<main class="container my-4">
+    <h1 class="mb-4" th:text="#{page.teams.heading}"></h1>
 
-    <button type="submit" th:text="#{button.filter}">Filter</button>
-    <a th:href="@{/teams}" th:text="#{button.clear}">Clear</a>
-</form>
+    <form class="row gy-2 gx-3 align-items-center mb-4" th:action="@{/teams}" method="get">
+        <div class="col-auto">
+            <select id="league-select" class="form-select" name="league" th:value="${league}">
+                <option value="" th:text="#{option.allLeagues}">All Leagues</option>
+                <option th:value="Formula_1" th:text="#{league.formula1}">Formula 1</option>
+                <option th:value="Formula_2" th:text="#{league.formula2}">Formula 2</option>
+                <option th:value="Formula_3" th:text="#{league.formula3}">Formula 3</option>
+                <option th:value="Formula_4" th:text="#{league.formula4}">Formula 4</option>
+                <option th:value="Formula_E" th:text="#{league.formulaE}">Formula E</option>
+            </select>
+        </div>
 
-<table border="1">
-    <thead>
-    <tr>
-        <th th:text="#{table.header.id}">ID</th>
-        <th th:text="#{table.header.name}">Name</th>
-        <th th:text="#{table.header.drivers}">Drivers</th>
-        <th th:text="#{table.header.league}">League</th>
-        <th th:text="#{table.header.founded}">Founded</th>
-        <th th:text="#{table.header.budget}">Budget</th>
-        <th th:text="#{table.header.edit}">Edit</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="team : ${teams}">
-        <td th:text="${team.id}"></td>
-        <td th:text="${team.name}"></td>
-        <td>
-            <details>
-                <summary th:text="#{details.showDrivers}">Show Drivers</summary>
-                <ul>
-                    <li th:each="driver : ${team.drivers}" th:text="${driver.name}"></li>
-                </ul>
-            </details>
-        </td>
-        <td th:text="${team.league}"></td>
-        <td th:text="${team.foundedYear}"></td>
-        <td th:text="${team.budgetInMillions}"></td>
-        <td>
-            <a th:href="@{/teams/edit/{id}(id=${team.id})}" th:text="#{table.header.edit}">Edit</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
-<p>
-    <strong th:text="#{label.totalTeams} + ': ' + ${#lists.size(teams)}">Total teams: 0</strong>
-</p>
+        <div class="col-auto d-flex align-items-end gap-2">
+            <button type="submit" class="btn btn-primary" th:text="#{button.filter}"></button>
+            <a class="btn btn-outline-secondary" th:href="@{/teams}" th:text="#{button.clear}"></a>
+        </div>
+    </form>
 
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4">
+        <div class="col" th:each="team : ${teams}">
+            <div class="card h-100 shadow-sm">
+                <img class="card-img-top"
+                     th:src="${team.teamLogoUrl}"
+                     th:alt="${team.name}">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${team.name}">Mercedes</h5>
+                    <span class="badge text-bg-primary" th:text="${team.league}">Formula_1</span>
+                    <p class="card-text mt-2">
+                        <span class="text-muted" th:text="#{label.foundedYear} + ':'">Founded in:</span>
+                        <strong th:text="${team.foundedYear}">1950</strong>
+                    </p>
+                </div>
+                <div class="card-footer bg-white">
+                    <a class="btn btn-sm btn-outline-primary w-100"
+                       th:href="@{/teams/{id}(id=${team.id})}"
+                       th:text="#{button.viewDetails}"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p class="mt-3"><strong th:text="#{label.totalTeams} + ': ' + ${#lists.size(teams)}">Total teams: 0</strong></p>
+    <a class="btn btn-sm btn-primary w-100" th:text="#{button.addTeam}" th:href="@{/teams/add}"></a>
+</main>
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>
