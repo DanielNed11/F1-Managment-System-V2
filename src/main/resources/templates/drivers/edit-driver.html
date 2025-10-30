@@ -1,23 +1,22 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{page.driver.edit.title}"></title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
+<head th:replace="~{fragments/header :: head(#{page.driver.edit.title})}"></head>
 <body>
-<nav th:replace="~{fragments/navbar :: menu}"></nav>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<main class="container my-4">
 
-<h1 th:text="#{page.driver.edit.heading}"></h1>
+<h1 class="mb-4" th:text="#{page.driver.edit.heading}"></h1>
 
-<form th:action="@{/drivers/edit/{id}(id=${driver.id})}" th:object="${driver}" method="post">
+<form class="row g-3" th:action="@{/drivers/edit/{id}(id=${driver.id})}" th:object="${driver}" method="post">
 
-    <label th:text="#{label.name}"></label>
-        <input type="text" th:field="*{name}" required>
+    <div class="col-md-6">
+        <label class="form-label" th:text="#{label.name} + ':'"></label>
+        <input type="text" class="form-control" th:field="*{name}" required />
+    </div>
 
-
-    <label th:text="#{label.setTeam}"></label>
-        <select th:field="*{teamId}">
+    <div class="col-md-6">
+        <label class="form-label" th:text="#{label.setTeam} + ':'"></label>
+        <select class="form-select" th:field="*{teamId}">
             <option th:value="0" th:selected="${driver.team == null}" th:text="#{option.noTeam}"></option>
             <option th:each="team : ${teams}"
                     th:value="${team.id}"
@@ -25,18 +24,23 @@
                     th:selected="${driver.team != null and driver.team.id == team.id}">
             </option>
         </select>
+    </div>
 
+    <div class="col-md-6">
+        <label class="form-label" th:text="#{label.nationality} + ':'"></label>
+        <input type="text" class="form-control" th:field="*{nationality}" required />
+    </div>
 
-    <label th:text="#{label.nationality}"></label>
-        <input type="text" th:field="*{nationality}" required />
+    <div class="col-md-6">
+        <label class="form-label" th:text="#{label.worldChampionships} + ':'"></label>
+        <input type="number" class="form-control" th:field="*{worldChampionships}" required />
+    </div>
 
-
-    <label th:text="#{label.worldChampionships}"></label>
-        <input type="number" th:field="*{worldChampionships}" required />
-
-
-    <button type="submit" th:text="#{button.updateDriver}"></button>
+    <div class="col-12 d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary" th:text="#{button.updateDriver}"></button>
+    </div>
 </form>
 
+</main>
 </body>
 </html>

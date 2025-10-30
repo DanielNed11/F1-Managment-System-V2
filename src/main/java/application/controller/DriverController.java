@@ -49,9 +49,9 @@ public class DriverController {
             log.warn("Driver with id " + id + " not found");
             return "redirect:/drivers";
         }
-        model.addAttribute("drivers", driver);
+        model.addAttribute("driver", driver);
         log.info("Getting driver with id " + id);
-        return "drivers/drivers";
+        return "drivers/driver";
     }
 
     @GetMapping("/add")

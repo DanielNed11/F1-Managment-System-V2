@@ -24,16 +24,19 @@ public class Driver {
     @Getter @Setter
     private int teamId;
     @Getter @Setter
+    private String imageUrl;
+    @Getter @Setter
     private List<Race> races = new ArrayList<>();
 
     public Driver() {}
 
     public Driver(String name, LocalDate dateOfBirth, String nationality,
-                  int worldChampionships) {
+                  int worldChampionships, String imageUrl) {
         this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.nationality = nationality;
         this.worldChampionships = worldChampionships;
+        this.imageUrl = imageUrl;
     }
 
     public void addRace(Race race) {

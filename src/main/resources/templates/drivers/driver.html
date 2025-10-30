@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(#{page.driver.heading})}"></head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<main class="container my-4">
+    <h1 class="mb-4" th:text="#{page.driver.heading}">Driver</h1>
+
+    <table class="table table-striped table-hover align-middle">
+        <thead class="table-light">
+        <tr>
+            <th th:text="#{table.header.id}"></th>
+            <th th:text="#{table.header.photo}"></th>
+            <th th:text="#{table.header.name}"></th>
+            <th th:text="#{table.header.nationality}"></th>
+            <th th:text="#{table.header.dateOfBirth}"></th>
+            <th th:text="#{table.header.worldChampionships}"></th>
+            <th th:text="#{table.header.team}"></th>
+            <th th:text="#{table.header.edit}"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td th:text="${driver.id}">1</td>
+            <td>
+                <img alt="Logo"
+                     class="img-fluid rounded"
+                     style="max-height: 50px;"
+                     th:src="${driver.imageUrl}"/>
+            </td>
+            <td><strong th:text="${driver.name}"></strong></td>
+            <td th:text="${driver.nationality}"></td>
+            <td th:text="${#temporals.format(driver.dateOfBirth, 'yyyy-MM-dd')}"></td>
+            <td th:text="${driver.worldChampionships}"></td>
+            <td th:text="${driver.team == null ? 'No team' : driver.team.name}"></td>
+            <td>
+                <a class="btn btn-sm btn-outline-primary"
+                   th:href="@{/drivers/edit/{id}(id=${driver.id})}">
+                    <i class="bi bi-pencil-square"></i>
+                    <span th:text="#{table.header.edit}"></span>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a class="btn btn-secondary mt-3" th:href="@{/drivers}">
+        <i class="bi bi-arrow-left"></i>
+        <span th:text="#{page.drivers.title}"></span>
+    </a>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

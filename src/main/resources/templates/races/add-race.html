@@ -1,12 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{page.race.add.title}"></title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
+<head th:replace="~{fragments/header :: head(#{page.race.add.title})}"></head>
 <body>
-<nav th:replace="~{fragments/navbar :: menu}"></nav>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
 <h1 th:text="#{page.race.add.heading}"></h1>
 

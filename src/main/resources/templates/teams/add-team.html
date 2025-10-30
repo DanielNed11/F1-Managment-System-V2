@@ -1,37 +1,45 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head(#{page.team.add.title})}"></head>
+<head th:replace="~{fragments/header :: head(#{page.team.add.title})}"></head>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<h1 th:text="#{page.team.add.heading}"></h1>
+<main class="container my-4">
+<h1 class="mb-4" th:text="#{page.team.add.heading}"></h1>
 
-<form th:action="@{/teams/add}" th:object="${team}" method="post">
+<form class="row g-3" th:action="@{/teams/add}" th:object="${team}" method="post">
 
-    <label th:text="#{label.name} + ':'"></label>
-        <input type="text" th:field="*{name}" required />
+    <div class="col-md-6">
+        <label class="form-label" th:text="#{label.name} + ':'"></label>
+        <input type="text" class="form-control" th:field="*{name}" required />
+    </div>
 
+    <div class="col-md-6">
+        <label class="form-label" th:text="#{label.foundedYear} + ':'"></label>
+        <input type="number" class="form-control" th:field="*{foundedYear}" required />
+    </div>
 
-    <label th:text="#{label.foundedYear} + ':'"></label>
-        <input type="number" th:field="*{foundedYear}" required />
-
-
-    <label th:text="#{label.league} + ':'"></label>
-        <select th:field="*{league}">
-            <option th:value="Formula_1" th:text="#{league.formula1}">Formula 1</option>
-            <option th:value="Formula_2" th:text="#{league.formula2}">Formula 2</option>
-            <option th:value="Formula_3" th:text="#{league.formula3}">Formula 3</option>
-            <option th:value="Formula_4" th:text="#{league.formula4}">Formula 4</option>
-            <option th:value="Formula_E" th:text="#{league.formulaE}">Formula E</option>
+    <div class="col-md-6">
+        <label class="form-label" th:text="#{label.league} + ':'"></label>
+        <select class="form-select" th:field="*{league}">
+            <option th:each="l : ${T(application.domain.League).values()}"
+                    th:value="${l.name()}"
+                    th:text="${l.name().replace('_', ' ')}">
+            </option>
         </select>
+    </div>
 
+    <div class="col-md-6">
+        <label class="form-label" th:text="#{label.budget} + ':'"></label>
+        <input type="number" class="form-control" th:field="*{budgetInMillions}" required />
+    </div>
 
-    <label th:text="#{label.budget} + ':'"></label>
-        <input type="number" th:field="*{budgetInMillions}" required />
+    <div class="col-12 d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary" th:text="#{button.addTeam}"></button>
+    </div>
 
-
-    <button type="submit" th:text="#{button.addTeam}"></button>
 </form>
+</main>
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

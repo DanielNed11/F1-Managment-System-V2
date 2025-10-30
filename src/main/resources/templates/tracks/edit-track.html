@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{page.track.edit.title}"></title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
+<head th:replace="~{fragments/header :: head(#{page.track.edit.title})}"></head>
+
 <body>
-<nav th:replace="~{fragments/navbar :: menu}"></nav>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
 <h1 th:text="#{page.track.edit.heading}"></h1>
 

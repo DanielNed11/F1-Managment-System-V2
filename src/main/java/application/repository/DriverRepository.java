@@ -11,11 +11,16 @@ public class DriverRepository implements IRepository<Driver> {
     private final List<Driver> drivers = new ArrayList<>();
 
     public DriverRepository() {
-        this.add(new Driver("Lewis Hamilton", LocalDate.of(1985, 1, 7), "British", 7));
-        this.add( new Driver( "Max Verstappen", LocalDate.of(1997, 9, 30), "Dutch", 2));
-        this.add(new Driver( "Charles Leclerc", LocalDate.of(1997, 10, 16), "Monegasque", 0));
-        this.add(new Driver( "Carlos Sainz", LocalDate.of(1994, 9, 1), "Spanish", 0));
-        this.add( new Driver( "Valtteri Bottas", LocalDate.of(1989, 8, 28), "Finnish", 0));
+        this.add(new Driver("Lewis Hamilton", LocalDate.of(1985, 1, 7),
+                "British", 7, "/img/Hamilton.png"));
+        this.add( new Driver( "Max Verstappen", LocalDate.of(1997, 9, 30),
+                "Dutch", 2, "/img/Verstappen.png"));
+        this.add(new Driver( "Charles Leclerc", LocalDate.of(1997, 10, 16),
+                "Monegasque", 0, "/img/Leclerc.png"));
+        this.add(new Driver( "Carlos Sainz", LocalDate.of(1994, 9, 1),
+                "Spanish", 0,  "/img/Carlos.png"));
+        this.add( new Driver( "Nikola Tsolov", LocalDate.of(2006, 12, 21),
+                "Bulgarian", 0, "/img/Nikola.png"));
     }
 
     @Override

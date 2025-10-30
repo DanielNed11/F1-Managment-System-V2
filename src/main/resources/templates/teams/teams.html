@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head th:replace="~{fragments/head :: head(#{page.teams.title})}"></head>
+<head th:replace="~{fragments/header :: head(#{page.teams.title})}"></head>
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
 
@@ -11,11 +11,10 @@
         <div class="col-auto">
             <select id="league-select" class="form-select" name="league" th:value="${league}">
                 <option value="" th:text="#{option.allLeagues}">All Leagues</option>
-                <option th:value="Formula_1" th:text="#{league.formula1}">Formula 1</option>
-                <option th:value="Formula_2" th:text="#{league.formula2}">Formula 2</option>
-                <option th:value="Formula_3" th:text="#{league.formula3}">Formula 3</option>
-                <option th:value="Formula_4" th:text="#{league.formula4}">Formula 4</option>
-                <option th:value="Formula_E" th:text="#{league.formulaE}">Formula E</option>
+                <option th:each="l : ${T(application.domain.League).values()}"
+                        th:value="${l.name()}"
+                        th:text="${l.name().replace('_', ' ')}">
+                </option>
             </select>
         </div>
 
@@ -33,7 +32,7 @@
                      th:alt="${team.name}">
                 <div class="card-body">
                     <h5 class="card-title" th:text="${team.name}">Mercedes</h5>
-                    <span class="badge text-bg-primary" th:text="${team.league}">Formula_1</span>
+                    <span class="badge text-bg-primary" th:text="${team.league.name().replace('_', ' ')}"></span>
                     <p class="card-text mt-2">
                         <span class="text-muted" th:text="#{label.foundedYear} + ':'">Founded in:</span>
                         <strong th:text="${team.foundedYear}">1950</strong>

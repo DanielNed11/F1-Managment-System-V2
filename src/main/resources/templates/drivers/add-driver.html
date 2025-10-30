@@ -1,42 +1,50 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{page.driver.add.title}"></title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
+<head th:replace="~{fragments/header :: head(#{page.driver.add.title})}"></head>
 <body>
-<nav th:replace="~{fragments/navbar :: menu}"></nav>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<main class="container my-4">
 
-<h1 th:text="#{page.driver.add.heading}"></h1>
+<h1 class="mb-4" th:text="#{page.driver.add.heading}"></h1>
 
-<form th:action="@{/drivers/add}" th:object="${driver}" method="post">
+<form class="row g-3" th:action="@{/drivers/add}" th:object="${driver}" method="post">
 
-    <label th:text="#{label.name} + ':'" />
-        <input type="text" th:field="*{name}" required />
+    <div class="col-md-6">
+        <label class="form-label" th:text="#{label.name} + ':'"></label>
+        <input type="text" class="form-control" th:field="*{name}" required />
+    </div>
 
-
-    <label th:text="#{label.setTeam} + ':'" />
-        <select th:field="*{teamId}">
+    <div class="col-md-6">
+        <label class="form-label" th:text="#{label.setTeam} + ':'"></label>
+        <select class="form-select" th:field="*{teamId}">
             <option th:value="0" selected th:text="#{option.noTeam}"></option>
             <option th:each="team : ${teams}"
                     th:value="${team.id}"
                     th:text="${team.name}">
             </option>
         </select>
+    </div>
 
+    <div class="col-md-6">
+        <label class="form-label" th:text="#{label.nationality} + ':'"></label>
+        <input type="text" class="form-control" th:field="*{nationality}" required />
+    </div>
 
-    <label th:text="#{label.nationality} + ':'" />
-        <input type="text" th:field="*{nationality}" required />
+    <div class="col-md-6">
+        <label class="form-label" th:text="#{label.dateOfBirth} + ':'"></label>
+        <input type="date" class="form-control" th:field="*{dateOfBirth}" required />
+    </div>
 
-    <label th:text="#{label.dateOfBirth} + ':'" />
-        <input type="date" th:field="*{dateOfBirth}" required />
+    <div class="col-md-6">
+        <label class="form-label" th:text="#{label.worldChampionships} + ':'"></label>
+        <input type="number" class="form-control" th:field="*{worldChampionships}" />
+    </div>
 
-    <label th:text="#{label.worldChampionships} + ':'" />
-        <input type="number" th:field="*{worldChampionships}" />
-
-    <button type="submit" th:text="#{button.addDriver}"></button>
+    <div class="col-12 d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary" th:text="#{button.addDriver}"></button>
+    </div>
 </form>
 
+</main>
 </body>
 </html>

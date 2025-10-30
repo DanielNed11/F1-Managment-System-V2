@@ -3,5 +3,6 @@ body {
 }
 
 .card-img-top {
-    object-fit: contain; height: 200px;
+    object-fit: contain;
+    height: 200px;
 }

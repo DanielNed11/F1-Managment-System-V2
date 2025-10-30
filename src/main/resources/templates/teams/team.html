@@ -1,45 +1,78 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head th:replace="~{fragments/head :: head(#{page.team.title})}"></head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(#{page.team.title})}"></head>
 <body>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<h1 th:text="#{page.teams.heading}">Team</h1>
+<main class="container my-4">
+    <h1 class="mb-4" th:text="#{page.teams.heading}">Team</h1>
 
+    <table class="table table-striped table-hover align-middle">
+        <thead class="table-light">
+        <tr>
+            <th th:text="#{table.header.id}"></th>
+            <th th:text="#{table.header.logo}">Logo</th>
+            <th th:text="#{table.header.name}"></th>
+            <th th:text="#{table.header.drivers}"></th>
+            <th th:text="#{table.header.league}"></th>
+            <th th:text="#{table.header.founded}"></th>
+            <th th:text="#{table.header.budget}"></th>
+            <th th:text="#{table.header.edit}"></th>
+        </tr>
+        </thead>
 
-<table class="table">
-    <thead>
-    <tr>
-        <th th:text="#{table.header.id}"></th>
-        <th th:text="#{table.header.name}"></th>
-        <th th:text="#{table.header.drivers}"></th>
-        <th th:text="#{table.header.league}"></th>
-        <th th:text="#{table.header.founded}"></th>
-        <th th:text="#{table.header.budget}"></th>
-        <th th:text="#{table.header.edit}"></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td th:text="${team.id}"></td>
-        <td th:text="${team.name}"></td>
-        <td>
-            <details>
-                <summary th:text="#{details.showDrivers}">Show Drivers</summary>
-                <ul>
-                    <li th:each="driver : ${team.drivers}" th:text="${driver.name}"></li>
-                </ul>
-            </details>
-        </td>
-        <td th:text="${team.league}"></td>
-        <td th:text="${team.foundedYear}"></td>
-        <td th:text="${team.budgetInMillions}"></td>
-        <td>
-            <a th:href="@{/teams/edit/{id}(id=${team.id})}" th:text="#{table.header.edit}">Edit</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+        <tbody>
+        <tr>
+            <td th:text="${team.id}"></td>
+
+            <td>
+                <img alt="Logo"
+                     class="img-fluid rounded"
+                     style="max-height: 50px;"
+                     th:src="${team.teamLogoUrl}">
+            </td>
+
+            <td>
+                <strong th:text="${team.name}"></strong>
+            </td>
+
+            <td>
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="badge rounded-pill text-bg-info"
+                          th:each="driver : ${team.drivers}"
+                          th:text="${driver.name}">
+                    </span>
+                </div>
+            </td>
+
+            <td>
+                <span class="badge text-bg-primary" th:text="${team.league.name().replace('_', ' ')}"></span>
+            </td>
+
+            <td th:text="${team.foundedYear}"></td>
+
+            <td>
+                <span class="badge text-bg-success" th:text="${team.budgetInMillions} + 'M'"></span>
+            </td>
+
+            <td>
+                <a class="btn btn-sm btn-outline-primary"
+                   th:href="@{/teams/edit/{id}(id=${team.id})}">
+                    <i class="bi bi-pencil-square"></i>
+                    <span th:text="#{table.header.edit}">Edit</span>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a class="btn btn-secondary mt-3"
+       th:href="@{/teams}">
+        <i class="bi bi-arrow-left"></i>
+        Back to Teams
+    </a>
+</main>
+
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

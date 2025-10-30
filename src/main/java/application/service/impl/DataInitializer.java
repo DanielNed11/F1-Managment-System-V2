@@ -40,13 +40,11 @@ public class DataInitializer {
         Driver verstappen = drivers.stream().filter(d -> d.getName().equals("Max Verstappen")).findFirst().orElse(null);
         Driver leclerc = drivers.stream().filter(d -> d.getName().equals("Charles Leclerc")).findFirst().orElse(null);
         Driver sainz = drivers.stream().filter(d -> d.getName().equals("Carlos Sainz")).findFirst().orElse(null);
-        Driver bottas = drivers.stream().filter(d -> d.getName().equals("Valtteri Bottas")).findFirst().orElse(null);
 
         if (mercedes != null && hamilton != null) mercedes.addDriver(hamilton);
         if (redBull != null && verstappen != null) redBull.addDriver(verstappen);
         if (ferrari != null && leclerc != null) ferrari.addDriver(leclerc);
         if (ferrari != null && sainz != null) ferrari.addDriver(sainz);
-        if (mercedes != null && bottas != null) mercedes.addDriver(bottas);
 
         Track monaco = tracks.stream().filter(t -> t.getName().equals("Monaco GP")).findFirst().orElse(null);
         Track silverstone = tracks.stream().filter(t -> t.getName().equals("Silverstone")).findFirst().orElse(null);

@@ -1,64 +1,59 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{page.drivers.title}">All Drivers</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
+<head th:replace="~{fragments/header :: head(#{page.drivers.title})}"></head>
 <body>
-<nav th:replace="~{fragments/navbar :: menu}"></nav>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 
-<h1 th:text="#{page.drivers.heading}">Drivers</h1>
+<main class="container my-4">
+    <h1 class="mb-4" th:text="#{page.drivers.heading}">Drivers</h1>
 
-<form th:action="@{/drivers}" method="get">
-    <label th:text="#{label.nationality} + ':'"></label>
-        <input type="text" name="nationality" th:value="${nationality}" placeholder="e.g. British" />
+    <form class="row gy-2 gx-3 align-items-center mb-4" th:action="@{/drivers}" method="get">
+        <div class="col-auto">
+            <input type="text" class="form-control" name="nationality"
+                   th:value="${nationality}" th:placeholder="#{label.nationality}" />
+        </div>
 
+        <div class="col-auto">
+            <input type="date" class="form-control" name="dateOfBirth"
+                   th:value="${dateOfBirth != null} ? ${#temporals.format(dateOfBirth, 'yyyy-MM-dd')} : ''" />
+        </div>
 
-    <label th:text="#{label.dateOfBirth} + ':'"></label>
-        <input type="date" name="dateOfBirth"
-               th:value="${dateOfBirth != null} ? ${#temporals.format(dateOfBirth, 'yyyy-MM-dd')} : ''" />
+        <div class="col-auto d-flex align-items-end gap-2">
+            <button type="submit" class="btn btn-primary" th:text="#{button.filter}"></button>
+            <a class="btn btn-outline-secondary" th:href="@{/drivers}" th:text="#{button.clear}"></a>
+        </div>
+    </form>
 
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4">
+        <div class="col" th:each="driver : ${drivers}">
+            <div class="card h-100 shadow-sm">
+                <img class="card-img-top"
+                     th:src="${driver.imageUrl}"
+                     th:alt="${driver.name}" />
 
-    <button type="submit" th:text="#{button.filter}">Filter</button>
-    <a th:href="@{/drivers}" th:text="#{button.clear}">Clear</a>
-</form>
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${driver.name}">Name</h5>
+                    <span class="badge text-bg-primary" th:text="${driver.nationality}">Nationality</span>
+                </div>
 
-<table>
-    <thead>
-    <tr>
-        <th th:text="#{table.header.id}"></th>
-        <th th:text="#{table.header.name}"></th>
-        <th th:text="#{table.header.team}"></th>
-        <th th:text="#{table.header.races}"></th>
-        <th th:text="#{table.header.nationality}"></th>
-        <th th:text="#{table.header.dateOfBirth}"></th>
-        <th th:text="#{table.header.worldChampionships}"></th>
-        <th th:text="#{table.header.edit}">Edit</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="driver : ${drivers}">
-        <td th:text="${driver.id}"></td>
-        <td th:text="${driver.name}"></td>
-        <td th:text="${driver.team?.name ?: 'No Team'}"></td>
-        <td>
-            <details>
-                <summary th:text="#{details.showRaces}"></summary>
-                <ul>
-                    <li th:each="race : ${driver.races}" th:text="${race.name}"></li>
-                </ul>
-            </details>
-        </td>
-        <td th:text="${driver.nationality}"></td>
-        <td th:text="${driver.dateOfBirth}"></td>
-        <td th:text="${driver.worldChampionships}"></td>
-        <td><a th:href="@{/drivers/edit/{id}(id=${driver.id})}" th:text="#{table.header.edit}"></a></td>
-    </tr>
-    </tbody>
-</table>
-<p>
-    <strong th:text="#{label.totalDrivers} + ': ' + ${#lists.size(drivers)}"></strong>
-</p>
+                <div class="card-footer bg-white">
+                    <a class="btn btn-sm btn-outline-primary w-100"
+                       th:href="@{/drivers/{id}(id=${driver.id})}"
+                       th:text="#{button.viewDetails}"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p class="mt-3">
+        <strong th:text="#{label.totalDrivers} + ': ' + ${#lists.size(drivers)}"></strong>
+    </p>
+
+    <a class="btn btn-sm btn-primary w-100"
+       th:text="#{button.addDriver}"
+       th:href="@{/drivers/add}"></a>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>
