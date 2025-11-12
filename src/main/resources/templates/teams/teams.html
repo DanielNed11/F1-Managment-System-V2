@@ -32,7 +32,7 @@
                      th:alt="${team.name}">
                 <div class="card-body">
                     <h5 class="card-title" th:text="${team.name}">Mercedes</h5>
-                    <span class="badge text-bg-primary" th:text="${team.league.name().replace('_', ' ')}"></span>
+                    <span class="badge text-bg-primary" th:text="${team.league != null ? team.league.replace('_', ' ') : ''}"></span>
                     <p class="card-text mt-2">
                         <span class="text-muted" th:text="#{label.foundedYear} + ':'">Founded in:</span>
                         <strong th:text="${team.foundedYear}">1950</strong>

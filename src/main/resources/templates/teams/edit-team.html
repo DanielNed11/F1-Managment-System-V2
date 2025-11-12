@@ -7,31 +7,47 @@
 <main class="container my-4">
     <h1 class="mb-4" th:text="#{page.team.edit.heading}">Edit Team</h1>
 
-    <form class="row g-3" th:action="@{/teams/edit/{id}(id=${team.id})}" th:object="${team}" method="post">
+    <form class="row g-3" th:action="@{/teams/edit/{id}(id=${teamViewModel.id})}" th:object="${teamViewModel}" method="post">
 
         <div class="col-md-6">
             <label class="form-label" th:text="#{label.name} + ':'"></label>
-            <input type="text" class="form-control" th:field="*{name}" required>
+            <input type="text" class="form-control" th:field="*{name}"
+                   th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
         </div>
 
         <div class="col-md-6">
             <label class="form-label" th:text="#{label.foundedYear} + ':'"></label>
-            <input type="number" class="form-control" th:field="*{foundedYear}" required>
+            <input type="number" class="form-control" th:field="*{foundedYear}"
+                   th:classappend="${#fields.hasErrors('foundedYear')} ? 'is-invalid' : ''">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('foundedYear')}" th:errors="*{foundedYear}"></div>
         </div>
 
         <div class="col-md-6">
             <label class="form-label" th:text="#{label.league} + ':'"></label>
-            <select class="form-select" th:field="*{league}">
+            <select class="form-select" th:field="*{league}"
+                    th:classappend="${#fields.hasErrors('league')} ? 'is-invalid' : ''">
                 <option th:each="l : ${T(application.domain.League).values()}"
                         th:value="${l.name()}"
                         th:text="${l.name().replace('_', ' ')}">
                 </option>
             </select>
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('league')}" th:errors="*{league}"></div>
         </div>
 
         <div class="col-md-6">
             <label class="form-label" th:text="#{label.budget} + ':'"></label>
-            <input type="number" class="form-control" th:field="*{budgetInMillions}" required>
+            <input type="number" step="0.01" class="form-control" th:field="*{budgetInMillions}"
+                   th:classappend="${#fields.hasErrors('budgetInMillions')} ? 'is-invalid' : ''">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('budgetInMillions')}" th:errors="*{budgetInMillions}"></div>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label" th:text="'Team Logo URL:'"></label>
+            <input type="text" class="form-control" th:field="*{teamLogoUrl}"
+                   th:classappend="${#fields.hasErrors('teamLogoUrl')} ? 'is-invalid' : ''"
+                   placeholder="/img/teamlogo.png">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('teamLogoUrl')}" th:errors="*{teamLogoUrl}"></div>
         </div>
 
         <div class="col-12 d-flex justify-content-end">

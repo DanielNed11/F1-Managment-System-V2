@@ -6,6 +6,8 @@ import application.domain.Track;
 import application.service.IDriverService;
 import application.service.IRaceService;
 import application.service.ITrackService;
+import application.session.SessionHistory;
+import jakarta.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,36 +27,45 @@ public class RaceController {
     private final IRaceService raceService;
     private final IDriverService driverService;
     private final ITrackService trackService;
+    private final SessionHistory sessionHistory;
     private final Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    public RaceController(IRaceService raceService, IDriverService driverService, ITrackService trackService) {
+    public RaceController(IRaceService raceService, IDriverService driverService, ITrackService trackService, SessionHistory sessionHistory) {
         this.raceService = raceService;
         this.driverService = driverService;
         this.trackService = trackService;
+        this.sessionHistory = sessionHistory;
     }
 
 
     @GetMapping
-    public String showAllRaces(Model model) {
+    public String showAllRaces(HttpSession session, Model model) {
+        sessionHistory.addVisit(session, "/races", "All Races");
+
         model.addAttribute("races", raceService.getAll());
         log.info("Showing all races");
         return "races/races";
     }
 
     @GetMapping("/{id}")
-    public String showRace(@PathVariable int id, Model model) {
+    public String showRace(@PathVariable int id, HttpSession session, Model model) {
         Race race = raceService.getById(id);
         if (race == null) {
             return "redirect:/races";
         }
+
+        sessionHistory.addVisit(session, "/races/" + id, "Race Details");
+
         model.addAttribute("race", race);
         log.info("Showing race with id " + id);
         return "races/races";
     }
 
     @GetMapping("/add")
-    public String showAddRaceForm(Model model) {
+    public String showAddRaceForm(HttpSession session, Model model) {
+        sessionHistory.addVisit(session, "/races/add", "Add Race");
+
         model.addAttribute("tracks", trackService.getAll());
         model.addAttribute("drivers", driverService.getAll());
         log.info("Show Add Race Form");
@@ -92,11 +103,14 @@ public class RaceController {
 
 
     @GetMapping("/edit/{id}")
-    public String showEditRaceForm(@PathVariable int id, Model model) {
+    public String showEditRaceForm(@PathVariable int id, HttpSession session, Model model) {
         Race race = raceService.getById(id);
         if (race == null) {
             return "redirect:/races";
         }
+
+        sessionHistory.addVisit(session, "/races/edit/" + id, "Edit Race");
+
         model.addAttribute("race", race);
         model.addAttribute("tracks", trackService.getAll());
         model.addAttribute("drivers", driverService.getAll());
@@ -147,7 +161,7 @@ public class RaceController {
 
 
     @GetMapping("/{raceId}/add-driver/{driverId}")
-    public String addDriverToRace(@PathVariable int raceId, @PathVariable int driverId) {
+    public String addDriverToRace(@PathVariable int raceId, @PathVariable int driverId, HttpSession session) {
         Race race = raceService.getById(raceId);
         Driver driver = driverService.getById(driverId);
 
@@ -158,7 +172,7 @@ public class RaceController {
         race.addDriver(driver);
 
         raceService.update(race);
-        log.info("Added Driver with id " + driverId);
+        log.info("Added Driver with id " + driverId + " for session: " + session.getId());
         return "redirect:/races/edit/" + raceId;
     }
 }

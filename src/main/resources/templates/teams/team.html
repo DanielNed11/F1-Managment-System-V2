@@ -39,14 +39,14 @@
             <td>
                 <div class="d-flex flex-wrap gap-2">
                     <span class="badge rounded-pill text-bg-info"
-                          th:each="driver : ${team.drivers}"
-                          th:text="${driver.name}">
+                          th:each="driverName : ${team.driverNames}"
+                          th:text="${driverName}">
                     </span>
                 </div>
             </td>
 
             <td>
-                <span class="badge text-bg-primary" th:text="${team.league.name().replace('_', ' ')}"></span>
+                <span class="badge text-bg-primary" th:text="${team.league != null ? team.league.replace('_', ' ') : ''}"></span>
             </td>
 
             <td th:text="${team.foundedYear}"></td>

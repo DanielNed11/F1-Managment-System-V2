@@ -2,6 +2,8 @@ package application.controller;
 
 import application.domain.Track;
 import application.service.impl.TrackService;
+import application.session.SessionHistory;
+import jakarta.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,29 +16,37 @@ import org.springframework.web.bind.annotation.*;
 public class TrackController {
 
     private final TrackService trackService;
+    private final SessionHistory sessionHistory;
     private final Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    public TrackController(TrackService trackService) {
+    public TrackController(TrackService trackService, SessionHistory sessionHistory) {
         this.trackService = trackService;
+        this.sessionHistory = sessionHistory;
     }
 
     @GetMapping
-    public String showAllTracks(Model model) {
+    public String showAllTracks(HttpSession session, Model model) {
+        sessionHistory.addVisit(session, "/tracks", "All Tracks");
+
         model.addAttribute("tracks", trackService.getAll());
         log.info("Showing all tracks");
         return "tracks/tracks";
     }
 
     @GetMapping("/{id}")
-    public String getTeam(Model model, @PathVariable int id) {
+    public String getTeam(HttpSession session, Model model, @PathVariable int id) {
+        sessionHistory.addVisit(session, "/tracks/" + id, "Track Details");
+
         model.addAttribute("tracks", trackService.getById(id));
-        log.info("Getting team with id " + id);
+        log.info("Getting track with id " + id);
         return "tracks/tracks";
     }
 
     @GetMapping("/add")
-    public String showAddTrack(Model model) {
+    public String showAddTrack(HttpSession session, Model model) {
+        sessionHistory.addVisit(session, "/tracks/add", "Add Track");
+
         model.addAttribute("track", new Track());
         log.info("Showing add track form");
         return "tracks/add-track";
@@ -49,7 +59,9 @@ public class TrackController {
     }
 
     @GetMapping("/edit/{id}")
-    public String showEditTrackForm(Model model, @PathVariable int id) {
+    public String showEditTrackForm(HttpSession session, Model model, @PathVariable int id) {
+        sessionHistory.addVisit(session, "/tracks/edit/" + id, "Edit Track");
+
         model.addAttribute("track", trackService.getById(id));
         log.info("Editing track with id " + id);
         return "tracks/edit-track";
