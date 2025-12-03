@@ -1,7 +1,10 @@
 package application.controller;
 
 import application.domain.Driver;
+import application.domain.Race;
+import application.domain.Team;
 import application.service.IDriverService;
+import application.service.IRaceService;
 import application.service.ITeamService;
 import application.session.SessionHistory;
 import application.viewmodel.DriverViewModel;
@@ -26,13 +29,15 @@ public class DriverController {
 
     private final IDriverService driverService;
     private final ITeamService teamService;
+    private final IRaceService raceService;
     private final SessionHistory sessionHistory;
     private final Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    public DriverController(IDriverService driverService, ITeamService teamService, SessionHistory sessionHistory) {
+    public DriverController(IDriverService driverService, ITeamService teamService, IRaceService raceService, SessionHistory sessionHistory) {
         this.driverService = driverService;
         this.teamService = teamService;
+        this.raceService = raceService;
         this.sessionHistory = sessionHistory;
     }
 
@@ -71,8 +76,13 @@ public class DriverController {
         // Track this page visit in session history
         sessionHistory.addVisit(session, "/drivers/" + id, "Driver Details");
 
+        List<Race> races = raceService.getAll().stream()
+                .filter(r -> r.getDrivers().stream().anyMatch(d -> d.getId() == id))
+                .collect(Collectors.toList());
+
         DriverViewModel driverViewModel = mapToViewModel(driver);
         model.addAttribute("driver", driverViewModel);
+        model.addAttribute("races", races);
         log.info("Getting driver with id " + id);
         return "drivers/driver";
     }
@@ -148,11 +158,8 @@ public class DriverController {
     }
 
     private void validateDriversTeam(Driver driver) {
-        if (driver.getTeamId() != 0) {
-            driver.setTeam(teamService.getById(driver.getTeamId()));
-        } else {
-            driver.setTeam(null);
-        }
+        // Validation logic can be added here if needed
+        // teamId is already set directly on the driver object
     }
 
     private DriverViewModel mapToViewModel(Driver driver) {
@@ -162,8 +169,17 @@ public class DriverController {
         viewModel.setDateOfBirth(driver.getDateOfBirth());
         viewModel.setNationality(driver.getNationality());
         viewModel.setWorldChampionships(driver.getWorldChampionships());
-        viewModel.setTeamId(driver.getTeamId());
-        viewModel.setTeamName(driver.getTeam() != null ? driver.getTeam().getName() : null);
+
+        // Get team object and set both teamId and teamName
+        Team team = driver.getTeam();
+        if (team != null) {
+            viewModel.setTeamId(team.getId());
+            viewModel.setTeamName(team.getName());
+        } else {
+            viewModel.setTeamId(0);
+            viewModel.setTeamName(null);
+        }
+
         viewModel.setImageUrl(driver.getImageUrl());
         return viewModel;
     }
@@ -175,8 +191,21 @@ public class DriverController {
         driver.setDateOfBirth(viewModel.getDateOfBirth());
         driver.setNationality(viewModel.getNationality());
         driver.setWorldChampionships(viewModel.getWorldChampionships());
-        driver.setTeamId(viewModel.getTeamId());
+
+        // Set the Team object instead of teamId
+        if (viewModel.getTeamId() != 0) {
+            Team team = teamService.getById(viewModel.getTeamId());
+            driver.setTeam(team);
+        }
+
         driver.setImageUrl(viewModel.getImageUrl());
         return driver;
+    }
+
+    @PostMapping("/{id}/delete")
+    public String deleteDriver(@PathVariable int id, HttpSession session) {
+        driverService.delete(id);
+        log.info("Deleted driver with id " + id + " for session: " + session.getId());
+        return "redirect:/drivers";
     }
 }

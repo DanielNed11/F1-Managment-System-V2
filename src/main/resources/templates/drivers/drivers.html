@@ -36,10 +36,16 @@
                     <span class="badge text-bg-primary" th:text="${driver.nationality}">Nationality</span>
                 </div>
 
-                <div class="card-footer bg-white">
-                    <a class="btn btn-sm btn-outline-primary w-100"
+                <div class="card-footer bg-white d-flex gap-2">
+                    <a class="btn btn-sm btn-outline-primary flex-grow-1"
                        th:href="@{/drivers/{id}(id=${driver.id})}"
                        th:text="#{button.viewDetails}"></a>
+                    <form th:action="@{/drivers/{id}/delete(id=${driver.id})}" method="post"
+                          onsubmit="return confirm('Are you sure you want to delete this driver?');">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

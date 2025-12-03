@@ -1,12 +1,15 @@
-package application.repository;
+package application.repository.local;
 
 import application.domain.*;
+import application.repository.IRepository;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+@Profile("collection")
 public class DriverRepository implements IRepository<Driver> {
     private final List<Driver> drivers = new ArrayList<>();
 
@@ -50,5 +53,10 @@ public class DriverRepository implements IRepository<Driver> {
             }
         }
         throw new IllegalArgumentException("Driver with id " + driver.getId() + " not found");
+    }
+
+    @Override
+    public void delete(int id) {
+        drivers.removeIf(d -> d.getId() == id);
     }
 }

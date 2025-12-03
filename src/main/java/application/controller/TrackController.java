@@ -1,6 +1,8 @@
 package application.controller;
 
+import application.domain.Race;
 import application.domain.Track;
+import application.service.IRaceService;
 import application.service.impl.TrackService;
 import application.session.SessionHistory;
 import jakarta.servlet.http.HttpSession;
@@ -11,17 +13,22 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Controller
 @RequestMapping("/tracks")
 public class TrackController {
 
     private final TrackService trackService;
+    private final IRaceService raceService;
     private final SessionHistory sessionHistory;
     private final Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    public TrackController(TrackService trackService, SessionHistory sessionHistory) {
+    public TrackController(TrackService trackService, IRaceService raceService, SessionHistory sessionHistory) {
         this.trackService = trackService;
+        this.raceService = raceService;
         this.sessionHistory = sessionHistory;
     }
 
@@ -35,12 +42,17 @@ public class TrackController {
     }
 
     @GetMapping("/{id}")
-    public String getTeam(HttpSession session, Model model, @PathVariable int id) {
+    public String getTrack(HttpSession session, Model model, @PathVariable int id) {
         sessionHistory.addVisit(session, "/tracks/" + id, "Track Details");
 
-        model.addAttribute("tracks", trackService.getById(id));
+        List<Race> races = raceService.getAll().stream()
+                .filter(r -> r.getTrack() != null && r.getTrack().getId() == id)
+                .collect(Collectors.toList());
+
+        model.addAttribute("track", trackService.getById(id));
+        model.addAttribute("races", races);
         log.info("Getting track with id " + id);
-        return "tracks/tracks";
+        return "tracks/track";
     }
 
     @GetMapping("/add")
@@ -76,6 +88,13 @@ public class TrackController {
         }
         log.info("Edited track with id " + id);
         trackService.update(track);
+        return "redirect:/tracks";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String deleteTrack(@PathVariable int id, HttpSession session) {
+        trackService.delete(id);
+        log.info("Deleted track with id " + id + " for session: " + session.getId());
         return "redirect:/tracks";
     }
 

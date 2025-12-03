@@ -1,7 +1,9 @@
 package application.controller;
 
+import application.domain.Driver;
 import application.domain.League;
 import application.domain.Team;
+import application.service.IDriverService;
 import application.service.impl.TeamService;
 import application.session.SessionHistory;
 import application.viewmodel.TeamViewModel;
@@ -23,12 +25,14 @@ import java.util.stream.Collectors;
 public class TeamController {
 
     private final TeamService teamService;
+    private final IDriverService driverService;
     private final SessionHistory sessionHistory;
     private final Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    public TeamController(TeamService teamService, SessionHistory sessionHistory) {
+    public TeamController(TeamService teamService, IDriverService driverService, SessionHistory sessionHistory) {
         this.teamService = teamService;
+        this.driverService = driverService;
         this.sessionHistory = sessionHistory;
     }
 
@@ -60,8 +64,13 @@ public class TeamController {
 
         sessionHistory.addVisit(session, "/teams/" + id, "Team Details");
 
+        List<Driver> drivers = driverService.getAll().stream()
+                .filter(d -> d.getTeam() != null && d.getTeam().getId() == id)
+                .collect(Collectors.toList());
+
         TeamViewModel teamViewModel = mapToViewModel(team);
         model.addAttribute("team", teamViewModel);
+        model.addAttribute("drivers", drivers);
         log.info("Getting team with id " + id);
         return "teams/team";
     }
@@ -138,11 +147,11 @@ public class TeamController {
         viewModel.setTeamLogoUrl(team.getTeamLogoUrl());
         viewModel.setBudgetInMillions(team.getBudgetInMillions());
 
-        List<String> driverNames = team.getDrivers() != null
-                ? team.getDrivers().stream()
-                    .map(driver -> driver.getName())
-                    .collect(Collectors.toList())
-                : List.of();
+        // Load drivers for this team by checking team relationship
+        List<String> driverNames = driverService.getAll().stream()
+                .filter(driver -> driver.getTeam() != null && driver.getTeam().getId() == team.getId())
+                .map(driver -> driver.getName())
+                .collect(Collectors.toList());
         viewModel.setDriverNames(driverNames);
 
         return viewModel;
@@ -159,6 +168,13 @@ public class TeamController {
         team.setTeamLogoUrl(viewModel.getTeamLogoUrl());
         team.setBudgetInMillions(viewModel.getBudgetInMillions());
         return team;
+    }
+
+    @PostMapping("/{id}/delete")
+    public String deleteTeam(@PathVariable int id, HttpSession session) {
+        teamService.delete(id);
+        log.info("Deleted team with id " + id + " for session: " + session.getId());
+        return "redirect:/teams";
     }
 
 }

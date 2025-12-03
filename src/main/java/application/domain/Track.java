@@ -1,11 +1,18 @@
 package application.domain;
 
+import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Objects;
 
+@Entity
+@Table(name = "tracks")
+@NoArgsConstructor
 public class Track {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter @Setter
     private int id;
     @Getter @Setter
@@ -16,10 +23,6 @@ public class Track {
     private double lengthKm;
     @Getter @Setter
     private int openedYear;
-
-    public Track() {
-
-    }
 
     public Track(String name, String location, double lengthKm, int openedYear) {
         this.name = name;

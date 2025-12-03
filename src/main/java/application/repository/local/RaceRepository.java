@@ -1,6 +1,8 @@
-package application.repository;
+package application.repository.local;
 
 import application.domain.*;
+import application.repository.IRepository;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -8,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+@Profile("collection")
 public class RaceRepository implements IRepository<Race> {
 
     private final List<Race> races = new ArrayList<>();
@@ -43,15 +46,11 @@ public class RaceRepository implements IRepository<Race> {
 
     @Override
     public void update(Race race) {
-        for (int i = 0; i < races.size(); i++) {
-            if (races.get(i).getId() == race.getId()) {
-                LocalDate date = races.get(i).getDate();
-                race.setDate(date);
+        // Implementation needed?
+    }
 
-                races.set(i, race);
-                return;
-            }
-        }
-        throw new IllegalArgumentException("Race with id " + race.getId() + " not found");
+    @Override
+    public void delete(int id) {
+        races.removeIf(r -> r.getId() == id);
     }
 }

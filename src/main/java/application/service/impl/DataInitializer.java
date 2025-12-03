@@ -4,21 +4,23 @@ import application.domain.*;
 import application.repository.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@Profile("collection")
 public class DataInitializer {
 
-    private final DriverRepository driverRepository;
-    private final TeamRepository teamRepository;
-    private final TrackRepository trackRepository;
-    private final RaceRepository raceRepository;
+    private final IRepository<Driver> driverRepository;
+    private final IRepository<Team> teamRepository;
+    private final IRepository<Track> trackRepository;
+    private final IRepository<Race> raceRepository;
 
     @Autowired
-    public DataInitializer(DriverRepository driverRepository, TeamRepository teamRepository,
-                           TrackRepository trackRepository,  RaceRepository raceRepository) {
+    public DataInitializer(IRepository<Driver> driverRepository, IRepository<Team> teamRepository,
+                           IRepository<Track> trackRepository,  IRepository<Race> raceRepository) {
         this.driverRepository = driverRepository;
         this.teamRepository = teamRepository;
         this.trackRepository = trackRepository;

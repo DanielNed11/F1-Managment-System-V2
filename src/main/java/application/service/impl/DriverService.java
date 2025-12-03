@@ -2,7 +2,7 @@ package application.service.impl;
 
 import application.domain.Driver;
 import application.domain.Team;
-import application.repository.DriverRepository;
+import application.repository.IRepository;
 import application.service.IDriverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +13,10 @@ import java.util.List;
 @Service
 public class DriverService implements IDriverService {
 
-    private final DriverRepository driverRepository;
+    private final IRepository<Driver> driverRepository;
 
     @Autowired
-    public DriverService(DriverRepository driverRepository) {
+    public DriverService(IRepository<Driver> driverRepository) {
         this.driverRepository = driverRepository;
     }
 
@@ -42,20 +42,6 @@ public class DriverService implements IDriverService {
             throw new IllegalArgumentException("Driver with id " + updatedDriver.getId() + " not found");
         }
 
-        Team oldTeam = existingDriver.getTeam();
-        Team newTeam = updatedDriver.getTeam();
-
-
-        if (oldTeam != null && (newTeam == null || oldTeam.getId() != newTeam.getId())) {
-            oldTeam.getDrivers().remove(existingDriver);
-            existingDriver.setTeam(null);
-        }
-
-
-        if (newTeam != null && !newTeam.getDrivers().contains(updatedDriver)) {
-            newTeam.getDrivers().add(updatedDriver);
-        }
-
         driverRepository.update(updatedDriver);
     }
 
@@ -71,6 +57,11 @@ public class DriverService implements IDriverService {
     @Override
     public void validateDriver(Driver driver) {
 
+    }
+
+    @Override
+    public void delete(int id) {
+        driverRepository.delete(id);
     }
 
 }

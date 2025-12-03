@@ -26,7 +26,14 @@
         <td th:text="${track.lengthKm}"></td>
         <td th:text="${track.openedYear}"></td>
         <td>
-            <a th:href="@{/tracks/edit/{id}(id=${track.id})}" th:text="#{table.header.edit}"></a>
+            <div class="d-flex gap-2">
+                <a class="btn btn-sm btn-outline-primary"
+                   th:href="@{/tracks/edit/{id}(id=${track.id})}" th:text="#{table.header.edit}"></a>
+                <form th:action="@{/tracks/{id}/delete(id=${track.id})}" method="post"
+                      onsubmit="return confirm('Are you sure you want to delete this track?');">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                </form>
+            </div>
         </td>
     </tr>
     </tbody>

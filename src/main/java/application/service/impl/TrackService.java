@@ -1,7 +1,7 @@
 package application.service.impl;
 
 import application.domain.Track;
-import application.repository.TrackRepository;
+import application.repository.IRepository;
 import application.service.ITrackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 @Service
 public class TrackService implements ITrackService {
 
-    private final TrackRepository trackRepository;
+    private final IRepository<Track> trackRepository;
 
     @Autowired
-    public TrackService(TrackRepository trackRepository) {
+    public TrackService(IRepository<Track> trackRepository) {
         this.trackRepository = trackRepository;
     }
 
@@ -46,5 +46,10 @@ public class TrackService implements ITrackService {
                 .filter(t -> (minLength == null || t.getLengthKm() >= minLength) &&
                         (maxLength == null || t.getLengthKm() <= maxLength))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void delete(int id) {
+        trackRepository.delete(id);
     }
 }

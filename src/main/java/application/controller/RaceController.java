@@ -59,7 +59,7 @@ public class RaceController {
 
         model.addAttribute("race", race);
         log.info("Showing race with id " + id);
-        return "races/races";
+        return "races/race";
     }
 
     @GetMapping("/add")
@@ -174,5 +174,12 @@ public class RaceController {
         raceService.update(race);
         log.info("Added Driver with id " + driverId + " for session: " + session.getId());
         return "redirect:/races/edit/" + raceId;
+    }
+
+    @PostMapping("/{id}/delete")
+    public String deleteRace(@PathVariable int id, HttpSession session) {
+        raceService.delete(id);
+        log.info("Deleted race with id " + id + " for session: " + session.getId());
+        return "redirect:/races";
     }
 }

@@ -1,5 +1,6 @@
 package application.domain;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,21 +8,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table(name = "teams")
 public class Team {
-    @Getter @Setter
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
+    @Setter
     private int id;
-    @Getter @Setter
+    @Getter
+    @Setter
     private String name;
-    @Getter @Setter
+    @Getter
+    @Setter
     private int foundedYear;
-    @Getter @Setter
+    @Getter
+    @Setter
+    @Enumerated(EnumType.STRING)
     private League league;
-    @Getter @Setter
+    @Getter
+    @Setter
     private String teamLogoUrl;
-    @Getter @Setter
+    @Getter
+    @Setter
     private double budgetInMillions;
 
-    @Getter @Setter
+    @Getter
+    @Setter
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "team")
     private List<Driver> drivers = new ArrayList<>();
 
     public Team() {
@@ -38,11 +52,7 @@ public class Team {
 
 
     public void addDriver(Driver driver) {
-        if (!drivers.contains(driver)) {
-            drivers.add(driver);
-            driver.setTeam(this);
-            driver.setTeamId(this.id);
-        }
+        drivers.add(driver);
     }
 
     @Override

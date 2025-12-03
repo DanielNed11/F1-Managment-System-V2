@@ -1,5 +1,6 @@
 package application.domain;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table(name = "drivers")
 public class Driver {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter @Setter
     private int id;
     @Getter @Setter
@@ -19,13 +24,14 @@ public class Driver {
     private String nationality;
     @Getter @Setter
     private int worldChampionships;
-    @Getter
-    private Team team;
     @Getter @Setter
-    private int teamId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id")
+    private Team team;
     @Getter @Setter
     private String imageUrl;
     @Getter @Setter
+    @ManyToMany(mappedBy = "drivers")
     private List<Race> races = new ArrayList<>();
 
     public Driver() {}
@@ -48,20 +54,6 @@ public class Driver {
     public void removeRace(Race race) {
         races.remove(race);
         race.getDrivers().remove(this);
-    }
-
-    public void setTeam(Team newTeam) {
-        if (this.team != null && this.team != newTeam) {
-            this.team.getDrivers().remove(this);
-        }
-
-        this.team = newTeam;
-
-        if (newTeam != null && !newTeam.getDrivers().contains(this)) {
-            newTeam.getDrivers().add(this);
-        }
-
-        this.teamId = (newTeam != null) ? newTeam.getId() : 0;
     }
 
     @Override

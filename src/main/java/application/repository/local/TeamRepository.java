@@ -1,13 +1,16 @@
-package application.repository;
+package application.repository.local;
 
 import application.domain.Team;
 import application.domain.League;
+import application.repository.IRepository;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+@Profile("collection")
 public class TeamRepository implements IRepository<Team> {
 
     private static final List<Team> teams = new ArrayList<>();
@@ -32,19 +35,18 @@ public class TeamRepository implements IRepository<Team> {
     }
 
     @Override
-    public void update(Team team) {
-        for (int i = 0; i < teams.size(); i++) {
-            if (teams.get(i).getId() == team.getId()) {
-                teams.set(i, team);
-                return;
-            }
-        }
-        throw new IllegalArgumentException("Team with id " + team.getId() + " not found");
-    }
-
-    @Override
     public void add(Team team) {
         team.setId(teams.size() + 1);
         teams.add(team);
+    }
+
+    @Override
+    public void update(Team team) {
+        // Implementation needed?
+    }
+
+    @Override
+    public void delete(int id) {
+        teams.removeIf(t -> t.getId() == id);
     }
 }

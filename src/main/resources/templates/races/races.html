@@ -30,7 +30,16 @@
         <td th:text="${race.date}"></td>
         <td th:text="${race.track?.name}"></td>
         <td th:text="${race.winner?.name}"></td>
-        <td><a th:href="@{/races/edit/{id}(id=${race.id})}" th:text="#{table.header.edit}"></a></td>
+        <td>
+            <div class="d-flex gap-2">
+                <a class="btn btn-sm btn-outline-primary"
+                   th:href="@{/races/edit/{id}(id=${race.id})}" th:text="#{table.header.edit}"></a>
+                <form th:action="@{/races/{id}/delete(id=${race.id})}" method="post"
+                      onsubmit="return confirm('Are you sure you want to delete this race?');">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                </form>
+            </div>
+        </td>
     </tr>
 </table>
 <p>

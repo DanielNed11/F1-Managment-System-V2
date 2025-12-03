@@ -1,5 +1,6 @@
 package application.domain;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,8 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table(name = "races")
 public class Race {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter @Setter
     private int id;
     @Getter @Setter
@@ -17,10 +21,20 @@ public class Race {
     @Getter @Setter
     private LocalDate date;
     @Getter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "track_id")
     private Track track;
     @Getter @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "winner_id")
     private Driver winner;
     @Getter @Setter
+    @ManyToMany
+    @JoinTable(
+            name = "race_drivers",
+            joinColumns = @JoinColumn(name = "race_id"),
+            inverseJoinColumns = @JoinColumn(name = "driver_id")
+    )
     private List<Driver> drivers = new ArrayList<>();
     @Getter @Setter
     private boolean hasEnded;

@@ -1,11 +1,14 @@
-package application.repository;
+package application.repository.local;
 
 import application.domain.Track;
+import application.repository.IRepository;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+@Profile("collection")
 public class TrackRepository implements IRepository<Track> {
     private static final List<Track> tracks = new ArrayList<>();
 
@@ -28,6 +31,12 @@ public class TrackRepository implements IRepository<Track> {
     }
 
     @Override
+    public void add(Track track) {
+        track.setId(tracks.size() + 1);
+        tracks.add(track);
+    }
+
+    @Override
     public void update(Track track) {
         for (int i = 0; i < tracks.size(); i++) {
             if (tracks.get(i).getId() == track.getId()) {
@@ -36,12 +45,10 @@ public class TrackRepository implements IRepository<Track> {
             }
         }
         throw new IllegalArgumentException("Track with id " + track.getId() + " not found");
-
     }
 
     @Override
-    public void add(Track track) {
-        track.setId(tracks.size() + 1);
-        tracks.add(track);
+    public void delete(int id) {
+        tracks.removeIf(t -> t.getId() == id);
     }
 }
