@@ -147,7 +147,6 @@ public class TeamController {
         viewModel.setTeamLogoUrl(team.getTeamLogoUrl());
         viewModel.setBudgetInMillions(team.getBudgetInMillions());
 
-        // Load drivers for this team by checking team relationship
         List<String> driverNames = driverService.getAll().stream()
                 .filter(driver -> driver.getTeam() != null && driver.getTeam().getId() == team.getId())
                 .map(driver -> driver.getName())

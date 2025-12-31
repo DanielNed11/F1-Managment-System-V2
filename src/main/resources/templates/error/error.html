@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Error')}"></head>
+
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+<main class="container my-5">
+    <div class="alert alert-warning" role="alert">
+        <h1 class="alert-heading">
+            <i class="bi bi-exclamation-triangle-fill"></i> Oops! Something went wrong
+        </h1>
+        <hr>
+        <p class="mb-0" th:text="${errorMessage}">An unexpected error occurred.</p>
+        <p class="text-muted small mt-2" th:if="${errorDetails}" th:text="${errorDetails}">Error details</p>
+    </div>
+
+    <div class="mt-4">
+        <a th:href="@{/}" class="btn btn-primary">
+            <i class="bi bi-house-fill"></i> Go to Home
+        </a>
+        <button onclick="history.back()" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Go Back
+        </button>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title">We're sorry!</h5>
+            <p class="card-text">
+                The application encountered an unexpected error while processing your request.
+                Our team has been notified and will look into this issue.
+            </p>
+            <h5 class="card-title mt-3">What can you do?</h5>
+            <ul>
+                <li>Try again in a few moments</li>
+                <li>Go back to the previous page</li>
+                <li>Return to the homepage</li>
+                <li>Contact support if you continue to experience issues</li>
+            </ul>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

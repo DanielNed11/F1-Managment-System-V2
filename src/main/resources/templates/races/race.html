@@ -46,7 +46,7 @@
     </table>
 
     <h3 class="mt-5 mb-3" th:text="#{table.header.drivers}">Drivers</h3>
-    <table class="table table-striped table-hover align-middle" th:if="${!race.drivers.empty}">
+    <table class="table table-striped table-hover align-middle" th:if="${!#lists.isEmpty(race.drivers)}">
         <thead class="table-light">
         <tr>
             <th th:text="#{table.header.id}">ID</th>
@@ -68,7 +68,7 @@
         </tr>
         </tbody>
     </table>
-    <p th:if="${race.drivers.empty}" class="text-muted">No drivers participating in this race.</p>
+    <p th:if="${#lists.isEmpty(race.drivers)}" class="text-muted" th:text="#{msg.noDriversInRace}">No drivers participating in this race.</p>
 
     <a class="btn btn-secondary mt-3" th:href="@{/races}">
         <i class="bi bi-arrow-left"></i>

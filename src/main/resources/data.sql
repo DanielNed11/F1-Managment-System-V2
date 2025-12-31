@@ -2,14 +2,14 @@ INSERT INTO teams (name, founded_year, league, team_logo_url, budget_in_millions
 ('Mercedes', 1954, 'Formula_1', '/img/mercedesLogo.png', 10.0),
 ('Ferrari', 1929, 'Formula_1', '/img/ferrariLogo.png', 30.0),
 ('Red Bull Racing', 2005, 'Formula_1', '/img/redbullLogo.png', 20.0),
-('Levski', 1914, 'Formula_E', '/img/redbullLogo.png', 7);
+('Levski', 1914, 'Formula_E', 'https://upload.wikimedia.org/wikipedia/en/5/51/PFC_Levski_Sofia.svg', 7);
 
-INSERT INTO tracks (name, location, length_km, opened_year) VALUES
-('Monaco GP', 'Monaco', 3.337, 1929),
-('Silverstone', 'UK', 5.891, 1948),
-('Spa-Francorchamps', 'Belgium', 7.004, 1921),
-('Monza', 'Italy', 5.793, 1922),
-('Suzuka', 'Japan', 5.807, 1962);
+INSERT INTO tracks (name, location, length_km, opened_year, track_type, city_name, days_to_setup, annual_rental_cost, has_temporary_barriers, has_museum, test_days_per_year, facilities) VALUES
+('Monaco GP', 'Monaco', 3.337, 1929, 'STREET', 'Monte Carlo', 42, 15.5, TRUE, NULL, NULL, NULL),
+('Silverstone', 'UK', 5.891, 1948, 'PERMANENT', NULL, NULL, NULL, NULL, TRUE, 20, 'Paddock Club, Modern Pit Complex, F1 Museum'),
+('Spa-Francorchamps', 'Belgium', 7.004, 1921, 'PERMANENT', NULL, NULL, NULL, NULL, FALSE, 15, 'Historic Paddock, Eau Rouge Corner Museum'),
+('Monza', 'Italy', 5.793, 1922, 'PERMANENT', NULL, NULL, NULL, NULL, TRUE, 25, 'Autodromo Museum, Paddock Club, Historic Banking'),
+('Suzuka', 'Japan', 5.807, 1962, 'PERMANENT', NULL, NULL, NULL, NULL, TRUE, 18, 'Honda Collection Hall, Theme Park, Paddock');
 
 INSERT INTO drivers (name, date_of_birth, nationality, world_championships, image_url, team_id) VALUES
 ('Lewis Hamilton', '1985-01-07', 'British', 7, '/img/Hamilton.png', 1),

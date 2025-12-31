@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head th:replace="~{fragments/header :: head('Session History')}"></head>
+<head th:replace="~{fragments/header :: head(#{page.sessionHistory.title})}"></head>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
 <main class="container my-4">
     <div class="row mb-4">
         <div class="col-md-8">
-            <h1 class="mb-4">Session History</h1>
-            <p class="text-muted">This page shows all the pages you have visited in your current browser session.</p>
+            <h1 class="mb-4" th:text="#{page.sessionHistory.heading}">Session History</h1>
+            <p class="text-muted" th:text="#{page.sessionHistory.description}">This page shows all the pages you have visited in your current browser session.</p>
             <p class="text-muted small">
-                <strong>Session ID:</strong> <code th:text="${sessionId}"></code>
+                <strong th:text="#{label.sessionId} + ':'">Session ID:</strong> <code th:text="${sessionId}"></code>
             </p>
         </div>
         <div class="col-md-4 text-end">
             <form th:action="@{/session-history/clear}" method="post" class="d-inline">
                 <button type="submit" class="btn btn-danger"
-                        th:disabled="${visitCount == 0}">
+                        th:disabled="${visitCount == 0}"
+                        th:text="#{button.clearHistory}">
                     Clear History
                 </button>
             </form>
@@ -26,11 +27,11 @@
     <div class="card">
         <div class="card-header">
             <h5 class="mb-0">
-                Total Pages Visited: <span class="badge bg-primary" th:text="${visitCount}">0</span>
+                <span th:text="#{label.totalPagesVisited} + ':'">Total Pages Visited:</span> <span class="badge bg-primary" th:text="${visitCount}">0</span>
             </h5>
         </div>
         <div class="card-body">
-            <div th:if="${visitCount == 0}" class="alert alert-info">
+            <div th:if="${visitCount == 0}" class="alert alert-info" th:text="#{msg.noPagesVisited}">
                 No pages visited yet in this session. Start browsing to build your history!
             </div>
 
@@ -39,9 +40,9 @@
                     <thead class="table-dark">
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Page Name</th>
-                            <th scope="col">URL</th>
-                            <th scope="col">Timestamp</th>
+                            <th scope="col" th:text="#{table.header.pageName}">Page Name</th>
+                            <th scope="col" th:text="#{table.header.url}">URL</th>
+                            <th scope="col" th:text="#{table.header.timestamp}">Timestamp</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -67,8 +68,8 @@
     <div class="mt-3">
         <p class="text-muted small">
             <i class="bi bi-info-circle"></i>
-            Note: Each browser tab/window maintains its own separate session history.
-            Opening the application in a different browser or incognito window will show a different history.
+            <span th:text="#{msg.sessionHistoryNote}">Note: Each browser tab/window maintains its own separate session history.
+            Opening the application in a different browser or incognito window will show a different history.</span>
         </p>
     </div>
 </main>

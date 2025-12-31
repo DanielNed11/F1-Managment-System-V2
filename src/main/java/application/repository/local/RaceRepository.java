@@ -46,7 +46,13 @@ public class RaceRepository implements IRepository<Race> {
 
     @Override
     public void update(Race race) {
-        // Implementation needed?
+        for (int i = 0; i < races.size(); i++) {
+            if (races.get(i).getId() == race.getId()) {
+                races.set(i, race);
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Race with id " + race.getId() + " not found");
     }
 
     @Override

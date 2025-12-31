@@ -42,7 +42,13 @@ public class TeamRepository implements IRepository<Team> {
 
     @Override
     public void update(Team team) {
-        // Implementation needed?
+        for (int i = 0; i < teams.size(); i++) {
+            if (teams.get(i).getId() == team.getId()) {
+                teams.set(i, team);
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Team with id " + team.getId() + " not found");
     }
 
     @Override

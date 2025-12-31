@@ -3,6 +3,7 @@ package application.controller;
 import application.domain.Driver;
 import application.domain.Race;
 import application.domain.Team;
+import application.exception.F1ApplicationException;
 import application.service.IDriverService;
 import application.service.IRaceService;
 import application.service.ITeamService;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -50,7 +52,6 @@ public class DriverController {
             HttpSession session,
             Model model) {
 
-        // Track this page visit in session history
         sessionHistory.addVisit(session, "/drivers", "All Drivers");
 
         List<Driver> drivers = driverService.filterDrivers(nationality, dateOfBirth);
@@ -73,7 +74,6 @@ public class DriverController {
             return "redirect:/drivers";
         }
 
-        // Track this page visit in session history
         sessionHistory.addVisit(session, "/drivers/" + id, "Driver Details");
 
         List<Race> races = raceService.getAll().stream()
@@ -89,7 +89,6 @@ public class DriverController {
 
     @GetMapping("/add")
     public String showAddForm(HttpSession session, Model model) {
-        // Track this page visit in session history
         sessionHistory.addVisit(session, "/drivers/add", "Add Driver");
 
         model.addAttribute("driverViewModel", new DriverViewModel());
@@ -123,7 +122,6 @@ public class DriverController {
             return "redirect:/drivers";
         }
 
-        // Track this page visit in session history
         sessionHistory.addVisit(session, "/drivers/edit/" + id, "Edit Driver");
 
         DriverViewModel driverViewModel = mapToViewModel(driver);
@@ -158,8 +156,6 @@ public class DriverController {
     }
 
     private void validateDriversTeam(Driver driver) {
-        // Validation logic can be added here if needed
-        // teamId is already set directly on the driver object
     }
 
     private DriverViewModel mapToViewModel(Driver driver) {
@@ -170,7 +166,6 @@ public class DriverController {
         viewModel.setNationality(driver.getNationality());
         viewModel.setWorldChampionships(driver.getWorldChampionships());
 
-        // Get team object and set both teamId and teamName
         Team team = driver.getTeam();
         if (team != null) {
             viewModel.setTeamId(team.getId());
@@ -192,7 +187,6 @@ public class DriverController {
         driver.setNationality(viewModel.getNationality());
         driver.setWorldChampionships(viewModel.getWorldChampionships());
 
-        // Set the Team object instead of teamId
         if (viewModel.getTeamId() != 0) {
             Team team = teamService.getById(viewModel.getTeamId());
             driver.setTeam(team);
@@ -206,6 +200,28 @@ public class DriverController {
     public String deleteDriver(@PathVariable int id, HttpSession session) {
         driverService.delete(id);
         log.info("Deleted driver with id " + id + " for session: " + session.getId());
+        return "redirect:/drivers";
+    }
+
+    @GetMapping("/champions")
+    public String showChampions(HttpSession session, Model model) {
+        sessionHistory.addVisit(session, "/drivers/champions", "Champion Drivers");
+
+        // Get all drivers with at least 1 world championship
+        List<Driver> champions = driverService.getAll().stream()
+                .filter(d -> d.getWorldChampionships() > 0)
+                .collect(Collectors.toList());
+
+        model.addAttribute("drivers", champions);
+        log.info("Showing champion drivers");
+        return "drivers/champions";
+    }
+
+    @ExceptionHandler(F1ApplicationException.class)
+    public String handleF1ApplicationException(F1ApplicationException ex,
+                                               RedirectAttributes redirectAttributes) {
+        log.warn("F1 Application exception: " + ex.getMessage());
+        redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
         return "redirect:/drivers";
     }
 }

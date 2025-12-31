@@ -9,6 +9,9 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "tracks")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "track_type", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("BASIC")
 @NoArgsConstructor
 public class Track {
     @Id

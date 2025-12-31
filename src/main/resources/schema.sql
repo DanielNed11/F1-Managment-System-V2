@@ -29,7 +29,15 @@ CREATE TABLE tracks (
     name VARCHAR(255) NOT NULL,
     location VARCHAR(255),
     length_km DOUBLE,
-    opened_year INT
+    opened_year INT,
+    track_type VARCHAR(20) DEFAULT 'BASIC',
+    city_name VARCHAR(255),
+    days_to_setup INT,
+    annual_rental_cost DOUBLE,
+    has_temporary_barriers BOOLEAN,
+    has_museum BOOLEAN,
+    test_days_per_year INT,
+    facilities VARCHAR(500)
 );
 
 CREATE TABLE races (

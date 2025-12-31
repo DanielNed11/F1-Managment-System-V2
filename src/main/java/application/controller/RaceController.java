@@ -76,12 +76,18 @@ public class RaceController {
     public String addRace(@RequestParam String name,
                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
                           @RequestParam int trackId,
-                          @RequestParam(required = false) int[] driverIds) {
+                          @RequestParam(required = false) int[] driverIds,
+                          @RequestParam(required = false) Integer winnerId) {
 
         Race race = new Race();
         race.setName(name);
         race.setDate(date);
         race.setTrack(trackService.getById(trackId));
+
+        // Set winner if provided
+        if (winnerId != null && winnerId > 0) {
+            race.setWinner(driverService.getById(winnerId));
+        }
 
         validateDriverIds(driverIds, race);
 
@@ -123,7 +129,8 @@ public class RaceController {
     @PostMapping("/edit/{id}")
     public String updateRace(@PathVariable int id,
                              @ModelAttribute Race updatedRace,
-                             @RequestParam(required = false) int[] driverIds) {
+                             @RequestParam(required = false) int[] driverIds,
+                             @RequestParam(required = false) Integer winnerId) {
 
         Race existingRace = raceService.getById(id);
         if (existingRace == null) {
@@ -135,6 +142,15 @@ public class RaceController {
         } else {
             existingRace.setTrack(null);
         }
+
+        // Set or clear winner
+        if (winnerId != null && winnerId > 0) {
+            existingRace.setWinner(driverService.getById(winnerId));
+        } else {
+            existingRace.setWinner(null);
+        }
+
+        existingRace.getDrivers().clear();
 
         validateDriverIds(driverIds, existingRace);
 
@@ -181,5 +197,18 @@ public class RaceController {
         raceService.delete(id);
         log.info("Deleted race with id " + id + " for session: " + session.getId());
         return "redirect:/races";
+    }
+
+    @GetMapping("/upcoming")
+    public String showUpcomingRaces(HttpSession session, Model model) {
+        sessionHistory.addVisit(session, "/races/upcoming", "Upcoming Races");
+
+        List<Race> upcomingRaces = raceService.getAll().stream()
+                .filter(r -> !r.isHasEnded())
+                .toList();
+
+        model.addAttribute("races", upcomingRaces);
+        log.info("Showing upcoming races");
+        return "races/upcoming-races";
     }
 }

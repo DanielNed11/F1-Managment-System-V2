@@ -183,14 +183,11 @@ public class RaceJdbcRepository implements IRepository<Race> {
             throw new IllegalArgumentException("Race with id " + race.getId() + " not found");
         }
 
-        // Update race-driver relationships
-        // First, delete existing relationships
         String deleteSql = "DELETE FROM race_drivers WHERE race_id = :raceId";
         jdbcClient.sql(deleteSql)
                 .param("raceId", race.getId())
                 .update();
 
-        // Then insert new relationships
         if (race.getDrivers() != null && !race.getDrivers().isEmpty()) {
             String insertSql = "INSERT INTO race_drivers (race_id, driver_id) VALUES (:raceId, :driverId)";
             for (var driver : race.getDrivers()) {

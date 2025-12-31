@@ -1,27 +1,71 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
-<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container">
-        <a class="navbar-brand"><i class="bi bi-speedometer2 me-1"></i>F1 Manager</a>
+        <a class="navbar-brand fw-bold" th:href="@{/}">
+            <i class="bi bi-flag-checkered me-2 text-danger"></i>
+            <span class="text-white" th:text="#{brand.appName}">F1 Manager</span>
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"
-                aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
+                aria-controls="nav" aria-expanded="false" th:attr="aria-label=#{aria.toggleNav}">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div id="nav" class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link" th:href="@{/drivers}" th:text="#{menu.allDrivers}">Drivers</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/teams}" th:text="#{menu.allTeams}">Teams</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/tracks}" th:text="#{menu.allTracks}">Tracks</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/races}" th:text="#{menu.allRaces}">Races</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/session-history}">
-                    <i class="bi bi-clock-history"></i> Session History
-                </a></li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/drivers}">
+                        <i class="bi bi-person-circle me-1"></i><span th:text="#{menu.allDrivers}">Drivers</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/teams}">
+                        <i class="bi bi-people-fill me-1"></i><span th:text="#{menu.allTeams}">Teams</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/tracks}">
+                        <i class="bi bi-flag-fill me-1"></i><span th:text="#{menu.allTracks}">Tracks</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/races}">
+                        <i class="bi bi-trophy-fill me-1"></i><span th:text="#{menu.allRaces}">Races</span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-plus-circle me-1"></i><span th:text="#{menu.quickAdd}">Quick Add</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" th:href="@{/drivers/add}">
+                            <i class="bi bi-person-plus me-2"></i><span th:text="#{menu.addDriver}">Add Driver</span>
+                        </a></li>
+                        <li><a class="dropdown-item" th:href="@{/teams/add}">
+                            <i class="bi bi-plus-circle me-2"></i><span th:text="#{menu.addTeam}">Add Team</span>
+                        </a></li>
+                        <li><a class="dropdown-item" th:href="@{/tracks/add(trackType='PERMANENT')}">
+                            <i class="bi bi-flag me-2"></i><span th:text="#{menu.addTrack}">Add Track</span>
+                        </a></li>
+                        <li><a class="dropdown-item" th:href="@{/races/add}">
+                            <i class="bi bi-trophy me-2"></i><span th:text="#{menu.addRace}">Add Race</span>
+                        </a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/session-history}">
+                        <i class="bi bi-clock-history me-1"></i><span th:text="#{menu.history}">History</span>
+                    </a>
+                </li>
             </ul>
             <div class="d-flex gap-2">
-                <a class="btn btn-outline-light btn-sm" href="?lang=en" th:text="#{menu.lang.en}"></a>
-                <a class="btn btn-outline-light btn-sm" href="?lang=bg" th:text="#{menu.lang.bg}"></a>
+                <a class="btn btn-outline-light btn-sm" href="?lang=en">
+                    <i class="bi bi-translate me-1"></i><span th:text="#{menu.lang.en}">EN</span>
+                </a>
+                <a class="btn btn-outline-light btn-sm" href="?lang=bg">
+                    <i class="bi bi-translate me-1"></i><span th:text="#{menu.lang.bg}">BG</span>
+                </a>
             </div>
         </div>
     </div>
