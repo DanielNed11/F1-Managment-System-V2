@@ -1,7 +1,7 @@
 package application.service.impl;
 
 import application.domain.Race;
-import application.repository.IRepository;
+import application.repository.IRaceRepository;
 import application.service.IRaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,10 +11,10 @@ import java.util.List;
 @Service
 public class RaceService implements IRaceService {
 
-    private final IRepository<Race> raceRepository;
+    private final IRaceRepository raceRepository;
 
     @Autowired
-    public RaceService(IRepository<Race> raceRepository) {
+    public RaceService(IRaceRepository raceRepository) {
         this.raceRepository = raceRepository;
     }
 
@@ -41,5 +41,20 @@ public class RaceService implements IRaceService {
     @Override
     public void delete(int id) {
         raceRepository.delete(id);
+    }
+
+    @Override
+    public List<Race> findRacesByDriverId(Integer driverId) {
+        return raceRepository.findRacesByDriverId(driverId);
+    }
+
+    @Override
+    public List<Race> findUpcomingRaces() {
+        return raceRepository.findUpcomingRaces();
+    }
+
+    @Override
+    public List<Race> findByTrackId(Integer trackId) {
+        return raceRepository.findByTrackId(trackId);
     }
 }

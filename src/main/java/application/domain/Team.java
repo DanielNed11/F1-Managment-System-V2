@@ -35,7 +35,7 @@ public class Team {
 
     @Getter
     @Setter
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "team")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "team", fetch = FetchType.EAGER)
     private List<Driver> drivers = new ArrayList<>();
 
     public Team() {

@@ -1,13 +1,14 @@
 package application.repository.jdbc;
 
 import application.domain.Race;
-import application.repository.IRepository;
+import application.repository.IRaceRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.Objects;
 @Repository("raceRepository")
 @Profile("jdbc")
 @Primary
-public class RaceJdbcRepository implements IRepository<Race> {
+public class RaceJdbcRepository implements IRaceRepository {
 
     private final JdbcClient jdbcClient;
 
@@ -131,6 +132,7 @@ public class RaceJdbcRepository implements IRepository<Race> {
     }
 
     @Override
+    @Transactional
     public void add(Race race) {
         String sql = "INSERT INTO races (name, date, track_id, winner_id, has_ended) " +
                      "VALUES (:name, :date, :trackId, :winnerId, :hasEnded)";
@@ -162,6 +164,7 @@ public class RaceJdbcRepository implements IRepository<Race> {
     }
 
     @Override
+    @Transactional
     public void update(Race race) {
         String sql = "UPDATE races SET name = :name, date = :date, " +
                      "track_id = :trackId, winner_id = :winnerId, has_ended = :hasEnded " +
@@ -200,8 +203,142 @@ public class RaceJdbcRepository implements IRepository<Race> {
     }
 
     @Override
+    @Transactional
     public void delete(int id) {
         String sql = "DELETE FROM races WHERE id = :id";
         jdbcClient.sql(sql).param("id", id).update();
+    }
+
+    @Override
+    public List<Race> findUpcomingRaces() {
+        String sql = "SELECT r.*, t.id as t_id, t.name as t_name, d.id as w_id, d.name as w_name " +
+                     "FROM races r " +
+                     "LEFT JOIN tracks t ON r.track_id = t.id " +
+                     "LEFT JOIN drivers d ON r.winner_id = d.id " +
+                     "WHERE r.has_ended = false " +
+                     "ORDER BY r.date";
+        List<Race> races = jdbcClient.sql(sql)
+                .query((rs, rowNum) -> {
+                    Race race = new Race();
+                    race.setId(rs.getInt("id"));
+                    race.setName(rs.getString("name"));
+                    race.setDate(rs.getDate("date") != null ?
+                            rs.getDate("date").toLocalDate() : null);
+                    race.setHasEnded(rs.getBoolean("has_ended"));
+
+                    int trackId = rs.getInt("t_id");
+                    if (!rs.wasNull()) {
+                        application.domain.Track track = new application.domain.Track();
+                        track.setId(trackId);
+                        track.setName(rs.getString("t_name"));
+                        race.setTrack(track);
+                    }
+
+                    int winnerId = rs.getInt("w_id");
+                    if (!rs.wasNull()) {
+                        application.domain.Driver winner = new application.domain.Driver();
+                        winner.setId(winnerId);
+                        winner.setName(rs.getString("w_name"));
+                        race.setWinner(winner);
+                    }
+
+                    return race;
+                })
+                .list();
+
+        for (Race race : races) {
+            race.setDrivers(getDriversForRace(race.getId()));
+        }
+
+        return races;
+    }
+
+    @Override
+    public List<Race> findRacesByDriverId(Integer driverId) {
+        String sql = "SELECT r.*, t.id as t_id, t.name as t_name, d.id as w_id, d.name as w_name " +
+                     "FROM races r " +
+                     "JOIN race_drivers rd ON r.id = rd.race_id " +
+                     "LEFT JOIN tracks t ON r.track_id = t.id " +
+                     "LEFT JOIN drivers d ON r.winner_id = d.id " +
+                     "WHERE rd.driver_id = :driverId";
+        List<Race> races = jdbcClient.sql(sql)
+                .param("driverId", driverId)
+                .query((rs, rowNum) -> {
+                    Race race = new Race();
+                    race.setId(rs.getInt("id"));
+                    race.setName(rs.getString("name"));
+                    race.setDate(rs.getDate("date") != null ?
+                            rs.getDate("date").toLocalDate() : null);
+                    race.setHasEnded(rs.getBoolean("has_ended"));
+
+                    int trackId = rs.getInt("t_id");
+                    if (!rs.wasNull()) {
+                        application.domain.Track track = new application.domain.Track();
+                        track.setId(trackId);
+                        track.setName(rs.getString("t_name"));
+                        race.setTrack(track);
+                    }
+
+                    int winnerId = rs.getInt("w_id");
+                    if (!rs.wasNull()) {
+                        application.domain.Driver winner = new application.domain.Driver();
+                        winner.setId(winnerId);
+                        winner.setName(rs.getString("w_name"));
+                        race.setWinner(winner);
+                    }
+
+                    return race;
+                })
+                .list();
+
+        for (Race race : races) {
+            race.setDrivers(getDriversForRace(race.getId()));
+        }
+
+        return races;
+    }
+
+    @Override
+    public List<Race> findByTrackId(Integer trackId) {
+        String sql = "SELECT r.*, t.id as t_id, t.name as t_name, d.id as w_id, d.name as w_name " +
+                     "FROM races r " +
+                     "LEFT JOIN tracks t ON r.track_id = t.id " +
+                     "LEFT JOIN drivers d ON r.winner_id = d.id " +
+                     "WHERE r.track_id = :trackId";
+        List<Race> races = jdbcClient.sql(sql)
+                .param("trackId", trackId)
+                .query((rs, rowNum) -> {
+                    Race race = new Race();
+                    race.setId(rs.getInt("id"));
+                    race.setName(rs.getString("name"));
+                    race.setDate(rs.getDate("date") != null ?
+                            rs.getDate("date").toLocalDate() : null);
+                    race.setHasEnded(rs.getBoolean("has_ended"));
+
+                    int tId = rs.getInt("t_id");
+                    if (!rs.wasNull()) {
+                        application.domain.Track track = new application.domain.Track();
+                        track.setId(tId);
+                        track.setName(rs.getString("t_name"));
+                        race.setTrack(track);
+                    }
+
+                    int winnerId = rs.getInt("w_id");
+                    if (!rs.wasNull()) {
+                        application.domain.Driver winner = new application.domain.Driver();
+                        winner.setId(winnerId);
+                        winner.setName(rs.getString("w_name"));
+                        race.setWinner(winner);
+                    }
+
+                    return race;
+                })
+                .list();
+
+        for (Race race : races) {
+            race.setDrivers(getDriversForRace(race.getId()));
+        }
+
+        return races;
     }
 }

@@ -64,9 +64,7 @@ public class TeamController {
 
         sessionHistory.addVisit(session, "/teams/" + id, "Team Details");
 
-        List<Driver> drivers = driverService.getAll().stream()
-                .filter(d -> d.getTeam() != null && d.getTeam().getId() == id)
-                .collect(Collectors.toList());
+        List<Driver> drivers = driverService.findByTeamId(id);
 
         TeamViewModel teamViewModel = mapToViewModel(team);
         model.addAttribute("team", teamViewModel);
@@ -147,9 +145,8 @@ public class TeamController {
         viewModel.setTeamLogoUrl(team.getTeamLogoUrl());
         viewModel.setBudgetInMillions(team.getBudgetInMillions());
 
-        List<String> driverNames = driverService.getAll().stream()
-                .filter(driver -> driver.getTeam() != null && driver.getTeam().getId() == team.getId())
-                .map(driver -> driver.getName())
+        List<String> driverNames = driverService.findByTeamId(team.getId()).stream()
+                .map(Driver::getName)
                 .collect(Collectors.toList());
         viewModel.setDriverNames(driverNames);
 

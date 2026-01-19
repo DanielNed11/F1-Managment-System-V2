@@ -76,9 +76,7 @@ public class DriverController {
 
         sessionHistory.addVisit(session, "/drivers/" + id, "Driver Details");
 
-        List<Race> races = raceService.getAll().stream()
-                .filter(r -> r.getDrivers().stream().anyMatch(d -> d.getId() == id))
-                .collect(Collectors.toList());
+        List<Race> races = raceService.findRacesByDriverId(id);
 
         DriverViewModel driverViewModel = mapToViewModel(driver);
         model.addAttribute("driver", driverViewModel);
@@ -109,7 +107,6 @@ public class DriverController {
         }
 
         Driver driver = mapToDriver(driverViewModel);
-        validateDriversTeam(driver);
         driverService.add(driver);
         log.info("Adding driver with id " + driver.getId() + " for session: " + session.getId());
         return "redirect:/drivers";
@@ -148,14 +145,10 @@ public class DriverController {
         }
 
         Driver driver = mapToDriver(driverViewModel);
-        validateDriversTeam(driver);
         driver.setId(id);
         driverService.update(driver);
         log.info("Updating driver with id " + id);
         return "redirect:/drivers";
-    }
-
-    private void validateDriversTeam(Driver driver) {
     }
 
     private DriverViewModel mapToViewModel(Driver driver) {
@@ -207,10 +200,7 @@ public class DriverController {
     public String showChampions(HttpSession session, Model model) {
         sessionHistory.addVisit(session, "/drivers/champions", "Champion Drivers");
 
-        // Get all drivers with at least 1 world championship
-        List<Driver> champions = driverService.getAll().stream()
-                .filter(d -> d.getWorldChampionships() > 0)
-                .collect(Collectors.toList());
+        List<Driver> champions = driverService.findChampions();
 
         model.addAttribute("drivers", champions);
         log.info("Showing champion drivers");

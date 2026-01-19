@@ -1,7 +1,7 @@
 package application.repository.local;
 
 import application.domain.*;
-import application.repository.IRepository;
+import application.repository.IDriverRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 @Profile("collection")
-public class DriverRepository implements IRepository<Driver> {
+public class DriverRepository implements IDriverRepository {
     private final List<Driver> drivers = new ArrayList<>();
 
     public DriverRepository() {
@@ -58,5 +58,17 @@ public class DriverRepository implements IRepository<Driver> {
     @Override
     public void delete(int id) {
         drivers.removeIf(d -> d.getId() == id);
+    }
+
+    @Override
+    public List<Driver> findByWorldChampionshipsGreaterThan(Integer championships) {
+        return drivers.stream().filter(driver -> driver.getWorldChampionships() > championships).toList();
+    }
+
+    @Override
+    public List<Driver> findByTeamId(Integer teamId) {
+        return drivers.stream()
+                .filter(driver -> driver.getTeam() != null && driver.getTeam().getId() == teamId)
+                .toList();
     }
 }

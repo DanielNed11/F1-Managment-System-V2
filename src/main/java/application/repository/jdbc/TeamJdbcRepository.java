@@ -2,13 +2,14 @@ package application.repository.jdbc;
 
 import application.domain.League;
 import application.domain.Team;
-import application.repository.IRepository;
+import application.repository.ITeamRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -16,7 +17,7 @@ import java.util.Objects;
 @Repository("teamRepository")
 @Profile("jdbc")
 @Primary
-public class TeamJdbcRepository implements IRepository<Team> {
+public class TeamJdbcRepository implements ITeamRepository {
 
     private final JdbcClient jdbcClient;
 
@@ -61,6 +62,7 @@ public class TeamJdbcRepository implements IRepository<Team> {
     }
 
     @Override
+    @Transactional
     public void add(Team team) {
         String sql = "INSERT INTO teams (name, founded_year, league, team_logo_url, budget_in_millions) " +
                      "VALUES (:name, :foundedYear, :league, :teamLogoUrl, :budget)";
@@ -78,6 +80,7 @@ public class TeamJdbcRepository implements IRepository<Team> {
     }
 
     @Override
+    @Transactional
     public void update(Team team) {
         String sql = "UPDATE teams SET name = :name, founded_year = :foundedYear, " +
                      "league = :league, team_logo_url = :teamLogoUrl, budget_in_millions = :budget " +
@@ -98,6 +101,7 @@ public class TeamJdbcRepository implements IRepository<Team> {
     }
 
     @Override
+    @Transactional
     public void delete(int id) {
         String sql = "DELETE FROM teams WHERE id = :id";
         jdbcClient.sql(sql).param("id", id).update();

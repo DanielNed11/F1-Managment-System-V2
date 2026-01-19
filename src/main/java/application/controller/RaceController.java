@@ -84,7 +84,6 @@ public class RaceController {
         race.setDate(date);
         race.setTrack(trackService.getById(trackId));
 
-        // Set winner if provided
         if (winnerId != null && winnerId > 0) {
             race.setWinner(driverService.getById(winnerId));
         }
@@ -104,7 +103,9 @@ public class RaceController {
                 if (d != null) selectedDrivers.add(d);
             }
         }
-        selectedDrivers.forEach(race::addDriver);
+        // Don't use addDriver() with detached entities - just set the list directly
+        // Race is the owning side of the relationship, so this is sufficient
+        race.getDrivers().addAll(selectedDrivers);
     }
 
 
@@ -143,7 +144,6 @@ public class RaceController {
             existingRace.setTrack(null);
         }
 
-        // Set or clear winner
         if (winnerId != null && winnerId > 0) {
             existingRace.setWinner(driverService.getById(winnerId));
         } else {
@@ -169,7 +169,7 @@ public class RaceController {
             return "redirect:/races";
         }
 
-        race.removeDriver(driver);
+        race.getDrivers().remove(driver);
         raceService.update(race);
         log.info("Removed Driver with id " + driverId);
         return "redirect:/races/edit/" + raceId;
@@ -185,7 +185,9 @@ public class RaceController {
             return "redirect:/races";
         }
 
-        race.addDriver(driver);
+        if (!race.getDrivers().contains(driver)) {
+            race.getDrivers().add(driver);
+        }
 
         raceService.update(race);
         log.info("Added Driver with id " + driverId + " for session: " + session.getId());
@@ -203,9 +205,7 @@ public class RaceController {
     public String showUpcomingRaces(HttpSession session, Model model) {
         sessionHistory.addVisit(session, "/races/upcoming", "Upcoming Races");
 
-        List<Race> upcomingRaces = raceService.getAll().stream()
-                .filter(r -> !r.isHasEnded())
-                .toList();
+        List<Race> upcomingRaces = raceService.findUpcomingRaces();
 
         model.addAttribute("races", upcomingRaces);
         log.info("Showing upcoming races");

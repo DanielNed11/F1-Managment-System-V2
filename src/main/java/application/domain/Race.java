@@ -21,15 +21,15 @@ public class Race {
     @Getter @Setter
     private LocalDate date;
     @Getter
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "track_id")
     private Track track;
     @Getter @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "winner_id")
     private Driver winner;
     @Getter @Setter
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "race_drivers",
             joinColumns = @JoinColumn(name = "race_id"),
@@ -43,10 +43,15 @@ public class Race {
 
     }
 
-    public Race(String name, LocalDate date, boolean hasEnded) {
+    public Race(String name, LocalDate date) {
         this.name = name;
         this.date = date;
-        this.hasEnded = hasEnded;
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void updateHasEnded() {
+        this.hasEnded = date != null && date.isBefore(LocalDate.now());
     }
 
     public void setTrack(Track track) {

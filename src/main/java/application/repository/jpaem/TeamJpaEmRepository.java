@@ -1,7 +1,7 @@
 package application.repository.jpaem;
 
 import application.domain.Team;
-import application.repository.IRepository;
+import application.repository.ITeamRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -16,7 +16,7 @@ import java.util.List;
 @Profile("jpa")
 @Primary
 @Transactional
-public class TeamJpaEmRepository implements IRepository<Team> {
+public class TeamJpaEmRepository implements ITeamRepository {
 
     @PersistenceContext
     private EntityManager entityManager;

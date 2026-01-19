@@ -1,7 +1,7 @@
 package application.repository.JPA;
 
 import application.domain.Race;
-import application.repository.IRepository;
+import application.repository.IRaceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
@@ -12,12 +12,12 @@ import java.util.List;
 @Repository("raceRepository")
 @Profile("spring-data")
 @Primary
-public class RaceRepository implements IRepository<Race> {
+public class RaceRepository implements IRaceRepository {
 
-    private final IRaceRepository repository;
+    private final RaceJpaRepository repository;
 
     @Autowired
-    public RaceRepository(IRaceRepository repository) {
+    public RaceRepository(RaceJpaRepository repository) {
         this.repository = repository;
     }
 
@@ -46,12 +46,18 @@ public class RaceRepository implements IRepository<Race> {
         repository.deleteById(id);
     }
 
-    // Custom queries
+    @Override
     public List<Race> findUpcomingRaces() {
         return repository.findUpcomingRaces();
     }
 
+    @Override
     public List<Race> findRacesByDriverId(Integer driverId) {
         return repository.findRacesByDriverId(driverId);
+    }
+
+    @Override
+    public List<Race> findByTrackId(Integer trackId) {
+        return repository.findByTrackId(trackId);
     }
 }

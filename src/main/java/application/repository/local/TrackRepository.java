@@ -1,7 +1,7 @@
 package application.repository.local;
 
 import application.domain.Track;
-import application.repository.IRepository;
+import application.repository.ITrackRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 @Profile("collection")
-public class TrackRepository implements IRepository<Track> {
+public class TrackRepository implements ITrackRepository {
     private static final List<Track> tracks = new ArrayList<>();
 
     public TrackRepository() {
@@ -50,5 +50,12 @@ public class TrackRepository implements IRepository<Track> {
     @Override
     public void delete(int id) {
         tracks.removeIf(t -> t.getId() == id);
+    }
+
+    @Override
+    public List<Track> findByLengthKmGreaterThan(Double length) {
+        return tracks.stream()
+                .filter(track -> track.getLengthKm() > length)
+                .toList();
     }
 }

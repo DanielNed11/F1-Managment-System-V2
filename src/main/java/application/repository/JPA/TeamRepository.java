@@ -1,7 +1,7 @@
 package application.repository.JPA;
 
 import application.domain.Team;
-import application.repository.IRepository;
+import application.repository.ITeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
@@ -12,12 +12,12 @@ import java.util.List;
 @Repository("teamRepository")
 @Profile("spring-data")
 @Primary
-public class TeamRepository implements IRepository<Team> {
+public class TeamRepository implements ITeamRepository {
 
-    private final ITeamRepository repository;
+    private final TeamJpaRepository repository;
 
     @Autowired
-    public TeamRepository(ITeamRepository repository) {
+    public TeamRepository(TeamJpaRepository repository) {
         this.repository = repository;
     }
 

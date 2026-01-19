@@ -1,7 +1,7 @@
 package application.repository.local;
 
 import application.domain.*;
-import application.repository.IRepository;
+import application.repository.IRaceRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 @Profile("collection")
-public class RaceRepository implements IRepository<Race> {
+public class RaceRepository implements IRaceRepository {
 
     private final List<Race> races = new ArrayList<>();
 
@@ -21,8 +21,8 @@ public class RaceRepository implements IRepository<Race> {
 
     private void seed() {
 
-        Race race1 = new Race("Monaco Grand Prix", LocalDate.of(2025, 5, 25), false);
-        Race race2 = new Race("British Grand Prix", LocalDate.of(2025, 7, 13),  false);
+        Race race1 = new Race("Monaco Grand Prix", LocalDate.of(2025, 5, 25));
+        Race race2 = new Race("British Grand Prix", LocalDate.of(2025, 7, 13));
 
         this.add(race1);
         this.add(race2);
@@ -58,5 +58,28 @@ public class RaceRepository implements IRepository<Race> {
     @Override
     public void delete(int id) {
         races.removeIf(r -> r.getId() == id);
+    }
+
+    @Override
+    public List<Race> findUpcomingRaces() {
+        return races.stream()
+                .filter(race -> !race.isHasEnded())
+                .sorted((r1, r2) -> r1.getDate().compareTo(r2.getDate()))
+                .toList();
+    }
+
+    @Override
+    public List<Race> findRacesByDriverId(Integer driverId) {
+        return races.stream()
+                .filter(race -> race.getDrivers() != null &&
+                        race.getDrivers().stream().anyMatch(driver -> driver.getId() == driverId))
+                .toList();
+    }
+
+    @Override
+    public List<Race> findByTrackId(Integer trackId) {
+        return races.stream()
+                .filter(race -> race.getTrack() != null && race.getTrack().getId() == trackId)
+                .toList();
     }
 }

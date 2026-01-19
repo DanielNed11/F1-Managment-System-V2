@@ -1,7 +1,7 @@
 package application.repository.JPA;
 
 import application.domain.Driver;
-import application.repository.IRepository;
+import application.repository.IDriverRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
@@ -12,12 +12,12 @@ import java.util.List;
 @Repository("driverRepository")
 @Profile("spring-data")
 @Primary
-public class DriverRepository implements IRepository<Driver> {
+public class DriverRepository implements IDriverRepository {
 
-    private final IDriverRepository repository;
+    private final DriverJpaRepository repository;
 
     @Autowired
-    public DriverRepository(IDriverRepository repository) {
+    public DriverRepository(DriverJpaRepository repository) {
         this.repository = repository;
     }
 
@@ -46,12 +46,13 @@ public class DriverRepository implements IRepository<Driver> {
         repository.deleteById(id);
     }
 
-    // Method queries
-    public List<Driver> findByNationality(String nationality) {
-        return repository.findByNationality(nationality);
-    }
-
+    @Override
     public List<Driver> findByWorldChampionshipsGreaterThan(Integer championships) {
         return repository.findByWorldChampionshipsGreaterThan(championships);
+    }
+
+    @Override
+    public List<Driver> findByTeamId(Integer teamId) {
+        return repository.findByTeamId(teamId);
     }
 }

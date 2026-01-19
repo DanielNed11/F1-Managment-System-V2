@@ -2,7 +2,7 @@ package application.repository.local;
 
 import application.domain.Team;
 import application.domain.League;
-import application.repository.IRepository;
+import application.repository.ITeamRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 @Profile("collection")
-public class TeamRepository implements IRepository<Team> {
+public class TeamRepository implements ITeamRepository {
 
     private static final List<Team> teams = new ArrayList<>();
 

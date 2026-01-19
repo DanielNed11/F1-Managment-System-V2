@@ -25,13 +25,13 @@ public class Driver {
     @Getter @Setter
     private int worldChampionships;
     @Getter @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "team_id")
     private Team team;
     @Getter @Setter
     private String imageUrl;
     @Getter @Setter
-    @ManyToMany(mappedBy = "drivers")
+    @ManyToMany(mappedBy = "drivers", fetch = FetchType.EAGER)
     private List<Race> races = new ArrayList<>();
 
     public Driver() {}
@@ -46,9 +46,7 @@ public class Driver {
     }
 
     public void addRace(Race race) {
-        if (!races.contains(race)) {
-            races.add(race);
-        }
+        races.add(race);
     }
 
     public void removeRace(Race race) {

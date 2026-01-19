@@ -1,7 +1,7 @@
 package application.repository.jpaem;
 
 import application.domain.Race;
-import application.repository.IRepository;
+import application.repository.IRaceRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -16,7 +16,7 @@ import java.util.List;
 @Profile("jpa")
 @Primary
 @Transactional
-public class RaceJpaEmRepository implements IRepository<Race> {
+public class RaceJpaEmRepository implements IRaceRepository {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -59,5 +59,28 @@ public class RaceJpaEmRepository implements IRepository<Race> {
         if (race != null) {
             entityManager.remove(race);
         }
+    }
+
+    @Override
+    public List<Race> findUpcomingRaces() {
+        TypedQuery<Race> query = entityManager.createQuery(
+                "SELECT r FROM Race r WHERE r.hasEnded = false ORDER BY r.date", Race.class);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Race> findRacesByDriverId(Integer driverId) {
+        TypedQuery<Race> query = entityManager.createQuery(
+                "SELECT r FROM Race r JOIN r.drivers d WHERE d.id = :driverId", Race.class);
+        query.setParameter("driverId", driverId);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Race> findByTrackId(Integer trackId) {
+        TypedQuery<Race> query = entityManager.createQuery(
+                "SELECT r FROM Race r WHERE r.track.id = :trackId", Race.class);
+        query.setParameter("trackId", trackId);
+        return query.getResultList();
     }
 }

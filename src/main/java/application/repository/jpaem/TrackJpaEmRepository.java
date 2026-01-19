@@ -1,7 +1,7 @@
 package application.repository.jpaem;
 
 import application.domain.Track;
-import application.repository.IRepository;
+import application.repository.ITrackRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -16,14 +16,13 @@ import java.util.List;
 @Profile("jpa")
 @Primary
 @Transactional
-public class TrackJpaEmRepository implements IRepository<Track> {
+public class TrackJpaEmRepository implements ITrackRepository {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
     public List<Track> getAll() {
-        // JPA automatically handles polymorphism - will return Track, StreetCircuit, and PermanentCircuit instances
         TypedQuery<Track> query = entityManager.createQuery(
                 "SELECT t FROM Track t", Track.class);
         return query.getResultList();
@@ -31,7 +30,6 @@ public class TrackJpaEmRepository implements IRepository<Track> {
 
     @Override
     public Track getById(int id) {
-        // EntityManager.find() automatically returns the correct subclass type
         return entityManager.find(Track.class, id);
     }
 
@@ -51,5 +49,13 @@ public class TrackJpaEmRepository implements IRepository<Track> {
         if (track != null) {
             entityManager.remove(track);
         }
+    }
+
+    @Override
+    public List<Track> findByLengthKmGreaterThan(Double length) {
+        TypedQuery<Track> query = entityManager.createQuery(
+                "SELECT t FROM Track t WHERE t.lengthKm > :length", Track.class);
+        query.setParameter("length", length);
+        return query.getResultList();
     }
 }

@@ -8,7 +8,6 @@
 <main class="container my-4">
     <h1 class="mb-4" th:text="#{page.track.edit.heading}">Edit Track</h1>
 
-    <!-- Track Type Badge -->
     <div class="mb-3">
         <span th:if="${trackType == 'STREET'}" class="badge bg-warning text-dark fs-6">
             <i class="bi bi-buildings"></i> <span th:text="#{track.street}">Street Circuit</span>
@@ -26,7 +25,6 @@
         <input type="hidden" name="trackType" th:value="${trackType}" />
         <input type="hidden" th:field="*{id}" />
 
-        <!-- Basic Track Fields -->
         <div class="mb-3">
             <label th:text="#{label.trackName}" class="form-label">Name</label>
             <input type="text" th:field="*{name}" class="form-control"
@@ -59,7 +57,6 @@
                  th:errors="*{openedYear}">Opened year error</div>
         </div>
 
-        <!-- Street Circuit Specific Fields -->
         <div th:if="${trackType == 'STREET'}">
             <hr class="my-4" />
             <h4 class="mb-3"><i class="bi bi-buildings"></i> <span th:text="#{streetcircuit.details}">Street Circuit Details</span></h4>
@@ -94,7 +91,6 @@
             </div>
         </div>
 
-        <!-- Permanent Circuit Specific Fields -->
         <div th:if="${trackType == 'PERMANENT'}">
             <hr class="my-4" />
             <h4 class="mb-3"><i class="bi bi-flag-fill"></i> <span th:text="#{permanentcircuit.details}">Permanent Circuit Details</span></h4>

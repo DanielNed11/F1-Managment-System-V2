@@ -7,7 +7,6 @@
 <main class="container my-4">
     <h1 class="mb-4" th:text="#{page.tracks.heading}">Track</h1>
 
-    <!-- Track Type Badge -->
     <div class="mb-3">
         <span th:if="${trackType == 'STREET'}"
               class="badge bg-warning text-dark fs-6">
@@ -54,7 +53,6 @@
         </tbody>
     </table>
 
-    <!-- Street Circuit Specific Fields -->
     <div th:if="${trackType == 'STREET'}" class="alert alert-warning">
         <h5><i class="bi bi-buildings"></i> <span th:text="#{streetcircuit.details}">Street Circuit Details</span></h5>
         <ul class="list-unstyled mb-0">
@@ -68,7 +66,6 @@
         </ul>
     </div>
 
-    <!-- Permanent Circuit Specific Fields -->
     <div th:if="${trackType == 'PERMANENT'}" class="alert alert-success">
         <h5><i class="bi bi-flag-fill"></i> <span th:text="#{permanentcircuit.details}">Permanent Circuit Details</span></h5>
         <ul class="list-unstyled mb-0">

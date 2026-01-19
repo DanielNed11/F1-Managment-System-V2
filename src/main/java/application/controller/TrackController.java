@@ -64,9 +64,7 @@ public class TrackController {
     public String getTrack(HttpSession session, Model model, @PathVariable int id) {
         sessionHistory.addVisit(session, "/tracks/" + id, "Track Details");
         Track track = trackService.getById(id);
-        List<Race> races = raceService.getAll().stream()
-                .filter(r -> r.getTrack() != null && r.getTrack().getId() == id)
-                .collect(Collectors.toList());
+        List<Race> races = raceService.findByTrackId(id);
         model.addAttribute("track", track);
         model.addAttribute("races", races);
         model.addAttribute("trackType", getTrackType(track));
@@ -182,9 +180,7 @@ public class TrackController {
     @GetMapping("/long-tracks")
     public String showLongTracks(HttpSession session, Model model) {
         sessionHistory.addVisit(session, "/tracks/long-tracks", "Long Tracks");
-        List<Track> longTracks = trackService.getAll().stream()
-                .filter(t -> t.getLengthKm() > 5.0)
-                .collect(Collectors.toList());
+        List<Track> longTracks = trackService.findLongTracks();
         model.addAttribute("tracks", longTracks);
         model.addAttribute("trackTypes", buildTrackTypesMap(longTracks));
         log.info("Showing long tracks (>5km)");

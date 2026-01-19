@@ -4,7 +4,6 @@
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<!-- Hero Section -->
 <div class="hero-section">
     <div class="container">
         <h1 class="display-4">
@@ -18,7 +17,6 @@
 </div>
 
 <div class="container">
-    <!-- Filter Section -->
     <div class="filter-section">
         <h5 class="mb-3"><i class="bi bi-funnel me-2"></i><span th:text="#{filter.teams.heading}">Filter Teams</span></h5>
         <form class="row g-3" th:action="@{/teams}" method="get">
@@ -44,7 +42,6 @@
         </form>
     </div>
 
-    <!-- Statistics Card -->
     <div class="row mb-4">
         <div class="col-md-4 col-lg-3">
             <div class="stats-card shadow-custom">
@@ -57,7 +54,6 @@
         </div>
     </div>
 
-    <!-- Teams Grid -->
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
         <div class="col" th:each="team : ${teams}">
             <div class="card h-100 shadow-custom">

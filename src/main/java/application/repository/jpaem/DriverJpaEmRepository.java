@@ -1,7 +1,7 @@
 package application.repository.jpaem;
 
 import application.domain.Driver;
-import application.repository.IRepository;
+import application.repository.IDriverRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -16,7 +16,7 @@ import java.util.List;
 @Profile("jpa")
 @Primary
 @Transactional
-public class DriverJpaEmRepository implements IRepository<Driver> {
+public class DriverJpaEmRepository implements IDriverRepository {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -49,5 +49,21 @@ public class DriverJpaEmRepository implements IRepository<Driver> {
         if (driver != null) {
             entityManager.remove(driver);
         }
+    }
+
+    @Override
+    public List<Driver> findByWorldChampionshipsGreaterThan(Integer championships) {
+        TypedQuery<Driver> query = entityManager.createQuery(
+                "SELECT d FROM Driver d WHERE d.worldChampionships > :championships", Driver.class);
+        query.setParameter("championships", championships);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Driver> findByTeamId(Integer teamId) {
+        TypedQuery<Driver> query = entityManager.createQuery(
+                "SELECT d FROM Driver d WHERE d.team.id = :teamId", Driver.class);
+        query.setParameter("teamId", teamId);
+        return query.getResultList();
     }
 }
