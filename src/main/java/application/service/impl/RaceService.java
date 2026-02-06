@@ -20,7 +20,7 @@ public class RaceService implements IRaceService {
 
     @Override
     public List<Race> getAll() {
-        return raceRepository.getAll();
+        return raceRepository.findAll();
     }
 
     @Override
@@ -40,7 +40,7 @@ public class RaceService implements IRaceService {
 
     @Override
     public void delete(int id) {
-        raceRepository.delete(id);
+        raceRepository.delete(raceRepository.findById(id).get());
     }
 
     @Override

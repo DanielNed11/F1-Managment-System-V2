@@ -5,7 +5,6 @@ import application.domain.League;
 import application.domain.Team;
 import application.service.IDriverService;
 import application.service.impl.TeamService;
-import application.session.SessionHistory;
 import application.viewmodel.TeamViewModel;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -26,14 +25,12 @@ public class TeamController {
 
     private final TeamService teamService;
     private final IDriverService driverService;
-    private final SessionHistory sessionHistory;
     private final Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    public TeamController(TeamService teamService, IDriverService driverService, SessionHistory sessionHistory) {
+    public TeamController(TeamService teamService, IDriverService driverService) {
         this.teamService = teamService;
         this.driverService = driverService;
-        this.sessionHistory = sessionHistory;
     }
 
     @GetMapping
@@ -41,7 +38,6 @@ public class TeamController {
                            Model model,
                            @RequestParam(required = false)
                            League league) {
-        sessionHistory.addVisit(session, "/teams", "All Teams");
 
         List<Team> teams = teamService.filterTeams(league);
         List<TeamViewModel> teamViewModels = teams.stream()
@@ -62,8 +58,6 @@ public class TeamController {
             return "redirect:/teams";
         }
 
-        sessionHistory.addVisit(session, "/teams/" + id, "Team Details");
-
         List<Driver> drivers = driverService.findByTeamId(id);
 
         TeamViewModel teamViewModel = mapToViewModel(team);
@@ -75,7 +69,6 @@ public class TeamController {
 
     @GetMapping("/add")
     public String showAddTeamForm(HttpSession session, Model model) {
-        sessionHistory.addVisit(session, "/teams/add", "Add Team");
 
         model.addAttribute("teamViewModel", new TeamViewModel());
         log.info("Showing add team form");
@@ -104,8 +97,6 @@ public class TeamController {
         if (team == null) {
             return "redirect:/teams";
         }
-
-        sessionHistory.addVisit(session, "/teams/edit/" + id, "Edit Team");
 
         TeamViewModel teamViewModel = mapToViewModel(team);
         model.addAttribute("teamViewModel", teamViewModel);

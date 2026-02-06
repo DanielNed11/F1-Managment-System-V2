@@ -1,7 +1,15 @@
 package application.repository;
 
 import application.domain.Team;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface ITeamRepository extends IRepository<Team> {
+@Repository
+public interface ITeamRepository extends JpaRepository<Team, Integer> {
 
+    void add(Team team);
+
+    void update(Team team);
+
+    void delete(Team team);
 }

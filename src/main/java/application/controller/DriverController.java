@@ -3,11 +3,9 @@ package application.controller;
 import application.domain.Driver;
 import application.domain.Race;
 import application.domain.Team;
-import application.exception.F1ApplicationException;
 import application.service.IDriverService;
 import application.service.IRaceService;
 import application.service.ITeamService;
-import application.session.SessionHistory;
 import application.viewmodel.DriverViewModel;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,15 +29,13 @@ public class DriverController {
     private final IDriverService driverService;
     private final ITeamService teamService;
     private final IRaceService raceService;
-    private final SessionHistory sessionHistory;
     private final Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    public DriverController(IDriverService driverService, ITeamService teamService, IRaceService raceService, SessionHistory sessionHistory) {
+    public DriverController(IDriverService driverService, ITeamService teamService, IRaceService raceService) {
         this.driverService = driverService;
         this.teamService = teamService;
         this.raceService = raceService;
-        this.sessionHistory = sessionHistory;
     }
 
     @GetMapping
@@ -52,7 +47,6 @@ public class DriverController {
             HttpSession session,
             Model model) {
 
-        sessionHistory.addVisit(session, "/drivers", "All Drivers");
 
         List<Driver> drivers = driverService.filterDrivers(nationality, dateOfBirth);
         List<DriverViewModel> driverViewModels = drivers.stream()
@@ -74,8 +68,6 @@ public class DriverController {
             return "redirect:/drivers";
         }
 
-        sessionHistory.addVisit(session, "/drivers/" + id, "Driver Details");
-
         List<Race> races = raceService.findRacesByDriverId(id);
 
         DriverViewModel driverViewModel = mapToViewModel(driver);
@@ -87,7 +79,6 @@ public class DriverController {
 
     @GetMapping("/add")
     public String showAddForm(HttpSession session, Model model) {
-        sessionHistory.addVisit(session, "/drivers/add", "Add Driver");
 
         model.addAttribute("driverViewModel", new DriverViewModel());
         model.addAttribute("teams", teamService.getAll());
@@ -118,8 +109,6 @@ public class DriverController {
         if (driver == null) {
             return "redirect:/drivers";
         }
-
-        sessionHistory.addVisit(session, "/drivers/edit/" + id, "Edit Driver");
 
         DriverViewModel driverViewModel = mapToViewModel(driver);
         model.addAttribute("driverViewModel", driverViewModel);
@@ -198,7 +187,6 @@ public class DriverController {
 
     @GetMapping("/champions")
     public String showChampions(HttpSession session, Model model) {
-        sessionHistory.addVisit(session, "/drivers/champions", "Champion Drivers");
 
         List<Driver> champions = driverService.findChampions();
 
@@ -207,11 +195,5 @@ public class DriverController {
         return "drivers/champions";
     }
 
-    @ExceptionHandler(F1ApplicationException.class)
-    public String handleF1ApplicationException(F1ApplicationException ex,
-                                               RedirectAttributes redirectAttributes) {
-        log.warn("F1 Application exception: " + ex.getMessage());
-        redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
-        return "redirect:/drivers";
-    }
+
 }

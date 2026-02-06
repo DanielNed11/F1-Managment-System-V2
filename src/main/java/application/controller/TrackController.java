@@ -6,7 +6,6 @@ import application.domain.StreetCircuit;
 import application.domain.Track;
 import application.service.IRaceService;
 import application.service.impl.TrackService;
-import application.session.SessionHistory;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/tracks")
@@ -27,14 +25,12 @@ public class TrackController {
 
     private final TrackService trackService;
     private final IRaceService raceService;
-    private final SessionHistory sessionHistory;
     private final Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    public TrackController(TrackService trackService, IRaceService raceService, SessionHistory sessionHistory) {
+    public TrackController(TrackService trackService, IRaceService raceService) {
         this.trackService = trackService;
         this.raceService = raceService;
-        this.sessionHistory = sessionHistory;
     }
 
     private String getTrackType(Track track) {
@@ -52,7 +48,6 @@ public class TrackController {
 
     @GetMapping
     public String showAllTracks(HttpSession session, Model model) {
-        sessionHistory.addVisit(session, "/tracks", "All Tracks");
         List<Track> tracks = trackService.getAll();
         model.addAttribute("tracks", tracks);
         model.addAttribute("trackTypes", buildTrackTypesMap(tracks));
@@ -62,7 +57,6 @@ public class TrackController {
 
     @GetMapping("/{id}")
     public String getTrack(HttpSession session, Model model, @PathVariable int id) {
-        sessionHistory.addVisit(session, "/tracks/" + id, "Track Details");
         Track track = trackService.getById(id);
         List<Race> races = raceService.findByTrackId(id);
         model.addAttribute("track", track);
@@ -75,7 +69,6 @@ public class TrackController {
     @GetMapping("/add")
     public String showAddTrack(HttpSession session, Model model,
                                @RequestParam(required = false, defaultValue = "BASIC") String trackType) {
-        sessionHistory.addVisit(session, "/tracks/add", "Add Track");
 
         Track track;
         if ("STREET".equals(trackType)) {
@@ -134,7 +127,6 @@ public class TrackController {
 
     @GetMapping("/edit/{id}")
     public String showEditTrackForm(HttpSession session, Model model, @PathVariable int id) {
-        sessionHistory.addVisit(session, "/tracks/edit/" + id, "Edit Track");
         Track track = trackService.getById(id);
         model.addAttribute("track", track);
         model.addAttribute("trackType", getTrackType(track));
@@ -179,7 +171,6 @@ public class TrackController {
 
     @GetMapping("/long-tracks")
     public String showLongTracks(HttpSession session, Model model) {
-        sessionHistory.addVisit(session, "/tracks/long-tracks", "Long Tracks");
         List<Track> longTracks = trackService.findLongTracks();
         model.addAttribute("tracks", longTracks);
         model.addAttribute("trackTypes", buildTrackTypesMap(longTracks));

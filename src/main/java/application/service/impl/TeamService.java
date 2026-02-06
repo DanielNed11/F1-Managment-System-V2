@@ -2,7 +2,7 @@ package application.service.impl;
 
 import application.domain.Team;
 import application.domain.League;
-import application.repository.IRepository;
+import application.repository.ITeamRepository;
 import application.service.ITeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,16 +13,16 @@ import java.util.stream.Collectors;
 @Service
 public class TeamService implements ITeamService {
 
-    private final IRepository<Team> teamRepository;
+    private final ITeamRepository teamRepository;
 
     @Autowired
-    public TeamService(IRepository<Team> teamRepository) {
+    public TeamService(ITeamRepository teamRepository) {
         this.teamRepository = teamRepository;
     }
 
     @Override
     public List<Team> getAll() {
-        return teamRepository.getAll();
+        return teamRepository.findAll();
     }
 
     @Override
@@ -42,14 +42,14 @@ public class TeamService implements ITeamService {
 
     @Override
     public List<Team> filterTeams(League league) {
-        return teamRepository.getAll().stream()
+        return teamRepository.findAll().stream()
                 .filter(t -> league == null || t.getLeague() == league)
                 .collect(Collectors.toList());
     }
 
     @Override
     public void delete(int id) {
-        teamRepository.delete(id);
+        teamRepository.delete(teamRepository.findById(id).get());
     }
 
 

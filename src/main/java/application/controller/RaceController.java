@@ -6,7 +6,6 @@ import application.domain.Track;
 import application.service.IDriverService;
 import application.service.IRaceService;
 import application.service.ITrackService;
-import application.session.SessionHistory;
 import jakarta.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,21 +26,18 @@ public class RaceController {
     private final IRaceService raceService;
     private final IDriverService driverService;
     private final ITrackService trackService;
-    private final SessionHistory sessionHistory;
     private final Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
-    public RaceController(IRaceService raceService, IDriverService driverService, ITrackService trackService, SessionHistory sessionHistory) {
+    public RaceController(IRaceService raceService, IDriverService driverService, ITrackService trackService) {
         this.raceService = raceService;
         this.driverService = driverService;
         this.trackService = trackService;
-        this.sessionHistory = sessionHistory;
     }
 
 
     @GetMapping
     public String showAllRaces(HttpSession session, Model model) {
-        sessionHistory.addVisit(session, "/races", "All Races");
 
         model.addAttribute("races", raceService.getAll());
         log.info("Showing all races");
@@ -55,7 +51,6 @@ public class RaceController {
             return "redirect:/races";
         }
 
-        sessionHistory.addVisit(session, "/races/" + id, "Race Details");
 
         model.addAttribute("race", race);
         log.info("Showing race with id " + id);
@@ -64,7 +59,6 @@ public class RaceController {
 
     @GetMapping("/add")
     public String showAddRaceForm(HttpSession session, Model model) {
-        sessionHistory.addVisit(session, "/races/add", "Add Race");
 
         model.addAttribute("tracks", trackService.getAll());
         model.addAttribute("drivers", driverService.getAll());
@@ -115,8 +109,6 @@ public class RaceController {
         if (race == null) {
             return "redirect:/races";
         }
-
-        sessionHistory.addVisit(session, "/races/edit/" + id, "Edit Race");
 
         model.addAttribute("race", race);
         model.addAttribute("tracks", trackService.getAll());
@@ -203,7 +195,6 @@ public class RaceController {
 
     @GetMapping("/upcoming")
     public String showUpcomingRaces(HttpSession session, Model model) {
-        sessionHistory.addVisit(session, "/races/upcoming", "Upcoming Races");
 
         List<Race> upcomingRaces = raceService.findUpcomingRaces();
 

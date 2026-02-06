@@ -1,8 +1,6 @@
 package application.service.impl;
 
 import application.domain.Driver;
-import application.domain.Team;
-import application.exception.F1ApplicationException;
 import application.repository.IDriverRepository;
 import application.service.IDriverService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +22,7 @@ public class DriverService implements IDriverService {
 
     @Override
     public List<Driver> getAll() {
-        return driverRepository.getAll();
+        return driverRepository.findAll();
     }
 
     @Override
@@ -44,12 +42,12 @@ public class DriverService implements IDriverService {
             throw new IllegalArgumentException("Driver with id " + updatedDriver.getId() + " not found");
         }
 
-        driverRepository.update(updatedDriver);
+        driverRepository.updateDriver(updatedDriver);
     }
 
     @Override
     public List<Driver> filterDrivers(String nationality, LocalDate dateOfBirth) {
-        return driverRepository.getAll().stream()
+        return driverRepository.findAll().stream()
                 .filter(d -> nationality == null || nationality.isBlank() ||
                         d.getNationality().toLowerCase().contains(nationality.trim().toLowerCase()))
                 .filter(d -> dateOfBirth == null || (d.getDateOfBirth() != null && d.getDateOfBirth().equals(dateOfBirth)))
@@ -59,33 +57,33 @@ public class DriverService implements IDriverService {
     @Override
     public void validateDriver(Driver driver) {
         if (driver == null) {
-            throw new F1ApplicationException("Driver cannot be null");
+            throw new IllegalArgumentException("Driver cannot be null");
         }
 
         if (driver.getDateOfBirth() == null) {
-            throw new F1ApplicationException("Driver date of birth is required");
+            throw new IllegalArgumentException("Driver date of birth is required");
         }
 
         int age = Period.between(driver.getDateOfBirth(), LocalDate.now()).getYears();
 
         if (age < 18) {
-            throw new F1ApplicationException(
+            throw new IllegalArgumentException(
                     "Driver must be at least 18 years old. Current age: " + age + " years");
         }
 
         if (age > 60) {
-            throw new F1ApplicationException(
+            throw new IllegalArgumentException(
                     "Driver age exceeds maximum racing age of 60. Current age: " + age + " years");
         }
 
         if (driver.getWorldChampionships() < 0) {
-            throw new F1ApplicationException("World championships cannot be negative");
+            throw new IllegalArgumentException("World championships cannot be negative");
         }
     }
 
     @Override
     public void delete(int id) {
-        driverRepository.delete(id);
+        driverRepository.delete(driverRepository.findDriverById(id));
     }
 
     @Override

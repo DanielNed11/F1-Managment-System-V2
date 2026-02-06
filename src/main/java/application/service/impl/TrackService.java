@@ -21,12 +21,12 @@ public class TrackService implements ITrackService {
 
     @Override
     public List<Track> getAll() {
-        return trackRepository.getAll();
+        return trackRepository.findAll();
     }
 
     @Override
     public Track getById(int id) {
-        return trackRepository.getById(id);
+        return trackRepository.findById(id).get();
     }
 
     @Override
@@ -41,7 +41,7 @@ public class TrackService implements ITrackService {
 
     @Override
     public List<Track> filterTracks(String location, Double minLength, Double maxLength) {
-        return trackRepository.getAll().stream()
+        return trackRepository.findAll().stream()
                 .filter(t -> location == null || location.isEmpty() || t.getLocation().equalsIgnoreCase(location))
                 .filter(t -> (minLength == null || t.getLengthKm() >= minLength) &&
                         (maxLength == null || t.getLengthKm() <= maxLength))
@@ -50,7 +50,7 @@ public class TrackService implements ITrackService {
 
     @Override
     public void delete(int id) {
-        trackRepository.delete(id);
+        trackRepository.delete(trackRepository.findById(id).get());
     }
 
     @Override
