@@ -46,7 +46,7 @@
     </table>
 
     <h3 class="mt-5 mb-3" th:text="#{table.header.drivers}">Drivers</h3>
-    <table class="table table-striped table-hover align-middle" th:if="${!#lists.isEmpty(race.drivers)}">
+    <table class="table table-striped table-hover align-middle" th:if="${!#lists.isEmpty(race.driverRaces)}">
         <thead class="table-light">
         <tr>
             <th th:text="#{table.header.id}">ID</th>
@@ -56,19 +56,19 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="driver : ${race.drivers}">
-            <td th:text="${driver.id}"></td>
-            <td th:text="${driver.name}"></td>
-            <td th:text="${driver.nationality}"></td>
+        <tr th:each="driverRace : ${race.driverRaces}">
+            <td th:text="${driverRace.driver.id}"></td>
+            <td th:text="${driverRace.driver.name}"></td>
+            <td th:text="${driverRace.driver.nationality}"></td>
             <td>
                 <a class="btn btn-sm btn-outline-primary"
-                   th:href="@{/drivers/{id}(id=${driver.id})}"
+                   th:href="@{/drivers/{id}(id=${driverRace.driver.id})}"
                    th:text="#{button.viewDetails}">View</a>
             </td>
         </tr>
         </tbody>
     </table>
-    <p th:if="${#lists.isEmpty(race.drivers)}" class="text-muted" th:text="#{msg.noDriversInRace}">No drivers participating in this race.</p>
+    <p th:if="${#lists.isEmpty(race.driverRaces)}" class="text-muted" th:text="#{msg.noDriversInRace}">No drivers participating in this race.</p>
 
     <a class="btn btn-secondary mt-3" th:href="@{/races}">
         <i class="bi bi-arrow-left"></i>

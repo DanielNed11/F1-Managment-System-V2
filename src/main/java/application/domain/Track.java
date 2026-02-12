@@ -16,15 +16,20 @@ import java.util.Objects;
 public class Track {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter @Setter
-    private int id;
-    @Getter @Setter
+    @Getter
+    @Setter
+    private Integer id;
+    @Getter
+    @Setter
     private String name;
-    @Getter @Setter
+    @Getter
+    @Setter
     private String location;
-    @Getter @Setter
+    @Getter
+    @Setter
     private double lengthKm;
-    @Getter @Setter
+    @Getter
+    @Setter
     private int openedYear;
 
     public Track(String name, String location, double lengthKm, int openedYear) {
@@ -38,7 +43,7 @@ public class Track {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Track track)) return false;
-        return id == track.id;
+        return Objects.equals(id, track.id);
     }
 
     @Override

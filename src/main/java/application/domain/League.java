@@ -5,5 +5,5 @@ public enum League {
     Formula_2,
     Formula_3,
     Formula_4,
-    Formula_E;
+    Formula_E
 }

@@ -1,7 +1,7 @@
 package application.service;
 
-import application.domain.Team;
 import application.domain.League;
+import application.domain.Team;
 
 import java.util.List;
 

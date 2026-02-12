@@ -15,27 +15,22 @@ public class Race {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter @Setter
-    private int id;
+    private Integer id;
     @Getter @Setter
     private String name;
     @Getter @Setter
     private LocalDate date;
     @Getter
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "track_id")
     private Track track;
     @Getter @Setter
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "winner_id")
     private Driver winner;
     @Getter @Setter
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "race_drivers",
-            joinColumns = @JoinColumn(name = "race_id"),
-            inverseJoinColumns = @JoinColumn(name = "driver_id")
-    )
-    private List<Driver> drivers = new ArrayList<>();
+    @OneToMany(mappedBy = "race", orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<DriverRace> driverRaces = new ArrayList<>();
     @Getter @Setter
     private boolean hasEnded;
 
@@ -60,22 +55,30 @@ public class Race {
         }
     }
 
-    public void removeDriver(Driver driver) {
-        drivers.remove(driver);
-        driver.removeRace(this);
+    public void addDriverRace(DriverRace driverRace) {
+        driverRaces.add(driverRace);
+        driverRace.setRace(this);
+    }
+
+    public void removeDriverRace(DriverRace driverRace) {
+        driverRaces.remove(driverRace);
+        driverRace.setRace(null);
     }
 
     public void addDriver(Driver driver) {
-        if (drivers.contains(driver)) return;
-        drivers.add(driver);
-        driver.addRace(this);
+        DriverRace driverRace = new DriverRace(driver, this);
+        addDriverRace(driverRace);
+    }
+
+    public void removeDriver(Driver driver) {
+        driverRaces.removeIf(dr -> dr.getDriver().equals(driver));
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Race race)) return false;
-        return id == race.id;
+        return Objects.equals(id, race.id);
     }
 
     @Override

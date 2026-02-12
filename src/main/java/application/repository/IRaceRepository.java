@@ -13,44 +13,43 @@ import java.util.Optional;
 public interface IRaceRepository extends JpaRepository<Race, Integer> {
 
     @Query("SELECT DISTINCT r FROM Race r " +
-           "LEFT JOIN FETCH r.track " +
-           "LEFT JOIN FETCH r.winner " +
-           "LEFT JOIN FETCH r.drivers")
+            "LEFT JOIN FETCH r.track " +
+            "LEFT JOIN FETCH r.winner " +
+            "LEFT JOIN FETCH r.driverRaces dr " +
+            "LEFT JOIN FETCH dr.driver")
     List<Race> findAll();
 
     @Query("SELECT r FROM Race r " +
-           "LEFT JOIN FETCH r.track " +
-           "LEFT JOIN FETCH r.winner " +
-           "LEFT JOIN FETCH r.drivers " +
-           "WHERE r.id = :id")
+            "LEFT JOIN FETCH r.track " +
+            "LEFT JOIN FETCH r.winner " +
+            "LEFT JOIN FETCH r.driverRaces dr " +
+            "LEFT JOIN FETCH dr.driver " +
+            "WHERE r.id = :id")
     Optional<Race> findById(@Param("id") Integer id);
 
     @Query("SELECT DISTINCT r FROM Race r " +
-           "LEFT JOIN FETCH r.track " +
-           "LEFT JOIN FETCH r.winner " +
-           "LEFT JOIN FETCH r.drivers " +
-           "WHERE r.hasEnded = false " +
-           "AND r.date >= CURRENT_DATE " +
-           "ORDER BY r.date")
+            "LEFT JOIN FETCH r.track " +
+            "LEFT JOIN FETCH r.winner " +
+            "LEFT JOIN FETCH r.driverRaces dr " +
+            "LEFT JOIN FETCH dr.driver " +
+            "WHERE r.hasEnded = false " +
+            "AND r.date >= CURRENT_DATE " +
+            "ORDER BY r.date")
     List<Race> findUpcomingRaces();
 
     @Query("SELECT DISTINCT r FROM Race r " +
-           "LEFT JOIN FETCH r.track " +
-           "LEFT JOIN FETCH r.winner " +
-           "JOIN FETCH r.drivers d " +
-           "WHERE d.id = :driverId")
+            "LEFT JOIN FETCH r.track " +
+            "LEFT JOIN FETCH r.winner " +
+            "JOIN FETCH r.driverRaces dr " +
+            "JOIN FETCH dr.driver d " +
+            "WHERE d.id = :driverId")
     List<Race> findRacesByDriverId(@Param("driverId") Integer driverId);
 
     @Query("SELECT DISTINCT r FROM Race r " +
-           "LEFT JOIN FETCH r.track " +
-           "LEFT JOIN FETCH r.winner " +
-           "LEFT JOIN FETCH r.drivers " +
-           "WHERE r.track.id = :trackId")
+            "LEFT JOIN FETCH r.track " +
+            "LEFT JOIN FETCH r.winner " +
+            "LEFT JOIN FETCH r.driverRaces dr " +
+            "LEFT JOIN FETCH dr.driver " +
+            "WHERE r.track.id = :trackId")
     List<Race> findByTrackId(@Param("trackId") Integer trackId);
-
-    void update(Race race);
-
-    void delete(Race race);
-
-    void add(Race race);
 }

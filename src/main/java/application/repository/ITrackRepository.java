@@ -10,11 +10,5 @@ import java.util.List;
 @Repository
 public interface ITrackRepository extends JpaRepository<Track, Integer> {
 
-    void add(Track track);
-
-    void update(Track track);
-
-    void delete(Track track);
-
     List<Track> findByLengthKmGreaterThan(@Param("lengthKm") Double length);
 }

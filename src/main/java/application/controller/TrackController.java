@@ -56,7 +56,7 @@ public class TrackController {
     }
 
     @GetMapping("/{id}")
-    public String getTrack(HttpSession session, Model model, @PathVariable int id) {
+    public String getTrack(HttpSession session, Model model, @PathVariable Integer id) {
         Track track = trackService.getById(id);
         List<Race> races = raceService.findByTrackId(id);
         model.addAttribute("track", track);
@@ -87,8 +87,8 @@ public class TrackController {
 
     @PostMapping("/add")
     public String addTrack(HttpServletRequest request,
-                          @RequestParam String trackType,
-                          Model model) {
+                           @RequestParam String trackType,
+                           Model model) {
         Track track;
 
         if ("STREET".equals(trackType)) {
@@ -126,7 +126,7 @@ public class TrackController {
     }
 
     @GetMapping("/edit/{id}")
-    public String showEditTrackForm(HttpSession session, Model model, @PathVariable int id) {
+    public String showEditTrackForm(HttpSession session, Model model, @PathVariable Integer id) {
         Track track = trackService.getById(id);
         model.addAttribute("track", track);
         model.addAttribute("trackType", getTrackType(track));
@@ -135,10 +135,10 @@ public class TrackController {
     }
 
     @PostMapping("/edit/{id}")
-    public String editTrack(@PathVariable int id,
-                           HttpServletRequest request,
-                           @RequestParam String trackType,
-                           Model model) {
+    public String editTrack(@PathVariable Integer id,
+                            HttpServletRequest request,
+                            @RequestParam String trackType,
+                            Model model) {
         Track track = trackService.getById(id);
 
         track.setName(request.getParameter("name"));
@@ -163,7 +163,7 @@ public class TrackController {
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteTrack(@PathVariable int id, HttpSession session) {
+    public String deleteTrack(@PathVariable Integer id, HttpSession session) {
         trackService.delete(id);
         log.info("Deleted track with id " + id + " for session: " + session.getId());
         return "redirect:/tracks";

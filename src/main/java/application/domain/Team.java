@@ -15,7 +15,7 @@ public class Team {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
     @Setter
-    private int id;
+    private Integer id;
     @Getter
     @Setter
     private String name;
@@ -35,7 +35,7 @@ public class Team {
 
     @Getter
     @Setter
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "team", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "team", fetch = FetchType.LAZY)
     private List<Driver> drivers = new ArrayList<>();
 
     public Team() {
@@ -59,7 +59,7 @@ public class Team {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Team team)) return false;
-        return id == team.id;
+        return Objects.equals(id, team.id);
     }
 
     @Override

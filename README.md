@@ -1,205 +1,148 @@
-# Formula 1 Management System
+# Programming 5 - Formula 1 Management System
 
-**Student Name:** Daniel Nedyalkov
-**Course:** Programming 3
+## Student Information
+- **Course:** Programming 5
+- **Name:** Daniel Nedyalkov
+- **Email:** daniel.nedyalkov@student.kdg.be
+- **Student ID:** 0172599-36
+- **Academic Year:** 2025-2026
+- **Group:** ACS201
 
 ---
 
-## Domain Description
+## Domain Entities
 
-This is a **Formula 1 Management System** managing four core entities with relationships:
+This is a **Formula 1 Management System** with the following entities:
 
-### Entities
+### 1. Driver
+- **Properties:** id, name, dateOfBirth, nationality, worldChampionships, imageUrl
+- **Relationships:** ManyToOne with Team, ManyToMany with Race
 
-1. **Driver** - F1 racing drivers
-   - Properties: name, dateOfBirth, nationality, worldChampionships, imageUrl
-   - Relations: belongs to one Team, participates in many Races
+### 2. Team
+- **Properties:** id, name, foundedYear, league (enum), teamLogoUrl, budgetInMillions
+- **Relationships:** OneToMany with Driver
 
-2. **Team** - F1 racing teams
-   - Properties: name, foundedYear, league (enum), teamLogoUrl, budgetInMillions
-   - Relations: has many Drivers
+### 3. Race
+- **Properties:** id, name, date, hasEnded
+- **Relationships:** ManyToOne with Track, ManyToOne with Driver (winner), ManyToMany with Driver
 
-3. **Race** - F1 racing events
-   - Properties: name, date, hasEnded
-   - Relations: held at one Track, has one winner (Driver), has many participating Drivers
+### 4. Track (Base class with inheritance)
+- **Properties:** id, name, location, lengthKm, openedYear
+- **Inheritance Strategy:** Single Table
+- **Subtypes:**
+  - **PermanentCircuit:** hasMuseum, testDaysPerYear, facilities
+  - **StreetCircuit:** cityName, daysToSetup, annualRentalCost, hasTemporaryBarriers
 
-4. **Track** - Racing circuits with inheritance
-   - Base properties: name, location, lengthKm, openedYear
-   - **StreetCircuit** subclass: cityName, daysToSetup, annualRentalCost, hasTemporaryBarriers
-   - **PermanentCircuit** subclass: hasMuseum, testDaysPerYear, facilities
+### 5. League (Enum)
+- **Values:** Formula_1, Formula_2, Formula_3, Formula_4, Formula_E
 
-### Entity Relationships
-
+### Entity Relationships Diagram
 ```
 Team (1) ----< (many) Driver
-Driver (many) >----< (many) Race  (many-to-many)
+Driver (many) >----< (many) Race
 Track (1) ----< (many) Race
 Race (many) >---- (1) Driver (as winner)
 
-Track (inheritance - Single Table)
-  ├── StreetCircuit
-  └── PermanentCircuit
+Track (Single Table Inheritance)
+  ├── PermanentCircuit
+  └── StreetCircuit
 ```
 
 ---
 
-## Application Profiles
+## Build and Run Instructions
 
-The application supports **4 repository implementations** switchable via profiles:
+### Prerequisites
+- Java 21 or higher
+- Docker and Docker Compose
+- Git
 
-### Repository Profiles
+### Setup Steps
 
-1. **`collection`** - In-memory ArrayList (Week 2-4)
-2. **`jdbc`** - Spring JDBC with JdbcClient (Week 6)
-3. **`jpa`** - JPA with EntityManager (Week 9)
-4. **`spring-data`** - Spring Data JPA repositories (Week 10)
-
-### Database Profiles
-
-1. **`dev`** - H2 in-memory database (automatic)
-2. **`prod`** - PostgreSQL
-
-### Switch Profiles
-
-Edit `src/main/resources/application.properties`:
-```properties
-spring.profiles.active=spring-data,dev
-
-spring.profiles.active=jpa,dev
-
-spring.profiles.active=jdbc,prod
-
-spring.profiles.active=collection
-```
-
----
-
-## Database Configuration
-
-### H2 (Development)
-- **Console:** http://localhost:8080/h2-console
-- No manual setup required - auto-configured
-
-### PostgreSQL (Production)
-```properties
-spring.datasource.url=jdbc:postgresql:pro3_db
-spring.datasource.username=postgres
-spring.datasource.password=Student_1234
-```
-
-## Running the Application
-
-### Steps
-
-1. Clone/navigate to project:
+1. **Clone the repository:**
    ```bash
-   cd /path/to/Programming_3
+   git clone https://gitlab.com/kdg-ti/programming-5/projects-25-26/acs201/daniel.nedyalkov/Client.git
+   cd Client
    ```
 
-2. Build:
+2. **Start the PostgreSQL database using Docker:**
+   ```bash
+   docker-compose up -d
+   ```
+   This will start a PostgreSQL database on port 5432.
+
+3. **Build the application:**
    ```bash
    ./gradlew build
    ```
 
-3. Run:
+4. **Run the application:**
    ```bash
    ./gradlew bootRun
    ```
 
-4. Access application:
-   - **Start URL:** http://localhost:8080
-   - **H2 Console:** http://localhost:8080/h2-console (dev profile)
+5. **Access the application:**
+   - Open your browser: `http://localhost:8080`
 
-### Default Settings
-- Profile: `spring-data,dev`
-- Port: 8080
-- Language: English (switch via navbar)
+### Stopping the Application
 
----
+- **Stop Spring Boot:** Press `Ctrl+C` in the terminal
+- **Stop PostgreSQL:**
+  ```bash
+  docker-compose down
+  ```
 
-## Completed Features
+### Useful Commands
 
-### ✅ All Assignment Requirements
-- [x] 3-tier layered architecture
-- [x] 4 entities with all relationships
-- [x] Full CRUD for all entities
-- [x] Track inheritance (StreetCircuit, PermanentCircuit)
-- [x] 4 repository implementations (collection, jdbc, jpa, spring-data)
-- [x] Spring Data JPA method queries and @Query
-- [x] Bean Validation with custom messages
-- [x] Exception handling (custom + global)
-- [x] Thymeleaf views with Bootstrap 5
-- [x] Multi-language support (EN/BG)
-- [x] Session history tracking
-- [x] H2 and PostgreSQL support
+```bash
+# Clean and rebuild
+./gradlew clean build
 
-### ✅ Extra Features
-- [x] Query result pages (champions, long tracks, upcoming races)
-- [x] Responsive design with Bootstrap
-- [x] Custom CSS styling
-- [x] Delete confirmations
-- [x] Form validation with error display
-- [x] Bootstrap Icons integration
+# Run tests
+./gradlew test
+
+# Check Docker containers status
+docker-compose ps
+
+# View database logs
+docker-compose logs postgres
+
+# Access PostgreSQL CLI
+docker exec -it programming5-postgres psql -U f1user -d f1db
+```
 
 ---
 
-## Parts Not Completed
+## Technology Stack
 
-All requirements have been fully implemented.
-
----
-
-## Unique Implementation
-
-### Technical Excellence
-
-1. **Four Repository Implementations**
-   - Shows evolution from simple collections to advanced Spring Data
-   - Easy switching via profiles demonstrates abstraction
-   - Each implementation handles polymorphism correctly (Track subclasses)
-
-2. **Advanced Polymorphism with JPA**
-   - Single Table Inheritance for Track entity
-   - Type-specific forms for StreetCircuit vs PermanentCircuit
-   - Conditional rendering in Thymeleaf based on track type
-   - Manual parameter extraction to preserve subclass types during form binding
-
-### Functional Features
-
-1. **Track Type Management**
-   - Type-specific forms with conditional field display
-   - Visual badges and icons distinguish track types
-   - Full edit support preserving subclass properties
-
-2. **Advanced Queries**
-   - Champions page: Method query `findByWorldChampionshipsGreaterThan(0)`
-   - Long tracks page: Stream filtering for tracks >5km
-   - Upcoming races page: Custom `@Query` for races not ended
-   - All accessible from footer Quick Links
-
-3. **Session History**
-   - Tracks all page visits with timestamps
-   - Session-scoped (per browser tab)
-   - Clear history functionality
-   - Displays last 20 visits
-
-## Quick Test Guide
-
-1. **Test Track Inheritance:**
-   - Navigate to "Tracks" → "Add Street Circuit"
-   - Fill form with street-specific fields (city name, rental cost, etc.)
-   - Save and verify badge shows "Street Circuit"
-   - Repeat for "Permanent Circuit"
-
-2. **Test Queries:**
-   - Footer → "Champions" (drivers with ≥1 championship)
-   - Footer → "Long Tracks" (tracks >5km)
-   - Footer → "Upcoming" (races not ended)
-
-3. **Test Languages:**
-   - Click language switcher in navbar (EN ⇄ BG)
-   - Verify all text changes
+- **Framework:** Spring Boot 3.5.6
+- **Java:** 21
+- **Database:** PostgreSQL (Docker)
+- **ORM:** Spring Data JPA / Hibernate
+- **Template Engine:** Thymeleaf
+- **CSS Framework:** Bootstrap 5.3.3
+- **Build Tool:** Gradle (Kotlin DSL)
 
 ---
 
-**Last Updated:** December 31, 2024
+## Project Structure
+
+```
+src/main/java/application/
+├── domain/              # Entity classes (Driver, Team, Race, Track, etc.)
+├── repository/JPA/      # Spring Data JPA Repository interfaces
+├── service/             # Service layer with business logic
+├── controller/          # Spring MVC controllers
+└── viewmodel/           # View model classes for data transfer
+
+src/main/resources/
+├── templates/           # Thymeleaf HTML templates
+├── static/              # Static assets (CSS, JS, images)
+└── application.properties
+
+docker-compose.yml       # PostgreSQL database configuration
+```
+
+---
+
+**Last Updated:** February 6, 2026

@@ -11,16 +11,20 @@ import lombok.Setter;
 @NoArgsConstructor
 public class StreetCircuit extends Track {
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private String cityName;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private Integer daysToSetup;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private Double annualRentalCost;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private Boolean hasTemporaryBarriers;
 
     public StreetCircuit(String name, String location, double lengthKm, int openedYear,

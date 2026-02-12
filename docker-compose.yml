@@ -1,0 +1,14 @@
+services:
+  postgres_boardgames_db:
+    image: postgres:18.1-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: 'f1Management'
+      POSTGRES_USER: 'spring'
+      POSTGRES_PASSWORD: 'spring'
+    ports:
+      - '5050:5432'
+    volumes:
+      - db-data:/var/lib/postgresql/data
+volumes:
+  db-data:

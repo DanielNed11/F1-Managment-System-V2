@@ -1,6 +1,7 @@
 package application.controller;
 
 import application.domain.Driver;
+import application.domain.DriverRace;
 import application.domain.Race;
 import application.domain.Track;
 import application.service.IDriverService;
@@ -45,7 +46,7 @@ public class RaceController {
     }
 
     @GetMapping("/{id}")
-    public String showRace(@PathVariable int id, HttpSession session, Model model) {
+    public String showRace(@PathVariable Integer id, HttpSession session, Model model) {
         Race race = raceService.getById(id);
         if (race == null) {
             return "redirect:/races";
@@ -69,8 +70,8 @@ public class RaceController {
     @PostMapping("/add")
     public String addRace(@RequestParam String name,
                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-                          @RequestParam int trackId,
-                          @RequestParam(required = false) int[] driverIds,
+                          @RequestParam Integer trackId,
+                          @RequestParam(required = false) Integer[] driverIds,
                           @RequestParam(required = false) Integer winnerId) {
 
         Race race = new Race();
@@ -89,22 +90,21 @@ public class RaceController {
         return "redirect:/races";
     }
 
-    private void validateDriverIds(@RequestParam(required = false) int[] driverIds, Race race) {
-        List<Driver> selectedDrivers = new ArrayList<>();
+    private void validateDriverIds(@RequestParam(required = false) Integer[] driverIds, Race race) {
         if (driverIds != null) {
-            for (int driverId : driverIds) {
+            for (Integer driverId : driverIds) {
                 Driver d = driverService.getById(driverId);
-                if (d != null) selectedDrivers.add(d);
+                if (d != null) {
+                    DriverRace driverRace = new DriverRace(d, race);
+                    race.getDriverRaces().add(driverRace);
+                }
             }
         }
-        // Don't use addDriver() with detached entities - just set the list directly
-        // Race is the owning side of the relationship, so this is sufficient
-        race.getDrivers().addAll(selectedDrivers);
     }
 
 
     @GetMapping("/edit/{id}")
-    public String showEditRaceForm(@PathVariable int id, HttpSession session, Model model) {
+    public String showEditRaceForm(@PathVariable Integer id, HttpSession session, Model model) {
         Race race = raceService.getById(id);
         if (race == null) {
             return "redirect:/races";
@@ -120,9 +120,9 @@ public class RaceController {
     }
 
     @PostMapping("/edit/{id}")
-    public String updateRace(@PathVariable int id,
+    public String updateRace(@PathVariable Integer id,
                              @ModelAttribute Race updatedRace,
-                             @RequestParam(required = false) int[] driverIds,
+                             @RequestParam(required = false) Integer[] driverIds,
                              @RequestParam(required = false) Integer winnerId) {
 
         Race existingRace = raceService.getById(id);
@@ -142,7 +142,7 @@ public class RaceController {
             existingRace.setWinner(null);
         }
 
-        existingRace.getDrivers().clear();
+        existingRace.getDriverRaces().clear();
 
         validateDriverIds(driverIds, existingRace);
 
@@ -153,7 +153,7 @@ public class RaceController {
 
 
     @PostMapping("/{raceId}/remove-driver/{driverId}")
-    public String removeDriverPost(@PathVariable int raceId, @PathVariable int driverId) {
+    public String removeDriverPost(@PathVariable Integer raceId, @PathVariable Integer driverId) {
         Race race = raceService.getById(raceId);
         Driver driver = driverService.getById(driverId);
 
@@ -161,7 +161,7 @@ public class RaceController {
             return "redirect:/races";
         }
 
-        race.getDrivers().remove(driver);
+        race.removeDriver(driver);
         raceService.update(race);
         log.info("Removed Driver with id " + driverId);
         return "redirect:/races/edit/" + raceId;
@@ -169,7 +169,7 @@ public class RaceController {
 
 
     @GetMapping("/{raceId}/add-driver/{driverId}")
-    public String addDriverToRace(@PathVariable int raceId, @PathVariable int driverId, HttpSession session) {
+    public String addDriverToRace(@PathVariable Integer raceId, @PathVariable Integer driverId, HttpSession session) {
         Race race = raceService.getById(raceId);
         Driver driver = driverService.getById(driverId);
 
@@ -177,8 +177,12 @@ public class RaceController {
             return "redirect:/races";
         }
 
-        if (!race.getDrivers().contains(driver)) {
-            race.getDrivers().add(driver);
+        // Check if the driver is already in this race
+        boolean driverExists = race.getDriverRaces().stream()
+                .anyMatch(dr -> dr.getDriver().equals(driver));
+
+        if (!driverExists) {
+            race.addDriver(driver);
         }
 
         raceService.update(race);
@@ -187,7 +191,7 @@ public class RaceController {
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteRace(@PathVariable int id, HttpSession session) {
+    public String deleteRace(@PathVariable Integer id, HttpSession session) {
         raceService.delete(id);
         log.info("Deleted race with id " + id + " for session: " + session.getId());
         return "redirect:/races";

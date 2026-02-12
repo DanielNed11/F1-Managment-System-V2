@@ -29,7 +29,7 @@
         <option th:each="driver : ${drivers}"
                 th:value="${driver.id}"
                 th:text="${driver.name}"
-                th:selected="${race.drivers.contains(driver)}">
+                th:selected="${#lists.contains(race.driverRaces.![driver.id], driver.id)}">
         </option>
     </select>
 
@@ -51,9 +51,9 @@
 
 <h3 th:text="#{section.driversInRace}"></h3>
 <ul>
-    <li th:each="driver : ${race.drivers}">
-        <span th:text="${driver.name}"></span>
-        <form th:action="@{/races/{raceId}/remove-driver/{driverId}(raceId=${race.id}, driverId=${driver.id})}" method="post" style="display:inline;">
+    <li th:each="driverRace : ${race.driverRaces}">
+        <span th:text="${driverRace.driver.name}"></span>
+        <form th:action="@{/races/{raceId}/remove-driver/{driverId}(raceId=${race.id}, driverId=${driverRace.driver.id})}" method="post" style="display:inline;">
             <button type="submit" th:text="#{button.remove}"></button>
         </form>
     </li>

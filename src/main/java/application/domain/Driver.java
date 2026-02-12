@@ -14,27 +14,36 @@ import java.util.Objects;
 public class Driver {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter @Setter
-    private int id;
-    @Getter @Setter
+    @Getter
+    @Setter
+    private Integer id;
+    @Getter
+    @Setter
     private String name;
-    @Getter @Setter
+    @Getter
+    @Setter
     private LocalDate dateOfBirth;
-    @Getter @Setter
+    @Getter
+    @Setter
     private String nationality;
-    @Getter @Setter
+    @Getter
+    @Setter
     private int worldChampionships;
-    @Getter @Setter
-    @ManyToOne(fetch = FetchType.EAGER)
+    @Getter
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
     private Team team;
-    @Getter @Setter
+    @Getter
+    @Setter
     private String imageUrl;
-    @Getter @Setter
-    @ManyToMany(mappedBy = "drivers", fetch = FetchType.EAGER)
-    private List<Race> races = new ArrayList<>();
+    @Getter
+    @Setter
+    @OneToMany(mappedBy = "driver", orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<DriverRace> driverRaces = new ArrayList<>();
 
-    public Driver() {}
+    public Driver() {
+    }
 
     public Driver(String name, LocalDate dateOfBirth, String nationality,
                   int worldChampionships, String imageUrl) {
@@ -45,20 +54,30 @@ public class Driver {
         this.imageUrl = imageUrl;
     }
 
+    public void addDriverRace(DriverRace driverRace) {
+        driverRaces.add(driverRace);
+        driverRace.setDriver(this);
+    }
+
+    public void removeDriverRace(DriverRace driverRace) {
+        driverRaces.remove(driverRace);
+        driverRace.setDriver(null);
+    }
+
     public void addRace(Race race) {
-        races.add(race);
+        DriverRace driverRace = new DriverRace(this, race);
+        addDriverRace(driverRace);
     }
 
     public void removeRace(Race race) {
-        races.remove(race);
-        race.getDrivers().remove(this);
+        driverRaces.removeIf(dr -> dr.getRace().equals(race));
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Driver driver)) return false;
-        return id == driver.id;
+        return Objects.equals(id, driver.id);
     }
 
     @Override
@@ -68,6 +87,6 @@ public class Driver {
 
     @Override
     public String toString() {
-        return name + " (" + nationality + ", Championships: " + worldChampionships+")";
+        return name + " (" + nationality + ", Championships: " + worldChampionships + ")";
     }
 }

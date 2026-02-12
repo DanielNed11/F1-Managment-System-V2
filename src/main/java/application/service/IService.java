@@ -4,8 +4,12 @@ import java.util.List;
 
 public interface IService<T> {
     List<T> getAll();
-    T getById(int id);
+
+    T getById(Integer id);
+
     void add(T entity);
+
     void update(T entity);
-    void delete(int id);
+
+    void delete(Integer id);
 }

@@ -3,14 +3,17 @@ package application.service.impl;
 import application.domain.Driver;
 import application.repository.IDriverRepository;
 import application.service.IDriverService;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class DriverService implements IDriverService {
 
     private final IDriverRepository driverRepository;
@@ -26,32 +29,41 @@ public class DriverService implements IDriverService {
     }
 
     @Override
-    public Driver getById(int id) {
-        return driverRepository.getById(id);
+    public Driver getById(Integer id) {
+        Driver driver = driverRepository.findById(id).orElse(null);
+        if (driver != null) {
+            Hibernate.initialize(driver.getTeam());
+            Hibernate.initialize(driver.getDriverRaces());
+        }
+        return driver;
     }
 
     @Override
+    @Transactional
     public void add(Driver driver) {
-        driverRepository.add(driver);
+        driverRepository.save(driver);
     }
 
     @Override
+    @Transactional
     public void update(Driver updatedDriver) {
-        Driver existingDriver = driverRepository.getById(updatedDriver.getId());
+        Driver existingDriver = driverRepository.findById(updatedDriver.getId()).orElse(null);
         if (existingDriver == null) {
             throw new IllegalArgumentException("Driver with id " + updatedDriver.getId() + " not found");
         }
 
-        driverRepository.updateDriver(updatedDriver);
+        driverRepository.save(updatedDriver);
     }
 
     @Override
     public List<Driver> filterDrivers(String nationality, LocalDate dateOfBirth) {
-        return driverRepository.findAll().stream()
+        List<Driver> drivers = driverRepository.findAll().stream()
                 .filter(d -> nationality == null || nationality.isBlank() ||
                         d.getNationality().toLowerCase().contains(nationality.trim().toLowerCase()))
                 .filter(d -> dateOfBirth == null || (d.getDateOfBirth() != null && d.getDateOfBirth().equals(dateOfBirth)))
                 .toList();
+        drivers.forEach(d -> Hibernate.initialize(d.getTeam()));
+        return drivers;
     }
 
     @Override
@@ -82,19 +94,23 @@ public class DriverService implements IDriverService {
     }
 
     @Override
-    public void delete(int id) {
-        driverRepository.delete(driverRepository.findDriverById(id));
+    @Transactional
+    public void delete(Integer id) {
+        driverRepository.deleteById(id);
     }
 
     @Override
     public List<Driver> findChampions() {
-        // Now all repository implementations have this method!
-        return driverRepository.findByWorldChampionshipsGreaterThan(0);
+        List<Driver> champions = driverRepository.findByWorldChampionshipsGreaterThan(0);
+        champions.forEach(d -> Hibernate.initialize(d.getTeam()));
+        return champions;
     }
 
     @Override
     public List<Driver> findByTeamId(Integer teamId) {
-        return driverRepository.findByTeamId(teamId);
+        List<Driver> drivers = driverRepository.findByTeamId(teamId);
+        drivers.forEach(d -> Hibernate.initialize(d.getTeam()));
+        return drivers;
     }
 
 }

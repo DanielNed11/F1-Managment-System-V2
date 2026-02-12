@@ -11,13 +11,16 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PermanentCircuit extends Track {
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private Boolean hasMuseum;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private Integer testDaysPerYear;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private String facilities;
 
     public PermanentCircuit(String name, String location, double lengthKm, int openedYear,

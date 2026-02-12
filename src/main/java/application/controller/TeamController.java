@@ -51,7 +51,7 @@ public class TeamController {
     }
 
     @GetMapping("/{id}")
-    public String getTeam(HttpSession session, Model model, @PathVariable int id) {
+    public String getTeam(HttpSession session, Model model, @PathVariable Integer id) {
         Team team = teamService.getById(id);
         if (team == null) {
             log.warn("Team with id " + id + " not found");
@@ -77,9 +77,9 @@ public class TeamController {
 
     @PostMapping("/add")
     public String addTeam(@Valid @ModelAttribute TeamViewModel teamViewModel,
-                         BindingResult bindingResult,
-                         HttpSession session,
-                         Model model) {
+                          BindingResult bindingResult,
+                          HttpSession session,
+                          Model model) {
         if (bindingResult.hasErrors()) {
             log.warn("Validation errors when adding team");
             return "teams/add-team";
@@ -92,7 +92,7 @@ public class TeamController {
     }
 
     @GetMapping("/edit/{id}")
-    public String showUpdateTeamForm(HttpSession session, Model model, @PathVariable int id) {
+    public String showUpdateTeamForm(HttpSession session, Model model, @PathVariable Integer id) {
         Team team = teamService.getById(id);
         if (team == null) {
             return "redirect:/teams";
@@ -105,10 +105,10 @@ public class TeamController {
     }
 
     @PostMapping("/edit/{id}")
-    public String updateTeam(@PathVariable int id,
-                            @Valid @ModelAttribute TeamViewModel teamViewModel,
-                            BindingResult bindingResult,
-                            Model model) {
+    public String updateTeam(@PathVariable Integer id,
+                             @Valid @ModelAttribute TeamViewModel teamViewModel,
+                             BindingResult bindingResult,
+                             Model model) {
         Team oldTeam = teamService.getById(id);
         if (oldTeam == null) {
             log.warn("Team with id " + id + " not found");
@@ -158,7 +158,7 @@ public class TeamController {
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteTeam(@PathVariable int id, HttpSession session) {
+    public String deleteTeam(@PathVariable Integer id, HttpSession session) {
         teamService.delete(id);
         log.info("Deleted team with id " + id + " for session: " + session.getId());
         return "redirect:/teams";

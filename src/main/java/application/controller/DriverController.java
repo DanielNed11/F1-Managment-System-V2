@@ -61,7 +61,7 @@ public class DriverController {
     }
 
     @GetMapping("/{id}")
-    public String getDriverById(@PathVariable int id, HttpSession session, Model model) {
+    public String getDriverById(@PathVariable Integer id, HttpSession session, Model model) {
         Driver driver = driverService.getById(id);
         if (driver == null) {
             log.warn("Driver with id " + id + " not found");
@@ -88,9 +88,9 @@ public class DriverController {
 
     @PostMapping("/add")
     public String addDriver(@Valid @ModelAttribute DriverViewModel driverViewModel,
-                           BindingResult bindingResult,
-                           HttpSession session,
-                           Model model) {
+                            BindingResult bindingResult,
+                            HttpSession session,
+                            Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("teams", teamService.getAll());
             log.warn("Validation errors when adding driver");
@@ -104,7 +104,7 @@ public class DriverController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editDriver(@PathVariable int id, HttpSession session, Model model) {
+    public String editDriver(@PathVariable Integer id, HttpSession session, Model model) {
         Driver driver = driverService.getById(id);
         if (driver == null) {
             return "redirect:/drivers";
@@ -118,7 +118,7 @@ public class DriverController {
     }
 
     @PostMapping("/edit/{id}")
-    public String updateDriver(@PathVariable int id,
+    public String updateDriver(@PathVariable Integer id,
                                @Valid @ModelAttribute DriverViewModel driverViewModel,
                                BindingResult bindingResult,
                                Model model) {
@@ -179,7 +179,7 @@ public class DriverController {
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteDriver(@PathVariable int id, HttpSession session) {
+    public String deleteDriver(@PathVariable Integer id, HttpSession session) {
         driverService.delete(id);
         log.info("Deleted driver with id " + id + " for session: " + session.getId());
         return "redirect:/drivers";
