@@ -29,8 +29,8 @@ public class Race {
     @JoinColumn(name = "winner_id")
     private Driver winner;
     @Getter @Setter
-    @OneToMany(mappedBy = "race", orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<DriverRace> driverRaces = new ArrayList<>();
+    @OneToMany(mappedBy = "race", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<RaceDriver> raceDrivers = new ArrayList<>();
     @Getter @Setter
     private boolean hasEnded;
 
@@ -55,23 +55,23 @@ public class Race {
         }
     }
 
-    public void addDriverRace(DriverRace driverRace) {
-        driverRaces.add(driverRace);
-        driverRace.setRace(this);
+    public void addRaceDriver(RaceDriver raceDrivers) {
+        this.raceDrivers.add(raceDrivers);
+        raceDrivers.setRace(this);
     }
 
-    public void removeDriverRace(DriverRace driverRace) {
-        driverRaces.remove(driverRace);
-        driverRace.setRace(null);
+    public void removeRaceDriver(RaceDriver raceDrivers) {
+        this.raceDrivers.remove(raceDrivers);
+        raceDrivers.setRace(null);
     }
 
-    public void addDriver(Driver driver) {
-        DriverRace driverRace = new DriverRace(driver, this);
-        addDriverRace(driverRace);
+    public void addDriver(Driver driver, int position) {
+        RaceDriver raceDrivers = new RaceDriver(driver, this, position);
+        addRaceDriver(raceDrivers);
     }
 
     public void removeDriver(Driver driver) {
-        driverRaces.removeIf(dr -> dr.getDriver().equals(driver));
+        raceDrivers.removeIf(rd -> rd.getDriver().equals(driver));
     }
 
     @Override

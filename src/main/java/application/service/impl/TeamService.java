@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class TeamService implements ITeamService {
 
     private final ITeamRepository teamRepository;
@@ -38,19 +38,16 @@ public class TeamService implements ITeamService {
     }
 
     @Override
-    @Transactional
     public void add(Team team) {
         teamRepository.save(team);
     }
 
     @Override
-    @Transactional
     public void update(Team team) {
         teamRepository.save(team);
     }
 
     @Override
-    @Transactional
     public void delete(Integer id) {
         teamRepository.deleteById(id);
     }

@@ -60,12 +60,14 @@
                         <details class="mt-2">
                             <summary class="text-primary fw-bold" style="cursor: pointer;">
                                 <i class="bi bi-people me-1"></i><span th:text="#{details.showDrivers}">Show Drivers</span>
-                                (<span th:text="${#lists.size(race.driverRaces)}">0</span>)
+                                (<span th:text="${#lists.size(race.raceDrivers)}">0</span>)
                             </summary>
                             <ul class="list-unstyled mt-2 ms-4">
-                                <li th:each="driverRace : ${race.driverRaces}" class="mb-1">
+                                <li th:each="raceDrivers : ${race.raceDrivers}" class="mb-1">
+                                    <span th:if="${raceDrivers.position != null}" class="badge bg-secondary me-1" th:text="${raceDrivers.position}">1</span>
+                                    <span th:if="${raceDrivers.position == null}" class="badge bg-light text-dark me-1">TBD</span>
                                     <i class="bi bi-person-circle text-muted me-1"></i>
-                                    <span th:text="${driverRace.driver.name}">Driver Name</span>
+                                    <span th:text="${raceDrivers.driver.name}">Driver Name</span>
                                 </li>
                             </ul>
                         </details>

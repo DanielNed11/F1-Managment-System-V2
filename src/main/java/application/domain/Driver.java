@@ -40,7 +40,7 @@ public class Driver {
     @Getter
     @Setter
     @OneToMany(mappedBy = "driver", orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<DriverRace> driverRaces = new ArrayList<>();
+    private List<RaceDriver> raceDrivers = new ArrayList<>();
 
     public Driver() {
     }
@@ -54,23 +54,23 @@ public class Driver {
         this.imageUrl = imageUrl;
     }
 
-    public void addDriverRace(DriverRace driverRace) {
-        driverRaces.add(driverRace);
-        driverRace.setDriver(this);
+    public void addRaceDriver(RaceDriver raceDrivers) {
+        this.raceDrivers.add(raceDrivers);
+        raceDrivers.setDriver(this);
     }
 
-    public void removeDriverRace(DriverRace driverRace) {
-        driverRaces.remove(driverRace);
-        driverRace.setDriver(null);
+    public void removeRaceDriver(RaceDriver raceDrivers) {
+        this.raceDrivers.remove(raceDrivers);
+        raceDrivers.setDriver(null);
     }
 
-    public void addRace(Race race) {
-        DriverRace driverRace = new DriverRace(this, race);
-        addDriverRace(driverRace);
+    public void addRace(Race race, int position) {
+        RaceDriver raceDrivers = new RaceDriver(this, race, position);
+        addRaceDriver(raceDrivers);
     }
 
     public void removeRace(Race race) {
-        driverRaces.removeIf(dr -> dr.getRace().equals(race));
+        raceDrivers.removeIf(rd -> rd.getRace().equals(race));
     }
 
     @Override

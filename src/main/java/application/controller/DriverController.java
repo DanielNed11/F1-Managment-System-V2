@@ -50,7 +50,7 @@ public class DriverController {
 
         List<Driver> drivers = driverService.filterDrivers(nationality, dateOfBirth);
         List<DriverViewModel> driverViewModels = drivers.stream()
-                .map(this::mapToViewModel)
+                .map(driverService::mapToViewModel)
                 .collect(Collectors.toList());
 
         model.addAttribute("nationality", nationality);
@@ -70,7 +70,7 @@ public class DriverController {
 
         List<Race> races = raceService.findRacesByDriverId(id);
 
-        DriverViewModel driverViewModel = mapToViewModel(driver);
+        DriverViewModel driverViewModel = driverService.mapToViewModel(driver);
         model.addAttribute("driver", driverViewModel);
         model.addAttribute("races", races);
         log.info("Getting driver with id " + id);
@@ -97,7 +97,7 @@ public class DriverController {
             return "drivers/add-driver";
         }
 
-        Driver driver = mapToDriver(driverViewModel);
+        Driver driver = driverService.mapToDriver(driverViewModel);
         driverService.add(driver);
         log.info("Adding driver with id " + driver.getId() + " for session: " + session.getId());
         return "redirect:/drivers";
@@ -110,7 +110,7 @@ public class DriverController {
             return "redirect:/drivers";
         }
 
-        DriverViewModel driverViewModel = mapToViewModel(driver);
+        DriverViewModel driverViewModel = driverService.mapToViewModel(driver);
         model.addAttribute("driverViewModel", driverViewModel);
         model.addAttribute("teams", teamService.getAll());
         log.info("Show edit form for driver with id " + id);
@@ -133,49 +133,11 @@ public class DriverController {
             return "drivers/edit-driver";
         }
 
-        Driver driver = mapToDriver(driverViewModel);
+        Driver driver = driverService.mapToDriver(driverViewModel);
         driver.setId(id);
         driverService.update(driver);
         log.info("Updating driver with id " + id);
         return "redirect:/drivers";
-    }
-
-    private DriverViewModel mapToViewModel(Driver driver) {
-        DriverViewModel viewModel = new DriverViewModel();
-        viewModel.setId(driver.getId());
-        viewModel.setName(driver.getName());
-        viewModel.setDateOfBirth(driver.getDateOfBirth());
-        viewModel.setNationality(driver.getNationality());
-        viewModel.setWorldChampionships(driver.getWorldChampionships());
-
-        Team team = driver.getTeam();
-        if (team != null) {
-            viewModel.setTeamId(team.getId());
-            viewModel.setTeamName(team.getName());
-        } else {
-            viewModel.setTeamId(0);
-            viewModel.setTeamName(null);
-        }
-
-        viewModel.setImageUrl(driver.getImageUrl());
-        return viewModel;
-    }
-
-    private Driver mapToDriver(DriverViewModel viewModel) {
-        Driver driver = new Driver();
-        driver.setId(viewModel.getId());
-        driver.setName(viewModel.getName());
-        driver.setDateOfBirth(viewModel.getDateOfBirth());
-        driver.setNationality(viewModel.getNationality());
-        driver.setWorldChampionships(viewModel.getWorldChampionships());
-
-        if (viewModel.getTeamId() != 0) {
-            Team team = teamService.getById(viewModel.getTeamId());
-            driver.setTeam(team);
-        }
-
-        driver.setImageUrl(viewModel.getImageUrl());
-        return driver;
     }
 
     @PostMapping("/{id}/delete")

@@ -14,12 +14,12 @@ public interface IDriverRepository extends JpaRepository<Driver, Integer> {
 
     @Query("SELECT DISTINCT d FROM Driver d " +
             "LEFT JOIN FETCH d.team " +
-            "LEFT JOIN FETCH d.driverRaces")
+            "LEFT JOIN FETCH d.raceDrivers")
     List<Driver> findAll();
 
     @Query("SELECT d FROM Driver d " +
             "LEFT JOIN FETCH d.team " +
-            "LEFT JOIN FETCH d.driverRaces " +
+            "LEFT JOIN FETCH d.raceDrivers " +
             "WHERE d.id = :id")
     Optional<Driver> findById(@Param("id") Integer id);
 

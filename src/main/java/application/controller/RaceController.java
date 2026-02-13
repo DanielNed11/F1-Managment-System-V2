@@ -1,7 +1,6 @@
 package application.controller;
 
 import application.domain.Driver;
-import application.domain.DriverRace;
 import application.domain.Race;
 import application.domain.Track;
 import application.service.IDriverService;
@@ -18,7 +17,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/races")
@@ -71,35 +72,11 @@ public class RaceController {
     public String addRace(@RequestParam String name,
                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
                           @RequestParam Integer trackId,
-                          @RequestParam(required = false) Integer[] driverIds,
+                          @RequestParam(required = false) Integer[] participatingDriverIds,
                           @RequestParam(required = false) Integer winnerId) {
 
-        Race race = new Race();
-        race.setName(name);
-        race.setDate(date);
-        race.setTrack(trackService.getById(trackId));
-
-        if (winnerId != null && winnerId > 0) {
-            race.setWinner(driverService.getById(winnerId));
-        }
-
-        validateDriverIds(driverIds, race);
-
-        raceService.add(race);
-        log.info("Added race with id " + race.getId());
+        raceService.addRace(name, date, trackId, participatingDriverIds, winnerId);
         return "redirect:/races";
-    }
-
-    private void validateDriverIds(@RequestParam(required = false) Integer[] driverIds, Race race) {
-        if (driverIds != null) {
-            for (Integer driverId : driverIds) {
-                Driver d = driverService.getById(driverId);
-                if (d != null) {
-                    DriverRace driverRace = new DriverRace(d, race);
-                    race.getDriverRaces().add(driverRace);
-                }
-            }
-        }
     }
 
 
@@ -110,9 +87,17 @@ public class RaceController {
             return "redirect:/races";
         }
 
+        Map<Integer, Integer> driverPositionsMap = new HashMap<>();
+        race.getRaceDrivers().forEach(rd -> {
+            if (rd.getPosition() != null) {
+                driverPositionsMap.put(rd.getDriver().getId(), rd.getPosition());
+            }
+        });
+
         model.addAttribute("race", race);
         model.addAttribute("tracks", trackService.getAll());
         model.addAttribute("drivers", driverService.getAll());
+        model.addAttribute("driverPositionsMap", driverPositionsMap);
         model.addAttribute("newDrivers", new ArrayList<Driver>());
         model.addAttribute("newTrack", new Track());
         log.info("Show Edit Race Form");
@@ -122,31 +107,30 @@ public class RaceController {
     @PostMapping("/edit/{id}")
     public String updateRace(@PathVariable Integer id,
                              @ModelAttribute Race updatedRace,
-                             @RequestParam(required = false) Integer[] driverIds,
-                             @RequestParam(required = false) Integer winnerId) {
+                             @RequestParam(required = false) Integer[] participatingDriverIds,
+                             @RequestParam(required = false) Integer winnerId,
+                             @RequestParam Map<String, String> allParams) {
 
         Race existingRace = raceService.getById(id);
         if (existingRace == null) {
             return "redirect:/races";
         }
 
-        if (updatedRace.getTrack() != null && updatedRace.getTrack().getId() != 0) {
-            existingRace.setTrack(trackService.getById(updatedRace.getTrack().getId()));
-        } else {
-            existingRace.setTrack(null);
-        }
+        // Extract position data from form parameters (format: driverPosition_{driverId})
+        Map<Integer, Integer> driverPositions = new HashMap<>();
+        allParams.forEach((key, value) -> {
+            if (key.startsWith("driverPosition_") && value != null && !value.isEmpty()) {
+                try {
+                    Integer driverId = Integer.parseInt(key.substring(15)); // "driverPosition_".length() = 15
+                    Integer position = Integer.parseInt(value);
+                    driverPositions.put(driverId, position);
+                } catch (NumberFormatException e) {
+                    // Skip invalid entries
+                }
+            }
+        });
 
-        if (winnerId != null && winnerId > 0) {
-            existingRace.setWinner(driverService.getById(winnerId));
-        } else {
-            existingRace.setWinner(null);
-        }
-
-        existingRace.getDriverRaces().clear();
-
-        validateDriverIds(driverIds, existingRace);
-
-        raceService.update(existingRace);
+        raceService.updateRace(updatedRace, participatingDriverIds, winnerId, existingRace, driverPositions);
         log.info("Updated Race with id " + id);
         return "redirect:/races";
     }
@@ -169,7 +153,7 @@ public class RaceController {
 
 
     @GetMapping("/{raceId}/add-driver/{driverId}")
-    public String addDriverToRace(@PathVariable Integer raceId, @PathVariable Integer driverId, HttpSession session) {
+    public String addDriverToRace(@PathVariable Integer raceId, @PathVariable Integer driverId, int position, HttpSession session) {
         Race race = raceService.getById(raceId);
         Driver driver = driverService.getById(driverId);
 
@@ -177,15 +161,7 @@ public class RaceController {
             return "redirect:/races";
         }
 
-        // Check if the driver is already in this race
-        boolean driverExists = race.getDriverRaces().stream()
-                .anyMatch(dr -> dr.getDriver().equals(driver));
-
-        if (!driverExists) {
-            race.addDriver(driver);
-        }
-
-        raceService.update(race);
+        raceService.addDriverToRace(position, race, driver);
         log.info("Added Driver with id " + driverId + " for session: " + session.getId());
         return "redirect:/races/edit/" + raceId;
     }

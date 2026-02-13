@@ -46,29 +46,34 @@
     </table>
 
     <h3 class="mt-5 mb-3" th:text="#{table.header.drivers}">Drivers</h3>
-    <table class="table table-striped table-hover align-middle" th:if="${!#lists.isEmpty(race.driverRaces)}">
+    <table class="table table-striped table-hover align-middle" th:if="${!#lists.isEmpty(race.raceDrivers)}">
         <thead class="table-light">
         <tr>
             <th th:text="#{table.header.id}">ID</th>
+            <th>Position</th>
             <th th:text="#{table.header.name}">Name</th>
             <th th:text="#{table.header.nationality}">Nationality</th>
             <th th:text="#{table.header.view}">View</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="driverRace : ${race.driverRaces}">
-            <td th:text="${driverRace.driver.id}"></td>
-            <td th:text="${driverRace.driver.name}"></td>
-            <td th:text="${driverRace.driver.nationality}"></td>
+        <tr th:each="raceDrivers : ${race.raceDrivers}">
+            <td th:text="${raceDrivers.driver.id}"></td>
+            <td>
+                <strong th:if="${raceDrivers.position != null}" th:text="${raceDrivers.position}"></strong>
+                <span th:if="${raceDrivers.position == null}" class="text-muted">TBD</span>
+            </td>
+            <td th:text="${raceDrivers.driver.name}"></td>
+            <td th:text="${raceDrivers.driver.nationality}"></td>
             <td>
                 <a class="btn btn-sm btn-outline-primary"
-                   th:href="@{/drivers/{id}(id=${driverRace.driver.id})}"
+                   th:href="@{/drivers/{id}(id=${raceDrivers.driver.id})}"
                    th:text="#{button.viewDetails}">View</a>
             </td>
         </tr>
         </tbody>
     </table>
-    <p th:if="${#lists.isEmpty(race.driverRaces)}" class="text-muted" th:text="#{msg.noDriversInRace}">No drivers participating in this race.</p>
+    <p th:if="${#lists.isEmpty(race.raceDrivers)}" class="text-muted" th:text="#{msg.noDriversInRace}">No drivers participating in this race.</p>
 
     <a class="btn btn-secondary mt-3" th:href="@{/races}">
         <i class="bi bi-arrow-left"></i>

@@ -28,13 +28,30 @@
 
     <br>
 
-    <label th:text="#{label.addDrivers} + ':'"></label>
-    <select name="driverIds" multiple>
-        <option th:each="driver : ${drivers}"
-                th:value="${driver.id}"
-                th:text="${driver.name}">
-        </option>
-    </select>
+    <h3 th:text="#{label.addDrivers}">Select Drivers</h3>
+    <p class="text-muted">Check the drivers who will participate in this race.</p>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Participated</th>
+                <th>Driver</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="driver : ${drivers}">
+                <td>
+                    <input type="checkbox"
+                           name="participatingDriverIds"
+                           th:value="${driver.id}"
+                           th:id="${'driver-' + driver.id}"/>
+                </td>
+                <td>
+                    <label th:for="${'driver-' + driver.id}" th:text="${driver.name}">Driver Name</label>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
     <br>
 

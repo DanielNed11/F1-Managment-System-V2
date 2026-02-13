@@ -8,9 +8,9 @@ import lombok.Setter;
 import java.util.Objects;
 
 @Entity
-@Table(name = "driver_races")
+@Table(name = "race_drivers")
 @NoArgsConstructor
-public class DriverRace {
+public class RaceDriver {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
@@ -29,15 +29,26 @@ public class DriverRace {
     @JoinColumn(name = "race_id")
     private Race race;
 
-    public DriverRace(Driver driver, Race race) {
+    @Getter
+    @Setter
+    private Integer position;
+
+    public RaceDriver(Driver driver, Race race, Integer position) {
         this.driver = driver;
         this.race = race;
+        this.position = position;
+    }
+
+    public RaceDriver(Driver driver, Race race) {
+        this.driver = driver;
+        this.race = race;
+        this.position = null;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DriverRace that)) return false;
+        if (!(o instanceof RaceDriver that)) return false;
         return Objects.equals(id, that.id);
     }
 

@@ -22,8 +22,8 @@ INSERT INTO races (name, date, track_id, winner_id, has_ended) VALUES
                                                                    ('Monaco Grand Prix', '2025-05-25', 1, 1, TRUE),
                                                                    ('British Grand Prix', '2025-07-13', 2, 2, TRUE);
 
-INSERT INTO driver_races (race_id, driver_id) VALUES
-                                                  (1, 1),
-                                                  (1, 3),
-                                                  (2, 2),
-                                                  (2, 1);
+INSERT INTO race_drivers (race_id, driver_id, position) VALUES
+                                                  (1, 1, 1),
+                                                  (1, 3, 2),
+                                                  (2, 2, 1),
+                                                  (2, 1, 2);
