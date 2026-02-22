@@ -26,7 +26,8 @@ public class Race {
     private Track track;
     @Getter @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "winner_id")
+    @JoinColumn(name = "winner_id", foreignKey = @ForeignKey(name = "fk_race_winner",
+        foreignKeyDefinition = "FOREIGN KEY (winner_id) REFERENCES drivers(id) ON DELETE SET NULL"))
     private Driver winner;
     @Getter @Setter
     @OneToMany(mappedBy = "race", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

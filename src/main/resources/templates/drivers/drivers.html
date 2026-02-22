@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<script src="/js/driver.js"></script>
 <head th:replace="~{fragments/header :: head(#{page.drivers.title})}"></head>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
@@ -9,8 +10,9 @@
         <h1 class="display-4">
             <i class="bi bi-person-circle me-3"></i><span th:text="#{page.drivers.heading}">Drivers</span>
         </h1>
-        <p class="lead mb-4" th:text="#{page.drivers.description}">Browse all Formula 1 drivers and their achievements</p>
-        <a th:href="@{/drivers/add}" class="btn btn-success btn-lg">
+        <p class="lead mb-4" th:text="#{page.drivers.description}">Browse all Formula 1 drivers and their
+            achievements</p>
+        <a class="btn btn-success btn-lg" th:href="@{/drivers/add}">
             <i class="bi bi-person-plus me-2"></i><span th:text="#{button.addDriver}">Add New Driver</span>
         </a>
     </div>
@@ -18,22 +20,23 @@
 
 <div class="container">
     <div class="filter-section">
-        <h5 class="mb-3"><i class="bi bi-funnel me-2"></i><span th:text="#{filter.drivers.heading}">Filter Drivers</span></h5>
-        <form class="row g-3" th:action="@{/drivers}" method="get">
+        <h5 class="mb-3"><i class="bi bi-funnel me-2"></i><span
+                th:text="#{filter.drivers.heading}">Filter Drivers</span></h5>
+        <form class="row g-3" method="get" th:action="@{/drivers}">
             <div class="col-md-4">
                 <label class="form-label" th:text="#{label.nationality}">Nationality</label>
-                <input type="text" class="form-control" name="nationality"
-                       th:value="${nationality}" th:placeholder="#{label.nationality}" />
+                <input class="form-control" name="nationality" th:placeholder="#{label.nationality}"
+                       th:value="${nationality}" type="text"/>
             </div>
 
             <div class="col-md-4">
                 <label class="form-label" th:text="#{label.dateOfBirth}">Date of Birth</label>
-                <input type="date" class="form-control" name="dateOfBirth"
-                       th:value="${dateOfBirth != null} ? ${#temporals.format(dateOfBirth, 'yyyy-MM-dd')} : ''" />
+                <input class="form-control" name="dateOfBirth" th:value="${dateOfBirth != null} ? ${#temporals.format(dateOfBirth, 'yyyy-MM-dd')} : ''"
+                       type="date"/>
             </div>
 
             <div class="col-md-4 d-flex align-items-end gap-2">
-                <button type="submit" class="btn btn-primary flex-fill">
+                <button class="btn btn-primary flex-fill" type="submit">
                     <i class="bi bi-search me-1"></i><span th:text="#{button.filter}">Filter</span>
                 </button>
                 <a class="btn btn-outline-secondary flex-fill" th:href="@{/drivers}">
@@ -59,8 +62,8 @@
         <div class="col" th:each="driver : ${drivers}">
             <div class="card h-100 shadow-custom">
                 <img class="card-img-top"
-                     th:src="${driver.imageUrl}"
-                     th:alt="${driver.name}" />
+                     th:alt="${driver.name}"
+                     th:src="${driver.imageUrl}"/>
 
                 <div class="card-body">
                     <h5 class="card-title fw-bold" th:text="${driver.name}">Name</h5>
@@ -83,12 +86,11 @@
                        th:href="@{/drivers/{id}(id=${driver.id})}">
                         <i class="bi bi-eye me-1"></i><span th:text="#{button.viewDetails}">View</span>
                     </a>
-                    <form th:action="@{/drivers/{id}/delete(id=${driver.id})}" method="post"
-                          th:attr="onsubmit='return confirm(\'' + #{confirm.delete.driver} + '\');'">
-                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                            <i class="bi bi-trash me-1"></i><span th:text="#{button.delete}">Delete</span>
-                        </button>
-                    </form>
+                    <button class="btn btn-sm btn-outline-danger"
+                            id="deleteDriver" th:data-id="${driver.id}">
+                        <i class="bi bi-trash me-1"></i>
+                        <span th:text="#{button.delete}">Delete</span>
+                    </button>
                 </div>
             </div>
         </div>

@@ -145,4 +145,200 @@ docker-compose.yml       # PostgreSQL database configuration
 
 ---
 
-**Last Updated:** February 6, 2026
+## Week 2
+
+This section contains HTTP requests and responses for the REST API endpoints implemented for drivers.
+
+### Fetching all drivers - OK (200)
+
+**Request:**
+```
+GET http://localhost:8080/api/drivers
+Accept: application/json
+```
+
+**Response:**
+```
+HTTP/1.1 200
+Content-Type: application/json
+
+[
+  {
+    "id": 5,
+    "name": "Nikola Tsolov",
+    "dateOfBirth": "2006-12-21",
+    "nationality": "Bulgarian",
+    "worldChampionships": 0,
+    "teamId": 4,
+    "teamName": "Levski",
+    "imageUrl": "/img/Nikola.png"
+  },
+  {
+    "id": 4,
+    "name": "Carlos Sainz",
+    "dateOfBirth": "1994-09-01",
+    "nationality": "Spanish",
+    "worldChampionships": 0,
+    "teamId": 2,
+    "teamName": "Ferrari",
+    "imageUrl": "/img/Carlos.png"
+  },
+  {
+    "id": 3,
+    "name": "Charles Leclerc",
+    "dateOfBirth": "1997-10-16",
+    "nationality": "Monegasque",
+    "worldChampionships": 0,
+    "teamId": 2,
+    "teamName": "Ferrari",
+    "imageUrl": "/img/Leclerc.png"
+  },
+  {
+    "id": 2,
+    "name": "Max Verstappen",
+    "dateOfBirth": "1997-09-30",
+    "nationality": "Dutch",
+    "worldChampionships": 2,
+    "teamId": 3,
+    "teamName": "Red Bull Racing",
+    "imageUrl": "/img/Verstappen.png"
+  },
+  {
+    "id": 1,
+    "name": "Lewis Hamilton",
+    "dateOfBirth": "1985-01-07",
+    "nationality": "British",
+    "worldChampionships": 7,
+    "teamId": 1,
+    "teamName": "Mercedes",
+    "imageUrl": "/img/Hamilton.png"
+  }
+]
+```
+
+---
+
+### Fetching single driver by ID - OK (200)
+
+**Request:**
+```
+GET http://localhost:8080/api/drivers/1
+Accept: application/json
+```
+
+**Response:**
+```
+HTTP/1.1 200
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "Lewis Hamilton",
+  "dateOfBirth": "1985-01-07",
+  "nationality": "British",
+  "worldChampionships": 7,
+  "teamId": 1,
+  "teamName": "Mercedes",
+  "imageUrl": "/img/Hamilton.png"
+}
+```
+
+---
+
+### Fetching single driver by ID - Not Found (404)
+
+**Request:**
+```
+GET http://localhost:8080/api/drivers/999
+Accept: application/json
+```
+
+**Response:**
+```
+HTTP/1.1 404
+Content-Length: 0
+```
+
+---
+
+### Fetching races for a specific driver - OK (200)
+
+**Request:**
+```
+GET http://localhost:8080/api/drivers/1/races
+Accept: application/json
+```
+
+**Response:**
+```
+HTTP/1.1 200
+Content-Type: application/json
+
+[
+  {
+    "id": 1,
+    "name": "Monaco Grand Prix",
+    "date": "2025-05-25",
+    "trackId": 1,
+    "trackName": "Monaco GP",
+    "winnerId": 1,
+    "winnerName": "Lewis Hamilton",
+    "hasEnded": true
+  },
+  {
+    "id": 2,
+    "name": "British Grand Prix",
+    "date": "2025-07-13",
+    "trackId": 2,
+    "trackName": "Silverstone",
+    "winnerId": 2,
+    "winnerName": "Max Verstappen",
+    "hasEnded": true
+  }
+]
+```
+
+---
+
+### Fetching races for a specific driver - Not Found (404)
+
+**Request:**
+```
+GET http://localhost:8080/api/drivers/999/races
+Accept: application/json
+```
+
+**Response:**
+```
+HTTP/1.1 404
+Content-Length: 0
+```
+
+---
+
+### Deleting a driver - No Content (204)
+
+**Request:**
+```
+DELETE http://localhost:8080/api/drivers/5
+```
+
+**Response:**
+```
+HTTP/1.1 204
+```
+
+---
+
+### Deleting a driver - Not Found (404)
+
+**Request:**
+```
+DELETE http://localhost:8080/api/drivers/999
+```
+
+**Response:**
+```
+HTTP/1.1 404
+Content-Length: 0
+```

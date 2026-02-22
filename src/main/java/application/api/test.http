@@ -1,0 +1,41 @@
+### Get all drivers - OK (200)
+GET http://localhost:8080/api/drivers
+Accept: application/json
+
+###
+
+### Get single driver by ID - OK (200)
+GET http://localhost:8080/api/drivers/1
+Accept: application/json
+
+###
+
+### Get single driver by ID - Not Found (404)
+GET http://localhost:8080/api/drivers/999
+Accept: application/json
+
+###
+
+### Get races for a specific driver - OK (200)
+GET http://localhost:8080/api/drivers/1/races
+Accept: application/json
+
+###
+
+### Get races for a specific driver - Not Found (404)
+GET http://localhost:8080/api/drivers/999/races
+Accept: application/json
+
+###
+
+### Delete driver by ID - No Content (204)
+DELETE http://localhost:8080/api/drivers/1
+Accept: application/json
+
+###
+
+### Delete driver by ID - Not Found (404)
+DELETE http://localhost:8080/api/drivers/999
+Accept: application/json
+
+###

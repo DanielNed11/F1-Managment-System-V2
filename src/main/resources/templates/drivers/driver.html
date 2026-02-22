@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+<script src="/js/driver.js"></script>
 <head th:replace="~{fragments/header :: head(#{page.driver.heading})}"></head>
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
@@ -45,39 +46,16 @@
         </tbody>
     </table>
 
-    <h3 class="mt-5 mb-3" th:text="#{table.header.races}">Races</h3>
-    <table class="table table-striped table-hover align-middle" th:if="${!#lists.isEmpty(races)}">
-        <thead class="table-light">
-        <tr>
-            <th th:text="#{table.header.id}">ID</th>
-            <th th:text="#{table.header.name}">Name</th>
-            <th th:text="#{table.header.date}">Date</th>
-            <th th:text="#{table.header.track}">Track</th>
-            <th th:text="#{table.header.winner}">Winner</th>
-            <th th:text="#{table.header.view}">View</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="race : ${races}">
-            <td th:text="${race.id}"></td>
-            <td th:text="${race.name}"></td>
-            <td th:text="${race.date}"></td>
-            <td th:text="${race.track != null ? race.track.name : ''}"></td>
-            <td th:text="${race.winner != null ? race.winner.name : ''}"></td>
-            <td>
-                <a class="btn btn-sm btn-outline-primary"
-                   th:href="@{/races/{id}(id=${race.id})}"
-                   th:text="#{button.viewDetails}">View</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <p th:if="${#lists.isEmpty(races)}" class="text-muted" th:text="#{msg.noRacesForDriver}">No races participated in.</p>
-
     <a class="btn btn-secondary mt-3" th:href="@{/drivers}">
         <i class="bi bi-arrow-left"></i>
         <span th:text="#{page.drivers.title}"></span>
     </a>
+
+    <div id="racesContainer"></div>
+
+    <button class="btn btn-primary" id="loadRacesBtn" th:data-id="${driver.id}">
+        Load Races
+    </button>
 </main>
 
 <div th:replace="~{fragments/footer :: footer}"></div>

@@ -39,7 +39,7 @@ public class Driver {
     private String imageUrl;
     @Getter
     @Setter
-    @OneToMany(mappedBy = "driver", orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "driver", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<RaceDriver> raceDrivers = new ArrayList<>();
 
     public Driver() {

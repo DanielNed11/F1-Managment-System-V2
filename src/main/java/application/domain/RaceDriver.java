@@ -20,7 +20,8 @@ public class RaceDriver {
     @Getter
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "driver_id")
+    @JoinColumn(name = "driver_id", foreignKey = @ForeignKey(name = "fk_racedriver_driver",
+        foreignKeyDefinition = "FOREIGN KEY (driver_id) REFERENCES drivers(id) ON DELETE CASCADE"))
     private Driver driver;
 
     @Getter
