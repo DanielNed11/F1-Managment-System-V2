@@ -51,7 +51,7 @@
             <div class="stats-card shadow-custom">
                 <div class="card-body text-center">
                     <i class="bi bi-person-circle"></i>
-                    <h3 class="mt-2 mb-0" th:text="${#lists.size(drivers)}">0</h3>
+                    <h3 class="mt-2 mb-0" id="driversCount" th:text="${#lists.size(drivers)}">0</h3>
                     <p class="mb-0" th:text="#{label.totalDrivers}">Total Drivers</p>
                 </div>
             </div>
@@ -59,7 +59,7 @@
     </div>
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
-        <div class="col" th:each="driver : ${drivers}">
+        <div class="col" th:each="driver : ${drivers}" th:attr="data-driver-id=${driver.id}">
             <div class="card h-100 shadow-custom">
                 <img class="card-img-top"
                      th:alt="${driver.name}"
@@ -86,8 +86,8 @@
                        th:href="@{/drivers/{id}(id=${driver.id})}">
                         <i class="bi bi-eye me-1"></i><span th:text="#{button.viewDetails}">View</span>
                     </a>
-                    <button class="btn btn-sm btn-outline-danger"
-                            id="deleteDriver" th:data-id="${driver.id}">
+                    <button class="btn btn-sm btn-outline-danger deleteDriverBtn"
+                            th:data-id="${driver.id}">
                         <i class="bi bi-trash me-1"></i>
                         <span th:text="#{button.delete}">Delete</span>
                     </button>

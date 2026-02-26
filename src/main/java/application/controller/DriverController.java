@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/drivers")
 public class DriverController {
 
     private final IDriverService driverService;
@@ -38,7 +37,7 @@ public class DriverController {
         this.raceService = raceService;
     }
 
-    @GetMapping
+    @GetMapping({"/drivers", "/"})
     public String showAllDrivers(
             @RequestParam(required = false) String nationality,
             @RequestParam(required = false)
@@ -60,7 +59,7 @@ public class DriverController {
         return "drivers/drivers";
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/drivers/{id}")
     public String getDriverById(@PathVariable Integer id, HttpSession session, Model model) {
         Driver driver = driverService.getById(id);
         if (driver == null) {
@@ -77,7 +76,7 @@ public class DriverController {
         return "drivers/driver";
     }
 
-    @GetMapping("/add")
+    @GetMapping("/drivers/add")
     public String showAddForm(HttpSession session, Model model) {
 
         model.addAttribute("driverViewModel", new DriverViewModel());
@@ -86,7 +85,7 @@ public class DriverController {
         return "drivers/add-driver";
     }
 
-    @PostMapping("/add")
+    @PostMapping("/drivers/add")
     public String addDriver(@Valid @ModelAttribute DriverViewModel driverViewModel,
                             BindingResult bindingResult,
                             HttpSession session,
@@ -103,7 +102,7 @@ public class DriverController {
         return "redirect:/drivers";
     }
 
-    @GetMapping("/edit/{id}")
+    @GetMapping("/drivers/edit/{id}")
     public String editDriver(@PathVariable Integer id, HttpSession session, Model model) {
         Driver driver = driverService.getById(id);
         if (driver == null) {
@@ -117,7 +116,7 @@ public class DriverController {
         return "drivers/edit-driver";
     }
 
-    @PostMapping("/edit/{id}")
+    @PostMapping("/drivers/edit/{id}")
     public String updateDriver(@PathVariable Integer id,
                                @Valid @ModelAttribute DriverViewModel driverViewModel,
                                BindingResult bindingResult,
@@ -140,14 +139,14 @@ public class DriverController {
         return "redirect:/drivers";
     }
 
-    @PostMapping("/{id}/delete")
+    @PostMapping("/drivers/{id}/delete")
     public String deleteDriver(@PathVariable Integer id, HttpSession session) {
         driverService.delete(id);
         log.info("Deleted driver with id " + id + " for session: " + session.getId());
         return "redirect:/drivers";
     }
 
-    @GetMapping("/champions")
+    @GetMapping("/drivers/champions")
     public String showChampions(HttpSession session, Model model) {
 
         List<Driver> champions = driverService.findChampions();

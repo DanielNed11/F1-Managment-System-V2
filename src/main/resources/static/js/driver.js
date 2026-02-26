@@ -8,10 +8,9 @@ async function getAllDrivers() {
                 }
             });
 
-        if (!res.ok) {
-            throw new Error('Something went wrong')
+        if (res.ok) {
+            return await res.json()
         }
-        return await res.json()
     } catch (err) {
         console.error(err)
     }
@@ -26,12 +25,10 @@ async function getDriversRaces(id) {
                     Accept: "application/json"
                 }
             });
-
-        if (!res.ok) {
-            throw new Error('Something went wrong')
+        if (res.ok) {
+            const races = await res.json();
+            displayRacesTable(await races)
         }
-        const races = await res.json();
-        displayRacesTable(await races)
 
     } catch (err) {
         console.error(err)
@@ -40,7 +37,6 @@ async function getDriversRaces(id) {
 
 async function deleteDriver(id) {
     if (!confirm("Are you sure you want to delete this driver?")) return
-
     try {
         const res = await fetch(`http://localhost:8080/api/drivers/${id}`,
             {
@@ -48,9 +44,13 @@ async function deleteDriver(id) {
             }
         );
 
-        if (res.status === 204) {
+        if (res.ok) {
             alert('Driver deleted successfully!');
-            window.location.reload();
+            const driverCard = document.querySelector(`[data-driver-id="${id}"]`);
+            if (driverCard) {
+                driverCard.remove();
+                updateDriversCount();
+            }
         } else if (res.status === 404) {
             alert('Driver not found');
         } else {
@@ -63,31 +63,32 @@ async function deleteDriver(id) {
 
 document.addEventListener("DOMContentLoaded", () => {
     const btn = document.getElementById("loadRacesBtn");
-    if (!btn) return;
+    if (btn) {
+        btn.addEventListener("click", async () => {
+            const driverId = btn.dataset.id;
 
-    btn.addEventListener("click", async () => {
-        const driverId = btn.dataset.id;
+            await getDriversRaces(driverId);
+        });
+    }
 
-        await getDriversRaces(driverId);
-    });
-});
+    const deleteButtons = document.querySelectorAll(".deleteDriverBtn");
+    if (deleteButtons.length !== 0) {
+        deleteButtons.forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const driverId = btn.dataset.id;
 
-document.addEventListener("DOMContentLoaded", () => {
-    const btn = document.getElementById("deleteDriver");
-    if (!btn) return;
-
-    btn.addEventListener("click", async () => {
-        const driverId = btn.dataset.id;
-
-        await deleteDriver(driverId);
-    });
+                await deleteDriver(driverId);
+            });
+        });
+    }
+    
 });
 
 function displayRacesTable(races) {
     const container = document.getElementById("racesContainer");
 
     races.length === 0 ?
-        container.innerHTML = `<p>This driver has not participated in any aces</p>` :
+        container.innerHTML = `<h3>This driver has not participated in any races</h3>` :
 
         container.innerHTML = `
           <table class="table table-striped table-hover align-middle">
@@ -113,4 +114,12 @@ function displayRacesTable(races) {
               </tbody>
           </table>
       `;
+}
+
+function updateDriversCount() {
+    const counter = document.getElementById("driversCount");
+    if (!counter) return;
+
+    const currentDrivers = document.querySelectorAll("[data-driver-id]").length;
+    counter.textContent = String(currentDrivers);
 }
