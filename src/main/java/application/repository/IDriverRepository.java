@@ -23,6 +23,8 @@ public interface IDriverRepository extends JpaRepository<Driver, Integer> {
             "WHERE d.id = :id")
     Optional<Driver> findById(@Param("id") Integer id);
 
+    List<Driver> findAllById(Iterable<Integer> id);
+
     List<Driver> findByWorldChampionshipsGreaterThan(@Param("championships") Integer championships);
 
     List<Driver> findByTeamId(@Param("teamId") Integer teamId);

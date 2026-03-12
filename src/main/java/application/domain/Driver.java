@@ -54,25 +54,6 @@ public class Driver {
         this.imageUrl = imageUrl;
     }
 
-    public void addRaceDriver(RaceDriver raceDrivers) {
-        this.raceDrivers.add(raceDrivers);
-        raceDrivers.setDriver(this);
-    }
-
-    public void removeRaceDriver(RaceDriver raceDrivers) {
-        this.raceDrivers.remove(raceDrivers);
-        raceDrivers.setDriver(null);
-    }
-
-    public void addRace(Race race, int position) {
-        RaceDriver raceDrivers = new RaceDriver(this, race, position);
-        addRaceDriver(raceDrivers);
-    }
-
-    public void removeRace(Race race) {
-        raceDrivers.removeIf(rd -> rd.getRace().equals(race));
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

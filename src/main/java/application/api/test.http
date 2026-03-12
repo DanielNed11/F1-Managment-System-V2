@@ -16,26 +16,100 @@ Accept: application/json
 
 ###
 
-### Get races for a specific driver - OK (200)
+### Get races for specific driver - OK (200)
 GET http://localhost:8080/api/drivers/1/races
 Accept: application/json
 
 ###
 
-### Get races for a specific driver - Not Found (404)
+### Get races for specific driver - Not Found (404)
 GET http://localhost:8080/api/drivers/999/races
 Accept: application/json
 
 ###
 
-### Delete driver by ID - No Content (204)
+### Create driver - Created (201)
+POST http://localhost:8080/api/drivers
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Lando Norris",
+  "dateOfBirth": "1999-11-13",
+  "nationality": "British",
+  "worldChampionships": 0,
+  "imageUrl": "/img/Lando.png"
+}
+
+###
+
+### Create driver - Bad Request (400)
+POST http://localhost:8080/api/drivers
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "A",
+  "dateOfBirth": "2099-01-01",
+  "nationality": "B",
+  "worldChampionships": 99,
+  "imageUrl": ""
+}
+
+###
+
+### Patch driver - OK (200)
+PATCH http://localhost:8080/api/drivers/5
+Accept: application/json
+Content-Type: application/json
+
+{
+  "worldChampionships": 3
+}
+
+###
+
+### Patch driver - Bad Request (400)
+PATCH http://localhost:8080/api/drivers/5
+Accept: application/json
+Content-Type: application/json
+
+{
+  "worldChampionships": 11
+}
+
+###
+
+### Patch driver - Not Found (404)
+PATCH http://localhost:8080/api/drivers/999
+Accept: application/json
+Content-Type: application/json
+
+{
+  "worldChampionships": 1
+}
+
+###
+
+### Delete driver - No Content (204)
 DELETE http://localhost:8080/api/drivers/1
 Accept: application/json
 
 ###
 
-### Delete driver by ID - Not Found (404)
+### Delete driver - Not Found (404)
 DELETE http://localhost:8080/api/drivers/999
 Accept: application/json
 
 ###
+
+### Login (form)
+POST http://localhost:8080/login
+Content-Type: application/x-www-form-urlencoded
+
+username=Daniel&password=Dani
+
+###
+
+### Logout
+POST http://localhost:8080/logout

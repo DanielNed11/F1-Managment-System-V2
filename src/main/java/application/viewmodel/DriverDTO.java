@@ -1,5 +1,6 @@
 package application.viewmodel;
 
+import application.domain.Team;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,8 +11,8 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DriverViewModel {
-    private int id;
+public class DriverDTO {
+    private Integer id;
 
     @NotBlank(message = "{validation.driver.name.notblank}")
     @Size(min = 2, max = 100, message = "{validation.driver.name.size}")
@@ -29,9 +30,7 @@ public class DriverViewModel {
     @Max(value = 10, message = "{validation.driver.worldChampionships.max}")
     private int worldChampionships;
 
-    private int teamId;
-
-    private String teamName;
+    private TeamDTO teamDTO;
 
     @Pattern(regexp = "^(https?://.*|/img/.*)$", message = "{validation.driver.imageUrl.pattern}")
     private String imageUrl;

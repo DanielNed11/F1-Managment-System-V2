@@ -1,25 +1,36 @@
 package application.service;
 
-import application.domain.Driver;
-import application.domain.Race;
-import application.viewmodel.RaceViewModel;
+import application.viewmodel.AddRaceDTO;
+import application.viewmodel.EditRaceDTO;
+import application.viewmodel.RaceDTO;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
-public interface IRaceService extends IService<Race> {
-    List<Race> findRacesByDriverId(Integer driverId);
+public interface IRaceService {
 
-    List<Race> findUpcomingRaces();
+    RaceDTO getById(Integer id);
 
-    List<Race> findByTrackId(Integer trackId);
+    void update(RaceDTO entity);
 
-    void addDriverToRace(int position, Race race, Driver driver);
+    void delete(Integer id);
 
-    void updateRace(Race updatedRace, Integer[] participatingDriverIds, Integer winnerId, Race existingRace, Map<Integer, Integer> driverPositions);
+    List<RaceDTO> findRacesByDriverId(Integer driverId);
 
-    void addRace(String name, LocalDate date, Integer trackId, Integer[] participatingDriverIds, Integer winnerId);
+    List<RaceDTO> findUpcomingRaces();
 
-    RaceViewModel mapToViewModel(Race race);
+    List<RaceDTO> findByTrackId(Integer trackId);
+
+    List<RaceDTO> getAllRaces();
+
+    AddRaceDTO getAddRaceForm();
+
+    EditRaceDTO getEditRaceForm(Integer id);
+
+    void addRace(AddRaceDTO addRaceDTO);
+
+    void updateRace(EditRaceDTO editRaceDTO);
+
+    void removeDriverFromRace(Integer raceId, Integer driverId);
+
+    void addDriverToRace(Integer raceId, Integer driverId, Integer position);
 }

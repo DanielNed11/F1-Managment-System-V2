@@ -1,13 +1,10 @@
 package application.controller;
 
-import application.domain.Driver;
-import application.domain.Race;
-import application.domain.Team;
 import application.service.IDriverService;
 import application.service.IRaceService;
 import application.service.ITeamService;
-import application.viewmodel.DriverViewModel;
-import jakarta.servlet.http.HttpSession;
+import application.viewmodel.DriverDTO;
+import application.viewmodel.RaceDTO;
 import jakarta.validation.Valid;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,8 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
+// TODO Handle Exceptions
 @Controller
 public class DriverController {
 
@@ -43,88 +40,67 @@ public class DriverController {
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate dateOfBirth,
-            HttpSession session,
             Model model) {
 
-
-        List<Driver> drivers = driverService.filterDrivers(nationality, dateOfBirth);
-        List<DriverViewModel> driverViewModels = drivers.stream()
-                .map(driverService::mapToViewModel)
-                .collect(Collectors.toList());
+        List<DriverDTO> driverDTOS = driverService.filterDrivers(nationality, dateOfBirth);
 
         model.addAttribute("nationality", nationality);
         model.addAttribute("dateOfBirth", dateOfBirth);
-        model.addAttribute("drivers", driverViewModels);
-        log.info("Showing all drivers for session: " + session.getId());
+        model.addAttribute("drivers", driverDTOS);
         return "drivers/drivers";
     }
 
     @GetMapping("/drivers/{id}")
-    public String getDriverById(@PathVariable Integer id, HttpSession session, Model model) {
-        Driver driver = driverService.getById(id);
-        if (driver == null) {
+    public String getDriverById(@PathVariable Integer id, Model model) {
+        DriverDTO driverDto = driverService.getById(id);
+        if (driverDto == null) {
             log.warn("Driver with id " + id + " not found");
             return "redirect:/drivers";
         }
 
-        List<Race> races = raceService.findRacesByDriverId(id);
+        List<RaceDTO> races = raceService.findRacesByDriverId(id);
 
-        DriverViewModel driverViewModel = driverService.mapToViewModel(driver);
-        model.addAttribute("driver", driverViewModel);
+        model.addAttribute("driver", driverDto);
         model.addAttribute("races", races);
-        log.info("Getting driver with id " + id);
         return "drivers/driver";
     }
 
     @GetMapping("/drivers/add")
-    public String showAddForm(HttpSession session, Model model) {
+    public String showAddForm(Model model) {
 
-        model.addAttribute("driverViewModel", new DriverViewModel());
+        model.addAttribute("driverDTO", new DriverDTO());
         model.addAttribute("teams", teamService.getAll());
-        log.info("Showing add driver form");
         return "drivers/add-driver";
     }
 
     @PostMapping("/drivers/add")
-    public String addDriver(@Valid @ModelAttribute DriverViewModel driverViewModel,
+    public String addDriver(@Valid @ModelAttribute DriverDTO driverDto,
                             BindingResult bindingResult,
-                            HttpSession session,
                             Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("teams", teamService.getAll());
-            log.warn("Validation errors when adding driver");
             return "drivers/add-driver";
         }
 
-        Driver driver = driverService.mapToDriver(driverViewModel);
-        driverService.add(driver);
-        log.info("Adding driver with id " + driver.getId() + " for session: " + session.getId());
+        driverService.add(driverDto);
+        log.info("Adding driver with id " + driverDto.getId());
         return "redirect:/drivers";
     }
 
     @GetMapping("/drivers/edit/{id}")
-    public String editDriver(@PathVariable Integer id, HttpSession session, Model model) {
-        Driver driver = driverService.getById(id);
-        if (driver == null) {
-            return "redirect:/drivers";
-        }
+    public String editDriver(@PathVariable Integer id, Model model) {
 
-        DriverViewModel driverViewModel = driverService.mapToViewModel(driver);
-        model.addAttribute("driverViewModel", driverViewModel);
+        DriverDTO driverDto = driverService.getById(id);
+        model.addAttribute("driverDTO", driverDto);
         model.addAttribute("teams", teamService.getAll());
-        log.info("Show edit form for driver with id " + id);
         return "drivers/edit-driver";
     }
 
     @PostMapping("/drivers/edit/{id}")
     public String updateDriver(@PathVariable Integer id,
-                               @Valid @ModelAttribute DriverViewModel driverViewModel,
+                               @Valid @ModelAttribute DriverDTO driverDto,
                                BindingResult bindingResult,
                                Model model) {
-        Driver existingDriver = driverService.getById(id);
-        if (existingDriver == null) {
-            return "redirect:/drivers";
-        }
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("teams", teamService.getAll());
@@ -132,29 +108,26 @@ public class DriverController {
             return "drivers/edit-driver";
         }
 
-        Driver driver = driverService.mapToDriver(driverViewModel);
-        driver.setId(id);
-        driverService.update(driver);
+        driverService.update(driverDto);
         log.info("Updating driver with id " + id);
         return "redirect:/drivers";
     }
 
     @PostMapping("/drivers/{id}/delete")
-    public String deleteDriver(@PathVariable Integer id, HttpSession session) {
+    public String deleteDriver(@PathVariable Integer id) {
         driverService.delete(id);
-        log.info("Deleted driver with id " + id + " for session: " + session.getId());
+        log.info("Deleted driver with id " + id);
         return "redirect:/drivers";
     }
 
     @GetMapping("/drivers/champions")
-    public String showChampions(HttpSession session, Model model) {
+    public String showChampions(Model model) {
 
-        List<Driver> champions = driverService.findChampions();
+        List<DriverDTO> champions = driverService.findChampions();
 
         model.addAttribute("drivers", champions);
         log.info("Showing champion drivers");
         return "drivers/champions";
     }
-
 
 }

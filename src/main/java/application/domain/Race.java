@@ -39,9 +39,13 @@ public class Race {
 
     }
 
-    public Race(String name, LocalDate date) {
+    public Race(String name, LocalDate date, Driver winner, Track track, List<RaceDriver> raceDrivers) {
         this.name = name;
         this.date = date;
+        this.winner = winner;
+        this.track = track;
+        this.raceDrivers = raceDrivers;
+        this.hasEnded = false;
     }
 
     @PrePersist
@@ -59,20 +63,6 @@ public class Race {
     public void addRaceDriver(RaceDriver raceDrivers) {
         this.raceDrivers.add(raceDrivers);
         raceDrivers.setRace(this);
-    }
-
-    public void removeRaceDriver(RaceDriver raceDrivers) {
-        this.raceDrivers.remove(raceDrivers);
-        raceDrivers.setRace(null);
-    }
-
-    public void addDriver(Driver driver, int position) {
-        RaceDriver raceDrivers = new RaceDriver(driver, this, position);
-        addRaceDriver(raceDrivers);
-    }
-
-    public void removeDriver(Driver driver) {
-        raceDrivers.removeIf(rd -> rd.getDriver().equals(driver));
     }
 
     @Override

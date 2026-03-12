@@ -11,13 +11,17 @@ import java.util.Optional;
 
 @Repository
 public interface IDriverRaceRepository extends JpaRepository<RaceDriver, Integer> {
-    Optional<RaceDriver> findByDriverIdAndRaceId(@Param("driverId") Integer driverId, @Param("raceId") Integer raceId);
 
-    @Query("SELECT DISTINCT dr FROM RaceDriver dr " +
+    @Query("SELECT dr FROM RaceDriver dr " +
             "LEFT JOIN FETCH dr.race r " +
             "LEFT JOIN FETCH r.track " +
             "LEFT JOIN FETCH r.winner " +
             "LEFT JOIN FETCH dr.driver " +
             "WHERE dr.driver.id = :driverId")
     Optional<List<RaceDriver>> findByDriverId(@Param("driverId") Integer driverId);
+
+    @Query("SELECT dr FROM RaceDriver dr " +
+            "LEFT JOIN FETCH dr.driver " +
+            "WHERE dr.race.id = :raceId")
+    List<RaceDriver> findByRaceId(@Param("raceId") Integer raceId);
 }

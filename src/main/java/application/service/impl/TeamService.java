@@ -1,10 +1,10 @@
 package application.service.impl;
 
 import application.domain.League;
-import application.domain.Team;
+import application.mapper.TeamMapper;
 import application.repository.ITeamRepository;
 import application.service.ITeamService;
-import org.hibernate.Hibernate;
+import application.viewmodel.TeamDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,34 +17,32 @@ import java.util.stream.Collectors;
 public class TeamService implements ITeamService {
 
     private final ITeamRepository teamRepository;
+    private final TeamMapper teamMapper;
 
     @Autowired
-    public TeamService(ITeamRepository teamRepository) {
+    public TeamService(ITeamRepository teamRepository, TeamMapper teamMapper) {
         this.teamRepository = teamRepository;
+        this.teamMapper = teamMapper;
     }
 
     @Override
-    public List<Team> getAll() {
-        return teamRepository.findAll();
+    public List<TeamDTO> getAll() {
+        return teamMapper.toTeamDTOList(teamRepository.findAll());
     }
 
     @Override
-    public Team getById(Integer id) {
-        Team team = teamRepository.findById(id).orElse(null);
-        if (team != null) {
-            Hibernate.initialize(team.getDrivers());
-        }
-        return team;
+    public TeamDTO getById(Integer id) {
+        return teamMapper.toTeamDTO(teamRepository.findById(id).get());
     }
 
     @Override
-    public void add(Team team) {
-        teamRepository.save(team);
+    public void add(TeamDTO team) {
+        teamRepository.save(teamMapper.toTeam(team));
     }
 
     @Override
-    public void update(Team team) {
-        teamRepository.save(team);
+    public void update(TeamDTO team) {
+        teamRepository.save(teamMapper.toTeam(team));
     }
 
     @Override
@@ -53,12 +51,10 @@ public class TeamService implements ITeamService {
     }
 
     @Override
-    public List<Team> filterTeams(League league) {
-        List<Team> teams = teamRepository.findAll().stream()
+    public List<TeamDTO> filterTeams(League league) {
+        return teamMapper.toTeamDTOList(teamRepository.findAll().stream()
                 .filter(t -> league == null || t.getLeague() == league)
-                .collect(Collectors.toList());
-        teams.forEach(t -> Hibernate.initialize(t.getDrivers()));
-        return teams;
+                .collect(Collectors.toList()));
     }
 
 

@@ -34,7 +34,7 @@
             <td th:text="${driver.nationality}"></td>
             <td th:text="${#temporals.format(driver.dateOfBirth, 'yyyy-MM-dd')}"></td>
             <td th:text="${driver.worldChampionships}"></td>
-            <td th:text="${driver.teamName == null ? 'No team' : driver.teamName}"></td>
+            <td th:text="${driver.teamDTO == null ? 'No team' : driver.teamDTO.name}"></td>
             <td>
                 <a class="btn btn-sm btn-outline-primary"
                    th:href="@{/drivers/edit/{id}(id=${driver.id})}">

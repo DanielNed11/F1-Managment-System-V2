@@ -6,20 +6,21 @@
 
 <h1 th:text="#{page.race.add.heading}"></h1>
 
-<form th:action="@{/races/add}" method="post">
+<form th:action="@{/races/add}" th:object="${addRaceDTO}" method="post">
 
     <label th:text="#{label.name} + ':'"></label>
-    <input type="text" name="name" required>
+    <input type="text" th:field="*{name}" required>
 
     <br>
 
     <label th:text="#{label.date} + ':'"></label>
-    <input type="date" name="date" required>
+    <input type="date" th:field="*{date}" required>
 
     <br>
 
     <label th:text="#{label.track} + ':'"></label>
-    <select name="trackId">
+    <select th:field="*{trackId}">
+        <option value="">-- Select Track --</option>
         <option th:each="track : ${tracks}"
                 th:value="${track.id}"
                 th:text="${track.name}">
@@ -28,46 +29,55 @@
 
     <br>
 
-    <h3 th:text="#{label.addDrivers}">Select Drivers</h3>
-    <p class="text-muted">Check the drivers who will participate in this race.</p>
+    <h3 th:text="#{section.selectDrivers}">Select Drivers</h3>
+    <p class="text-muted">
+        Check the drivers who will participate in this race. You can optionally enter positions.
+    </p>
 
     <table class="table table-striped">
         <thead>
-            <tr>
-                <th>Participated</th>
-                <th>Driver</th>
-            </tr>
+        <tr>
+            <th>Participated</th>
+            <th>Driver</th>
+            <th>Position</th>
+        </tr>
         </thead>
         <tbody>
-            <tr th:each="driver : ${drivers}">
-                <td>
-                    <input type="checkbox"
-                           name="participatingDriverIds"
-                           th:value="${driver.id}"
-                           th:id="${'driver-' + driver.id}"/>
-                </td>
-                <td>
-                    <label th:for="${'driver-' + driver.id}" th:text="${driver.name}">Driver Name</label>
-                </td>
-            </tr>
+        <tr th:each="selection, iter : *{driverSelections}">
+            <td>
+                <input type="hidden" th:field="*{driverSelections[__${iter.index}__].driverId}"/>
+                <input type="hidden" th:field="*{driverSelections[__${iter.index}__].driverName}"/>
+                <input type="checkbox"
+                       th:field="*{driverSelections[__${iter.index}__].participated}"
+                       th:id="${'driver-' + selection.driverId}"/>
+            </td>
+            <td>
+                <label th:for="${'driver-' + selection.driverId}" th:text="${selection.driverName}">Driver Name</label>
+            </td>
+            <td>
+                <input type="number"
+                       th:field="*{driverSelections[__${iter.index}__].position}"
+                       placeholder="Position"
+                       min="1"
+                       class="form-control"
+                       style="width: 100px;"/>
+            </td>
+        </tr>
         </tbody>
     </table>
-
     <br>
 
     <label th:text="#{table.header.winner} + ':'"></label>
-    <select name="winnerId">
+    <select th:field="*{winnerId}">
         <option value="" th:text="#{msg.noWinner}">No Winner</option>
-        <option th:each="driver : ${drivers}"
-                th:value="${driver.id}"
-                th:text="${driver.name}">
+        <option th:each="selection : *{driverSelections}"
+                th:value="${selection.driverId}"
+                th:text="${selection.driverName}">
         </option>
     </select>
 
     <br><br>
-
     <button type="submit" th:text="#{button.addRace}"></button>
 </form>
-
 </body>
 </html>

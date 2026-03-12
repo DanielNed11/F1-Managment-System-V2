@@ -10,8 +10,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeamViewModel {
-    private int id;
+public class TeamDTO {
+    private Integer id;
 
     @NotBlank(message = "{validation.team.name.notblank}")
     @Size(min = 2, max = 100, message = "{validation.team.name.size}")

@@ -342,3 +342,190 @@ DELETE http://localhost:8080/api/drivers/999
 HTTP/1.1 404
 Content-Length: 0
 ```
+
+---
+
+## Week 3
+
+### Creating a driver - Created (201)
+
+**Request:**
+```http
+POST http://localhost:8080/api/drivers
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Lando Norris",
+  "dateOfBirth": "1999-11-13",
+  "nationality": "British",
+  "worldChampionships": 0,
+  "imageUrl": "/img/Lando.png"
+}
+```
+
+**Response:**
+```http
+HTTP/1.1 201
+Content-Type: application/json
+
+{
+  "id": 6,
+  "name": "Lando Norris",
+  "dateOfBirth": "1999-11-13",
+  "nationality": "British",
+  "worldChampionships": 0,
+  "imageUrl": "/img/Lando.png"
+}
+```
+
+### Creating a driver - Bad Request (400)
+
+**Request:**
+```http
+POST http://localhost:8080/api/drivers
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "A",
+  "dateOfBirth": "2099-01-01",
+  "nationality": "B",
+  "worldChampionships": 99,
+  "imageUrl": ""
+}
+```
+
+**Response:**
+```http
+HTTP/1.1 400
+Content-Type: application/json
+```
+
+### Updating a driver with PATCH - OK (200)
+
+**Request:**
+```http
+PATCH http://localhost:8080/api/drivers/5
+Accept: application/json
+Content-Type: application/json
+
+{
+  "worldChampionships": 3
+}
+```
+
+**Response:**
+```http
+HTTP/1.1 200
+Content-Type: application/json
+
+{
+  "id": 5,
+  "name": "Nikola Tsolov",
+  "dateOfBirth": "2006-12-21",
+  "nationality": "Bulgarian",
+  "worldChampionships": 3,
+  "imageUrl": "/img/Nikola.png"
+}
+```
+
+### Updating a driver with PATCH - Bad Request (400)
+
+**Request:**
+```http
+PATCH http://localhost:8080/api/drivers/5
+Accept: application/json
+Content-Type: application/json
+
+{
+  "worldChampionships": 11
+}
+```
+
+**Response:**
+```http
+HTTP/1.1 400
+Content-Type: application/json
+```
+
+### Updating a driver with PATCH - Not Found (404)
+
+**Request:**
+```http
+PATCH http://localhost:8080/api/drivers/999
+Accept: application/json
+Content-Type: application/json
+
+{
+  "worldChampionships": 1
+}
+```
+
+**Response:**
+```http
+HTTP/1.1 404
+Content-Length: 0
+```
+
+### Deleting a driver - No Content (204)
+
+**Request:**
+```http
+DELETE http://localhost:8080/api/drivers/1
+Accept: application/json
+```
+
+**Response:**
+```http
+HTTP/1.1 204
+```
+
+### Deleting a driver - Not Found (404)
+
+**Request:**
+```http
+DELETE http://localhost:8080/api/drivers/999
+Accept: application/json
+```
+
+**Response:**
+```http
+HTTP/1.1 404
+Content-Length: 0
+```
+
+---
+
+## Week 4
+
+### Seeded users
+
+- `Daniel` / `Dani`
+- `Ivan` / `Ivan`
+- `Viki` / `Viki`
+
+
+Passwords are stored as BCrypt hashes in the database (`app_users` table).
+
+### Required links
+
+- Public page: [All Drivers](http://localhost:8080/drivers)
+- Authentication required page: [All Teams](http://localhost:8080/teams)
+
+### Login and logout
+
+- Custom login page: `/login`
+- Logout endpoint/form: `/logout`
+- Logged in username is shown in the navbar with `sec:authentication="name"`.
+
+### Authorization behavior
+
+- Anonymous users can access public pages (for example `/drivers`).
+- Authenticated users can access protected pages and perform data-changing actions.
+- On `/drivers`, authenticated users see application-specific controls (add form, edit/delete card actions) while anonymous users do not.
+
+### Notes
+
+- CSRF is temporarily disabled as required for this assignment.
+- REST API and AJAX flows are kept functional with authentication-aware handling.

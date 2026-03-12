@@ -1,100 +1,99 @@
 package application.service.impl;
 
 import application.domain.Driver;
-import application.domain.Race;
 import application.domain.RaceDriver;
-import application.domain.Team;
-import application.domain.Track;
+import application.mapper.DriverMapper;
+import application.mapper.RaceMapper;
 import application.repository.IDriverRaceRepository;
 import application.repository.IDriverRepository;
 import application.service.IDriverService;
-import application.viewmodel.DriverViewModel;
-import application.viewmodel.RaceViewModel;
+import application.viewmodel.DriverDTO;
+import application.viewmodel.PatchDriverDTO;
+import application.viewmodel.RaceDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.Period;
-import java.util.ArrayList;
 import java.util.List;
 
+
+// TODO Throw exceptions
 @Service
 @Transactional
 public class DriverService implements IDriverService {
 
+    private final DriverMapper driverMapper;
     private final IDriverRepository driverRepository;
-    private final TeamService teamService;
     private final IDriverRaceRepository driverRaceRepository;
+    private final RaceMapper raceMapper;
 
     @Autowired
     public DriverService(IDriverRepository driverRepository,
-                         TeamService teamService,
-                         IDriverRaceRepository driverRaceRepository) {
+                         IDriverRaceRepository driverRaceRepository,
+                         DriverMapper driverMapper, RaceMapper raceMapper) {
         this.driverRepository = driverRepository;
-        this.teamService = teamService;
         this.driverRaceRepository = driverRaceRepository;
+        this.driverMapper = driverMapper;
+        this.raceMapper = raceMapper;
     }
 
     @Override
-    public List<Driver> getAll() {
-        return driverRepository.findAll();
+    public List<DriverDTO> getAll() {
+        return driverMapper.toDriverDTOList(driverRepository.findAll());
     }
 
     @Override
-    public Driver getById(Integer id) {
-        return driverRepository.findById(id).orElse(null);
+    public DriverDTO getById(Integer id) {
+        return driverMapper.toDriverDTO(driverRepository.findById(id).orElse(null));
     }
 
     @Override
-    public void add(Driver driver) {
+    public void add(DriverDTO driverDTO) {
+        driverRepository.save(driverMapper.toDriver(driverDTO));
+    }
+
+    public DriverDTO add(AddDriverDtoService addDriverDtoService) {
+        Driver driver = new Driver();
+        driver.setId(null);
+        driver.setName(addDriverDtoService.name);
+        driver.setDateOfBirth(addDriverDtoService.dateOfBirth);
+        driver.setNationality(addDriverDtoService.nationality);
+        driver.setWorldChampionships(addDriverDtoService.worldChampionships);
+        driver.setImageUrl(addDriverDtoService.imageUrl);
+
         driverRepository.save(driver);
+        return driverMapper.toDriverDTO(driver);
     }
 
     @Override
-    public void update(Driver updatedDriver) {
-        Driver existingDriver = driverRepository.findById(updatedDriver.getId()).orElse(null);
+    public void update(DriverDTO updatedDriverDTO) {
+        Driver existingDriver = driverRepository.findById(updatedDriverDTO.getId()).orElse(null);
         if (existingDriver == null) {
-            throw new IllegalArgumentException("Driver with id " + updatedDriver.getId() + " not found");
+            throw new IllegalArgumentException("Driver with id " + updatedDriverDTO.getId() + " not found");
         }
 
-        driverRepository.save(updatedDriver);
+        driverRepository.save(driverMapper.toDriver(updatedDriverDTO));
+    }
+
+    public DriverDTO update(Integer id, PatchDriverDTO patchDriverDTO) {
+        Driver driver = driverRepository.findById(id).orElse(null);
+        if (driver == null) {
+            throw new IllegalArgumentException("Driver with id " + id + " not found");
+        }
+
+        driverMapper.patchDTOToDriver(patchDriverDTO, driver);
+        return driverMapper.toDriverDTO(driverRepository.save(driver));
     }
 
     @Override
-    public List<Driver> filterDrivers(String nationality, LocalDate dateOfBirth) {
+    public List<DriverDTO> filterDrivers(String nationality, LocalDate dateOfBirth) {
         return driverRepository.findAll().stream()
                 .filter(d -> nationality == null || nationality.isBlank() ||
                         d.getNationality().toLowerCase().contains(nationality.trim().toLowerCase()))
                 .filter(d -> dateOfBirth == null || (d.getDateOfBirth() != null && d.getDateOfBirth().equals(dateOfBirth)))
+                .map(driverMapper::toDriverDTO)
                 .toList();
-    }
-
-    @Override
-    public void validateDriver(Driver driver) {
-        if (driver == null) {
-            throw new IllegalArgumentException("Driver cannot be null");
-        }
-
-        if (driver.getDateOfBirth() == null) {
-            throw new IllegalArgumentException("Driver date of birth is required");
-        }
-
-        int age = Period.between(driver.getDateOfBirth(), LocalDate.now()).getYears();
-
-        if (age < 18) {
-            throw new IllegalArgumentException(
-                    "Driver must be at least 18 years old. Current age: " + age + " years");
-        }
-
-        if (age > 60) {
-            throw new IllegalArgumentException(
-                    "Driver age exceeds maximum racing age of 60. Current age: " + age + " years");
-        }
-
-        if (driver.getWorldChampionships() < 0) {
-            throw new IllegalArgumentException("World championships cannot be negative");
-        }
     }
 
     @Override
@@ -103,92 +102,24 @@ public class DriverService implements IDriverService {
     }
 
     @Override
-    public List<Driver> findChampions() {
-        return driverRepository.findByWorldChampionshipsGreaterThan(0);
+    public List<DriverDTO> findChampions() {
+        return driverMapper.toDriverDTOList(driverRepository.findByWorldChampionshipsGreaterThan(0));
     }
 
     @Override
-    public List<Driver> findByTeamId(Integer teamId) {
-        return driverRepository.findByTeamId(teamId);
+    public List<DriverDTO> findByTeamId(Integer teamId) {
+        return driverMapper.toDriverDTOList(driverRepository.findByTeamId(teamId));
     }
+
 
     @Override
-    public DriverViewModel mapToViewModel(Driver driver) {
-        DriverViewModel viewModel = new DriverViewModel();
-        viewModel.setId(driver.getId());
-        viewModel.setName(driver.getName());
-        viewModel.setDateOfBirth(driver.getDateOfBirth());
-        viewModel.setNationality(driver.getNationality());
-        viewModel.setWorldChampionships(driver.getWorldChampionships());
-
-        Team team = driver.getTeam();
-        if (team != null) {
-            viewModel.setTeamId(team.getId());
-            viewModel.setTeamName(team.getName());
-        } else {
-            viewModel.setTeamId(0);
-            viewModel.setTeamName(null);
-        }
-
-        viewModel.setImageUrl(driver.getImageUrl());
-        return viewModel;
+    public List<RaceDTO> getRacesByDriver(Integer id) {
+        return driverRaceRepository.findByDriverId(id).get().stream().map(RaceDriver::getRace).map(raceMapper::toRaceDTO).toList();
     }
 
-    @Override
-    public Driver mapToDriver(DriverViewModel viewModel) {
-        Driver driver = new Driver();
-        driver.setId(viewModel.getId());
-        driver.setName(viewModel.getName());
-        driver.setDateOfBirth(viewModel.getDateOfBirth());
-        driver.setNationality(viewModel.getNationality());
-        driver.setWorldChampionships(viewModel.getWorldChampionships());
+    public record AddDriverDtoService(String name, LocalDate dateOfBirth, String nationality, int worldChampionships, String imageUrl) {
 
-        if (viewModel.getTeamId() != 0) {
-            Team team = teamService.getById(viewModel.getTeamId());
-            driver.setTeam(team);
-        }
-
-        driver.setImageUrl(viewModel.getImageUrl());
-        return driver;
-    }
-
-    @Override
-    public List<Race> getRaces(Integer id) {
-        return driverRaceRepository.findByDriverId(id).get().stream().map(RaceDriver::getRace).toList();
-    }
-
-    public List<RaceViewModel> getRacesAsViewModels(Integer id) {
-        List<Race> races = driverRaceRepository.findByDriverId(id)
-                .get()
-                .stream()
-                .map(RaceDriver::getRace)
-                .toList();
-
-        return races.stream()
-                .map(this::mapRaceToViewModel)
-                .toList();
-    }
-
-    private RaceViewModel mapRaceToViewModel(Race race) {
-        RaceViewModel viewModel = new RaceViewModel();
-        viewModel.setId(race.getId());
-        viewModel.setName(race.getName());
-        viewModel.setDate(race.getDate());
-        viewModel.setHasEnded(race.isHasEnded());
-
-        Track track = race.getTrack();
-        if (track != null) {
-            viewModel.setTrackId(track.getId());
-            viewModel.setTrackName(track.getName());
-        }
-
-        Driver winner = race.getWinner();
-        if (winner != null) {
-            viewModel.setWinnerId(winner.getId());
-            viewModel.setWinnerName(winner.getName());
-        }
-
-        return viewModel;
     }
 
 }
+

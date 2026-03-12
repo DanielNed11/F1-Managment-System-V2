@@ -1,13 +1,12 @@
 package application.controller;
 
 import application.domain.PermanentCircuit;
-import application.domain.Race;
 import application.domain.StreetCircuit;
 import application.domain.Track;
 import application.service.IRaceService;
 import application.service.impl.TrackService;
+import application.viewmodel.RaceDTO;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,7 @@ public class TrackController {
 
 
     @GetMapping
-    public String showAllTracks(HttpSession session, Model model) {
+    public String showAllTracks( Model model) {
         List<Track> tracks = trackService.getAll();
         model.addAttribute("tracks", tracks);
         model.addAttribute("trackTypes", buildTrackTypesMap(tracks));
@@ -56,9 +55,9 @@ public class TrackController {
     }
 
     @GetMapping("/{id}")
-    public String getTrack(HttpSession session, Model model, @PathVariable Integer id) {
+    public String getTrack( Model model, @PathVariable Integer id) {
         Track track = trackService.getById(id);
-        List<Race> races = raceService.findByTrackId(id);
+        List<RaceDTO> races = raceService.findByTrackId(id);
         model.addAttribute("track", track);
         model.addAttribute("races", races);
         model.addAttribute("trackType", getTrackType(track));
@@ -67,7 +66,7 @@ public class TrackController {
     }
 
     @GetMapping("/add")
-    public String showAddTrack(HttpSession session, Model model,
+    public String showAddTrack( Model model,
                                @RequestParam(required = false, defaultValue = "BASIC") String trackType) {
 
         Track track;
@@ -87,8 +86,7 @@ public class TrackController {
 
     @PostMapping("/add")
     public String addTrack(HttpServletRequest request,
-                           @RequestParam String trackType,
-                           Model model) {
+                           @RequestParam String trackType) {
         Track track;
 
         if ("STREET".equals(trackType)) {
@@ -126,7 +124,7 @@ public class TrackController {
     }
 
     @GetMapping("/edit/{id}")
-    public String showEditTrackForm(HttpSession session, Model model, @PathVariable Integer id) {
+    public String showEditTrackForm( Model model, @PathVariable Integer id) {
         Track track = trackService.getById(id);
         model.addAttribute("track", track);
         model.addAttribute("trackType", getTrackType(track));
@@ -137,8 +135,7 @@ public class TrackController {
     @PostMapping("/edit/{id}")
     public String editTrack(@PathVariable Integer id,
                             HttpServletRequest request,
-                            @RequestParam String trackType,
-                            Model model) {
+                            @RequestParam String trackType) {
         Track track = trackService.getById(id);
 
         track.setName(request.getParameter("name"));
@@ -163,14 +160,14 @@ public class TrackController {
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteTrack(@PathVariable Integer id, HttpSession session) {
+    public String deleteTrack(@PathVariable Integer id)  {
         trackService.delete(id);
-        log.info("Deleted track with id " + id + " for session: " + session.getId());
+        log.info("Deleted track with id " + id);
         return "redirect:/tracks";
     }
 
     @GetMapping("/long-tracks")
-    public String showLongTracks(HttpSession session, Model model) {
+    public String showLongTracks(Model model) {
         List<Track> longTracks = trackService.findLongTracks();
         model.addAttribute("tracks", longTracks);
         model.addAttribute("trackTypes", buildTrackTypesMap(longTracks));

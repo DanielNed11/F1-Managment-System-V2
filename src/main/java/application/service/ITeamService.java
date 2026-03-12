@@ -1,10 +1,19 @@
 package application.service;
 
 import application.domain.League;
-import application.domain.Team;
+import application.viewmodel.TeamDTO;
 
 import java.util.List;
 
-public interface ITeamService extends IService<Team> {
-    List<Team> filterTeams(League league);
+public interface ITeamService {
+    List<TeamDTO> getAll();
+
+    TeamDTO getById(Integer id);
+
+    void add(TeamDTO entity);
+
+    void update(TeamDTO entity);
+
+    void delete(Integer id);
+    List<TeamDTO> filterTeams(League league);
 }

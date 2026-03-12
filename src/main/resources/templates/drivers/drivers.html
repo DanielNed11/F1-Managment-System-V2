@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <script src="/js/driver.js"></script>
 <head th:replace="~{fragments/header :: head(#{page.drivers.title})}"></head>
 <body>
@@ -12,13 +12,50 @@
         </h1>
         <p class="lead mb-4" th:text="#{page.drivers.description}">Browse all Formula 1 drivers and their
             achievements</p>
-        <a class="btn btn-success btn-lg" th:href="@{/drivers/add}">
+        <a class="btn btn-success btn-lg" th:href="@{/drivers/add}" sec:authorize="isAuthenticated()">
             <i class="bi bi-person-plus me-2"></i><span th:text="#{button.addDriver}">Add New Driver</span>
         </a>
     </div>
 </div>
 
 <div class="container">
+    <div class="filter-section mb-4" sec:authorize="isAuthenticated()">
+        <h5 class="mb-3">
+            <i class="bi bi-person-plus me-2"></i><span th:text="#{button.addDriver}">Add Driver</span>
+        </h5>
+        <form class="row g-3" id="add-form">
+
+            <div class="col-md-6">
+                <label class="form-label" th:text="#{label.name} + ':'"></label>
+                <input type="text" class="form-control" id="add-name"/>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label" th:text="#{label.nationality} + ':'"></label>
+                <input type="text" class="form-control" id="add-nationality"/>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label" th:text="#{label.dateOfBirth} + ':'"></label>
+                <input type="date" class="form-control" id="add-birthDate"/>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label" th:text="#{label.worldChampionships} + ':'"></label>
+                <input type="number" class="form-control" id="add-worldChampionships"/>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label" th:text="'Image URL:'"></label>
+                <input type="text" class="form-control" id="add-imageUrl" placeholder="/img/driver.png" />
+            </div>
+
+            <div class="col-12 d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary" th:text="#{button.addDriver}"></button>
+            </div>
+        </form>
+    </div>
+
     <div class="filter-section">
         <h5 class="mb-3"><i class="bi bi-funnel me-2"></i><span
                 th:text="#{filter.drivers.heading}">Filter Drivers</span></h5>
@@ -58,7 +95,7 @@
         </div>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+    <div id="driversGrid" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
         <div class="col" th:each="driver : ${drivers}" th:attr="data-driver-id=${driver.id}">
             <div class="card h-100 shadow-custom">
                 <img class="card-img-top"
@@ -81,7 +118,7 @@
                     </div>
                 </div>
 
-                <div class="card-footer d-flex gap-2">
+                <div class="card-footer d-flex gap-2" sec:authorize="isAuthenticated()">
                     <a class="btn btn-sm btn-outline-primary flex-fill"
                        th:href="@{/drivers/{id}(id=${driver.id})}">
                         <i class="bi bi-eye me-1"></i><span th:text="#{button.viewDetails}">View</span>
@@ -90,6 +127,10 @@
                             th:data-id="${driver.id}">
                         <i class="bi bi-trash me-1"></i>
                         <span th:text="#{button.delete}">Delete</span>
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary editDriverBtn"
+                            th:data-id="${driver.id}">
+                        Edit
                     </button>
                 </div>
             </div>

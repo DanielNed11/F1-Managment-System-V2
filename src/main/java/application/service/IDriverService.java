@@ -1,26 +1,27 @@
 package application.service;
 
-import application.domain.Driver;
-import application.domain.Race;
-import application.service.impl.RaceService;
-import application.viewmodel.DriverViewModel;
-import jakarta.validation.Valid;
+import application.viewmodel.DriverDTO;
+import application.viewmodel.RaceDTO;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public interface IDriverService extends IService<Driver> {
-    List<Driver> filterDrivers(String nationality, LocalDate dateOfBirth);
+public interface IDriverService {
+    List<DriverDTO> getAll();
 
-    void validateDriver(Driver driver);
+    DriverDTO getById(Integer id);
 
-    List<Driver> findChampions();
+    void add(DriverDTO entity);
 
-    List<Driver> findByTeamId(Integer teamId);
+    void update(DriverDTO entity);
 
-    Driver mapToDriver(@Valid DriverViewModel driverViewModel);
+    void delete(Integer id);
 
-    DriverViewModel mapToViewModel(Driver driver);
+    List<DriverDTO> filterDrivers(String nationality, LocalDate dateOfBirth);
 
-    List<Race> getRaces(Integer id);
+    List<DriverDTO> findChampions();
+
+    List<DriverDTO> findByTeamId(Integer teamId);
+
+    List<RaceDTO> getRacesByDriver(Integer id);
 }

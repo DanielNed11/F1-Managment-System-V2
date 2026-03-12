@@ -7,7 +7,7 @@
 
 <h1 class="mb-4" th:text="#{page.driver.edit.heading}"></h1>
 
-<form class="row g-3" th:action="@{/drivers/edit/{id}(id=${driverViewModel.id})}" th:object="${driverViewModel}" method="post">
+<form class="row g-3" th:action="@{/drivers/edit/{id}(id=${driverDTO.id})}" th:object="${driverDTO}" method="post">
 
     <div class="col-md-6">
         <label class="form-label" th:text="#{label.name} + ':'"></label>
@@ -18,10 +18,10 @@
 
     <div class="col-md-6">
         <label class="form-label" th:text="#{label.setTeam} + ':'"></label>
-        <select class="form-select" th:field="*{teamId}">
+        <select class="form-select" th:field="*{teamDTO}">
             <option th:value="0" th:text="#{option.noTeam}"></option>
             <option th:each="team : ${teams}"
-                    th:value="${team.id}"
+                    th:value="${team}"
                     th:text="${team.name}">
             </option>
         </select>
