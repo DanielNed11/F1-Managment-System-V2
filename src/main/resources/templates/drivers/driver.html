@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<script src="/js/driver.js"></script>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/header :: head(#{page.driver.heading})}"></head>
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
@@ -18,7 +17,7 @@
             <th th:text="#{table.header.dateOfBirth}"></th>
             <th th:text="#{table.header.worldChampionships}"></th>
             <th th:text="#{table.header.team}"></th>
-            <th th:text="#{table.header.edit}"></th>
+            <th th:if="${driver.isModifiable()}" th:text="#{table.header.edit}"></th>
         </tr>
         </thead>
         <tbody>
@@ -36,7 +35,7 @@
             <td th:text="${driver.worldChampionships}"></td>
             <td th:text="${driver.teamDTO == null ? 'No team' : driver.teamDTO.name}"></td>
             <td>
-                <a class="btn btn-sm btn-outline-primary"
+                <a class="btn btn-sm btn-outline-primary" th:if="${driver.isModifiable()}"
                    th:href="@{/drivers/edit/{id}(id=${driver.id})}">
                     <i class="bi bi-pencil-square"></i>
                     <span th:text="#{table.header.edit}"></span>
@@ -59,5 +58,6 @@
 </main>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
+<script src="/js/driver.js"></script>
 </body>
 </html>

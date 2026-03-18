@@ -1,6 +1,8 @@
 package application.controller;
 
+import application.domain.Driver;
 import application.domain.League;
+import application.mapper.DriverMapper;
 import application.service.IDriverService;
 import application.service.impl.TeamService;
 import application.viewmodel.DriverDTO;
@@ -10,6 +12,7 @@ import jakarta.validation.Valid;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,11 +27,13 @@ public class TeamController {
     private final TeamService teamService;
     private final IDriverService driverService;
     private final Log log = LogFactory.getLog(this.getClass());
+    private final DriverMapper driverMapper;
 
     @Autowired
-    public TeamController(TeamService teamService, IDriverService driverService) {
+    public TeamController(TeamService teamService, IDriverService driverService, DriverMapper driverMapper) {
         this.teamService = teamService;
         this.driverService = driverService;
+        this.driverMapper = driverMapper;
     }
 
     @GetMapping
@@ -52,23 +57,25 @@ public class TeamController {
             return "redirect:/teams";
         }
 
-        List<DriverDTO> drivers = driverService.findByTeamId(id);
+        List<Driver> drivers = driverService.findByTeamId(id);
 
         model.addAttribute("team", teamDTO);
-        model.addAttribute("drivers", drivers);
+        model.addAttribute("drivers", driverMapper.toDriverDTOList(drivers));
         log.info("Getting team with id " + id);
         return "teams/team";
     }
 
     @GetMapping("/add")
+    @PreAuthorize("hasRole('ADMIN')")
     public String showAddTeamForm(Model model) {
 
-        model.addAttribute("teamViewModel", new TeamDTO());
+        model.addAttribute("teamDTO", new TeamDTO());
         log.info("Showing add team form");
         return "teams/add-team";
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasRole('ADMIN')")
     public String addTeam(@Valid @ModelAttribute TeamDTO teamDTO,
                           BindingResult bindingResult
                          ) {
@@ -83,18 +90,20 @@ public class TeamController {
     }
 
     @GetMapping("/edit/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String showUpdateTeamForm(Model model, @PathVariable Integer id) {
         TeamDTO teamDTO = teamService.getById(id);
         if (teamDTO == null) {
             return "redirect:/teams";
         }
 
-        model.addAttribute("teamViewModel", teamDTO);
+        model.addAttribute("teamDTO", teamDTO);
         log.info("Show edit form for team with id " + id);
         return "teams/edit-team";
     }
 
     @PostMapping("/edit/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String updateTeam(@PathVariable Integer id,
                              @Valid @ModelAttribute TeamDTO teamDTO,
                              BindingResult bindingResult) {
@@ -115,6 +124,7 @@ public class TeamController {
     }
 
     @PostMapping("/{id}/delete")
+    @PreAuthorize("hasRole('ADMIN')")
     public String deleteTeam(@PathVariable Integer id, HttpSession session) {
         teamService.delete(id);
         log.info("Deleted team with id " + id + " for session: " + session.getId());

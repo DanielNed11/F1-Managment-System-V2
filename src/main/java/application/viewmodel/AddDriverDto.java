@@ -1,23 +1,29 @@
 package application.viewmodel;
 
-import application.service.impl.DriverService;
 import jakarta.validation.constraints.*;
+import lombok.*;
 
 import java.time.LocalDate;
 
-public record AddDriverDto(
-        @NotBlank @Size(min=2, max=30) String name,
-        @NotNull @Past LocalDate dateOfBirth,
-        @NotBlank @Size(min=2, max=30) String nationality,
-        @Min(0) @Max(10) int worldChampionships,
-        @NotBlank String imageUrl
-) {
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class AddDriverDto {
 
-    public DriverService.AddDriverDtoService mapToServiceDto(AddDriverDto addDriverDto) {
-        return new DriverService.AddDriverDtoService(addDriverDto.name(),
-                addDriverDto.dateOfBirth,
-                addDriverDto.nationality,
-                addDriverDto.worldChampionships,
-                addDriverDto.imageUrl);
-    }
+    @NotBlank
+    @Size(min = 2, max = 30)
+    private String name;
+    @NotNull
+    @Past
+    private LocalDate dateOfBirth;
+    @NotBlank
+    @Size(min = 2, max = 30)
+    private String nationality;
+    @Min(0)
+    @Max(10)
+    private int worldChampionships;
+    @NotBlank
+    private String imageUrl;
+
+    private Integer teamId = null;
 }

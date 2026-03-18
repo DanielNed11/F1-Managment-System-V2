@@ -27,5 +27,9 @@ public interface IDriverRepository extends JpaRepository<Driver, Integer> {
 
     List<Driver> findByWorldChampionshipsGreaterThan(@Param("championships") Integer championships);
 
+    @Query("SELECT DISTINCT d FROM Driver d " +
+            "LEFT JOIN FETCH d.team " +
+            "LEFT JOIN FETCH d.raceDrivers " +
+            "WHERE d.team.id = :teamId")
     List<Driver> findByTeamId(@Param("teamId") Integer teamId);
 }

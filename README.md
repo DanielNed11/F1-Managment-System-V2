@@ -497,35 +497,66 @@ Content-Length: 0
 
 ---
 
-## Week 4
+## Week 5
 
 ### Seeded users
 
-- `Daniel` / `Dani`
-- `Ivan` / `Ivan`
-- `Viki` / `Viki`
+The application seeds three persisted users in the `app_users` table. Passwords are stored as BCrypt hashes in the database, but the following credentials can be used to log in:
 
+| Username | Password | Role  | Managed team |
+|----------|----------|-------|--------------|
+| `Daniel` | `Dani`   | `ADMIN` | Mercedes |
+| `Ivan`   | `Ivan`   | `USER`  | Ferrari |
+| `Viki`   | `Viki`   | `USER`  | Red Bull Racing |
 
-Passwords are stored as BCrypt hashes in the database (`app_users` table).
+### Roles and access rights
 
-### Required links
+The application distinguishes between three access categories: unauthenticated visitors, signed-in `USER`s, and signed-in `ADMIN`s.
 
-- Public page: [All Drivers](http://localhost:8080/drivers)
-- Authentication required page: [All Teams](http://localhost:8080/teams)
+| Category | Can access | Can create | Can update/delete | Notes |
+|----------|------------|------------|-------------------|-------|
+| Unauthenticated user | Public driver pages such as [All Drivers](http://localhost:8080/drivers) and the home page | No | No | Hidden from add/edit/delete actions and redirected to `/login` for protected pages |
+| `USER` | Public pages plus protected pages after login, including [All Teams](http://localhost:8080/teams) | Can create drivers | Can update/delete only drivers associated with the same managed team | Cannot manage teams |
+| `ADMIN` | All pages | Can create drivers and teams | Can update/delete any driver and can manage teams | Can also assign or reassign driver teams |
 
-### Login and logout
+### Hidden UI elements
+
+The UI hides actions that the current visitor cannot perform:
+
+- On [All Drivers](http://localhost:8080/drivers), unauthenticated visitors do not see the inline add-driver form or the edit/delete buttons on driver cards.
+- On [All Teams](http://localhost:8080/teams), non-admin users do not see the add-team button or the delete-team action.
+- In the navbar, admin-only quick actions such as `Add Team` are hidden from non-admin users.
+
+The backend also verifies these restrictions. Hidden controls are only a convenience layer; controller and service logic still enforce the same access rules.
+
+### User-to-entity relationship
+
+The persisted user entity is `AppUser`. It is associated with `Team` through the `managerInTeam` relation.
+
+- A signed-in user who creates a new driver creates it for their managed team.
+- Drivers are therefore associated to users indirectly through the team they belong to.
+- A normal `USER` may update or delete only drivers belonging to their own managed team.
+- An `ADMIN` may update or delete any driver.
+- Users without a managed team cannot manage drivers.
+
+This can be observed on:
+
+- [All Drivers](http://localhost:8080/drivers)
+- [Driver Details Example](http://localhost:8080/drivers/1)
+- [All Teams](http://localhost:8080/teams)
+
+### Authentication and CSRF
 
 - Custom login page: `/login`
 - Logout endpoint/form: `/logout`
-- Logged in username is shown in the navbar with `sec:authentication="name"`.
+- Logged-in username is shown in the navbar with `sec:authentication="name"`.
+- CSRF protection is enabled.
+- Thymeleaf exposes the CSRF token and header name through meta tags in the page header.
+- AJAX requests include the CSRF header when calling the REST API, so the API and Ajax flows keep working with CSRF enabled.
 
-### Authorization behavior
+### Verification links
 
-- Anonymous users can access public pages (for example `/drivers`).
-- Authenticated users can access protected pages and perform data-changing actions.
-- On `/drivers`, authenticated users see application-specific controls (add form, edit/delete card actions) while anonymous users do not.
-
-### Notes
-
-- CSRF is temporarily disabled as required for this assignment.
-- REST API and AJAX flows are kept functional with authentication-aware handling.
+- Public page: [All Drivers](http://localhost:8080/drivers)
+- Public driver details example: [Driver 1](http://localhost:8080/drivers/1)
+- Authentication required page: [All Teams](http://localhost:8080/teams)
+- Login page: [Login](http://localhost:8080/login)

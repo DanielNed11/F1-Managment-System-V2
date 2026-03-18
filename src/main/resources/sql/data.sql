@@ -28,6 +28,7 @@ INSERT INTO race_drivers (race_id, driver_id, position) VALUES
                                                   (2, 2, 1),
                                                   (2, 1, 2);
 
-INSERT INTO app_users (username, password) VALUES ('Daniel', '$2a$12$bTagU/qGW0i/bXumJT8Xs.8swHwJ1nHKehO2q/KX.uo6BxqakPcoW');
-INSERT INTO app_users (username, password) VALUES ('Ivan', '$2a$12$gyHY3GTEKgvqY2H.pQaVBOhKAV7GrPOMVI5bhXWJmjXMYreidJRuu');
-INSERT INTO app_users (username, password) VALUES ('Viki', '$2a$12$54n6poQDwuP7q9G/ZsKUeOiFfU8.1VI2s0vDb3M9mxKRdBGPz6rli');
+INSERT INTO app_users (username, password, role, team_id) VALUES ('Daniel', '$2a$12$bTagU/qGW0i/bXumJT8Xs.8swHwJ1nHKehO2q/KX.uo6BxqakPcoW', 'ADMIN', 1);
+INSERT INTO app_users (username, password, role, team_id) VALUES ('Ivan', '$2a$12$gyHY3GTEKgvqY2H.pQaVBOhKAV7GrPOMVI5bhXWJmjXMYreidJRuu', 'USER', 2);
+INSERT INTO app_users (username, password, role, team_id) VALUES ('Viki', '$2a$12$54n6poQDwuP7q9G/ZsKUeOiFfU8.1VI2s0vDb3M9mxKRdBGPz6rli', 'USER', 3);
+

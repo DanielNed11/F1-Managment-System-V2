@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
 <head th:replace="~{fragments/header :: head(#{page.teams.title})}"></head>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
@@ -10,7 +12,7 @@
             <i class="bi bi-people-fill me-3"></i><span th:text="#{page.teams.heading}">Teams</span>
         </h1>
         <p class="lead mb-4" th:text="#{page.teams.description}">Discover all Formula 1 racing teams and their legacy</p>
-        <a th:href="@{/teams/add}" class="btn btn-success btn-lg">
+        <a th:href="@{/teams/add}" sec:authorize="hasRole('ADMIN')" class="btn btn-success btn-lg">
             <i class="bi bi-plus-circle me-2"></i><span th:text="#{button.addTeam}">Add New Team</span>
         </a>
     </div>
@@ -81,8 +83,7 @@
                        th:href="@{/teams/{id}(id=${team.id})}">
                         <i class="bi bi-eye me-1"></i><span th:text="#{button.viewDetails}">View</span>
                     </a>
-                    <form th:action="@{/teams/{id}/delete(id=${team.id})}" method="post"
-                          th:attr="onsubmit='return confirm(\'' + #{confirm.delete.team} + '\');'">
+                    <form th:action="@{/teams/{id}/delete(id=${team.id})}" method="post" sec:authorize="hasRole('ADMIN')">
                         <button type="submit" class="btn btn-sm btn-outline-danger">
                             <i class="bi bi-trash me-1"></i><span th:text="#{button.delete}">Delete</span>
                         </button>

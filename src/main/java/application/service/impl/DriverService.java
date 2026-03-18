@@ -1,21 +1,23 @@
 package application.service.impl;
 
-import application.domain.Driver;
-import application.domain.RaceDriver;
+import application.domain.*;
 import application.mapper.DriverMapper;
-import application.mapper.RaceMapper;
+import application.repository.IAppUserRepository;
 import application.repository.IDriverRaceRepository;
 import application.repository.IDriverRepository;
+import application.repository.ITeamRepository;
 import application.service.IDriverService;
-import application.viewmodel.DriverDTO;
+import application.viewmodel.AddDriverDto;
 import application.viewmodel.PatchDriverDTO;
-import application.viewmodel.RaceDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 
 // TODO Throw exceptions
@@ -26,100 +28,120 @@ public class DriverService implements IDriverService {
     private final DriverMapper driverMapper;
     private final IDriverRepository driverRepository;
     private final IDriverRaceRepository driverRaceRepository;
-    private final RaceMapper raceMapper;
+    private final IAppUserRepository iAppUserRepository;
+    private final ITeamRepository iTeamRepository;
 
     @Autowired
     public DriverService(IDriverRepository driverRepository,
                          IDriverRaceRepository driverRaceRepository,
-                         DriverMapper driverMapper, RaceMapper raceMapper) {
+                         DriverMapper driverMapper,
+                         IAppUserRepository iAppUserRepository, ITeamRepository iTeamRepository) {
         this.driverRepository = driverRepository;
         this.driverRaceRepository = driverRaceRepository;
         this.driverMapper = driverMapper;
-        this.raceMapper = raceMapper;
+        this.iAppUserRepository = iAppUserRepository;
+        this.iTeamRepository = iTeamRepository;
     }
 
     @Override
-    public List<DriverDTO> getAll() {
-        return driverMapper.toDriverDTOList(driverRepository.findAll());
+    public List<Driver> getAll() {
+        return driverRepository.findAll();
     }
 
     @Override
-    public DriverDTO getById(Integer id) {
-        return driverMapper.toDriverDTO(driverRepository.findById(id).orElse(null));
+    public Driver getById(Integer id) {
+        return driverRepository.findById(id).orElse(null);
     }
 
     @Override
-    public void add(DriverDTO driverDTO) {
-        driverRepository.save(driverMapper.toDriver(driverDTO));
-    }
+    public Driver add(AddDriverDto addDriverDto, int appUserId) {
+        Driver driver = driverMapper.toDriver(addDriverDto);
 
-    public DriverDTO add(AddDriverDtoService addDriverDtoService) {
-        Driver driver = new Driver();
-        driver.setId(null);
-        driver.setName(addDriverDtoService.name);
-        driver.setDateOfBirth(addDriverDtoService.dateOfBirth);
-        driver.setNationality(addDriverDtoService.nationality);
-        driver.setWorldChampionships(addDriverDtoService.worldChampionships);
-        driver.setImageUrl(addDriverDtoService.imageUrl);
+        AppUser appUser = iAppUserRepository.findById(appUserId).orElseThrow(NoSuchElementException::new);
+        Team team = appUser.getManagerInTeam();
+        driver.setTeam(team);
 
-        driverRepository.save(driver);
-        return driverMapper.toDriverDTO(driver);
+        Driver saved = driverRepository.save(driver);
+
+        return driverRepository.findById(saved.getId()).orElse(null);
     }
 
     @Override
-    public void update(DriverDTO updatedDriverDTO) {
-        Driver existingDriver = driverRepository.findById(updatedDriverDTO.getId()).orElse(null);
-        if (existingDriver == null) {
-            throw new IllegalArgumentException("Driver with id " + updatedDriverDTO.getId() + " not found");
-        }
-
-        driverRepository.save(driverMapper.toDriver(updatedDriverDTO));
-    }
-
-    public DriverDTO update(Integer id, PatchDriverDTO patchDriverDTO) {
+    public Driver update(Integer id, PatchDriverDTO patchDriverDTO, int appUserId) {
         Driver driver = driverRepository.findById(id).orElse(null);
         if (driver == null) {
             throw new IllegalArgumentException("Driver with id " + id + " not found");
         }
 
+        if (!canModifyDriver(id, appUserId)) {
+            throw new AccessDeniedException("Access denied");
+        }
+
         driverMapper.patchDTOToDriver(patchDriverDTO, driver);
-        return driverMapper.toDriverDTO(driverRepository.save(driver));
+
+        if (patchDriverDTO.getTeamId() != null) {
+            if (patchDriverDTO.getTeamId() == 0) {
+                driver.setTeam(null);
+            } else {
+                Team team = iTeamRepository.findById(patchDriverDTO.getTeamId())
+                        .orElseThrow(NoSuchElementException::new);
+                driver.setTeam(team);
+            }
+        }
+
+        return driverRepository.save(driver);
     }
 
     @Override
-    public List<DriverDTO> filterDrivers(String nationality, LocalDate dateOfBirth) {
+    public List<Driver> filterDrivers(String nationality, LocalDate dateOfBirth) {
         return driverRepository.findAll().stream()
                 .filter(d -> nationality == null || nationality.isBlank() ||
                         d.getNationality().toLowerCase().contains(nationality.trim().toLowerCase()))
                 .filter(d -> dateOfBirth == null || (d.getDateOfBirth() != null && d.getDateOfBirth().equals(dateOfBirth)))
-                .map(driverMapper::toDriverDTO)
                 .toList();
     }
 
     @Override
-    public void delete(Integer id) {
-        driverRepository.deleteById(id);
+    public void delete(Integer id, int appUserId) {
+        if (canModifyDriver(id, appUserId)) driverRepository.deleteById(id);
+        else throw new AccessDeniedException("Access denied");
+
     }
 
     @Override
-    public List<DriverDTO> findChampions() {
-        return driverMapper.toDriverDTOList(driverRepository.findByWorldChampionshipsGreaterThan(0));
+    public List<Driver> findChampions() {
+        return driverRepository.findByWorldChampionshipsGreaterThan(0);
     }
 
     @Override
-    public List<DriverDTO> findByTeamId(Integer teamId) {
-        return driverMapper.toDriverDTOList(driverRepository.findByTeamId(teamId));
+    public List<Driver> findByTeamId(Integer teamId) {
+        return driverRepository.findByTeamId(teamId);
     }
 
 
     @Override
-    public List<RaceDTO> getRacesByDriver(Integer id) {
-        return driverRaceRepository.findByDriverId(id).get().stream().map(RaceDriver::getRace).map(raceMapper::toRaceDTO).toList();
+    public List<Race> getRacesByDriver(Integer id) {
+        return driverRaceRepository
+                .findByDriverId(id)
+                .orElseThrow(NoSuchElementException::new)
+                .stream()
+                .map(RaceDriver::getRace)
+                .toList();
     }
 
-    public record AddDriverDtoService(String name, LocalDate dateOfBirth, String nationality, int worldChampionships, String imageUrl) {
+    @Override
+    public boolean canModifyDriver(Integer driverId, int appUserId) {
+        AppUser appUser = iAppUserRepository.findById(appUserId).orElseThrow(NoSuchElementException::new);
 
+        if (appUser.getRole() == Role.ADMIN) {
+            return true;
+        }
+
+        Team driversTeam = driverRepository.findById(driverId).orElseThrow(NoSuchElementException::new).getTeam();
+        Team managedTeam = appUser.getManagerInTeam();
+
+        return managedTeam != null && driversTeam != null
+                && Objects.equals(managedTeam.getId(), driversTeam.getId());
     }
 
 }
-

@@ -3,7 +3,6 @@ package application.mapper;
 import application.domain.Team;
 import application.viewmodel.TeamDTO;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 

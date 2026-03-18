@@ -1,27 +1,33 @@
 package application.service;
 
+import application.domain.Driver;
+import application.domain.Race;
+import application.viewmodel.AddDriverDto;
 import application.viewmodel.DriverDTO;
+import application.viewmodel.PatchDriverDTO;
 import application.viewmodel.RaceDTO;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public interface IDriverService {
-    List<DriverDTO> getAll();
+    List<Driver> getAll();
 
-    DriverDTO getById(Integer id);
+    Driver getById(Integer id);
 
-    void add(DriverDTO entity);
+    Driver add(AddDriverDto entity, int appUserId);
 
-    void update(DriverDTO entity);
+    Driver update(Integer id, PatchDriverDTO patchDriverDTO, int appUserId);
 
-    void delete(Integer id);
+    void delete(Integer id, int appUserId);
 
-    List<DriverDTO> filterDrivers(String nationality, LocalDate dateOfBirth);
+    List<Driver> filterDrivers(String nationality, LocalDate dateOfBirth);
 
-    List<DriverDTO> findChampions();
+    List<Driver> findChampions();
 
-    List<DriverDTO> findByTeamId(Integer teamId);
+    List<Driver> findByTeamId(Integer teamId);
 
-    List<RaceDTO> getRacesByDriver(Integer id);
+    List<Race> getRacesByDriver(Integer id);
+
+    boolean canModifyDriver(Integer driverId, int appUserId);
 }

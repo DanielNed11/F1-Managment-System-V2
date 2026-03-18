@@ -34,4 +34,6 @@ public class DriverDTO {
 
     @Pattern(regexp = "^(https?://.*|/img/.*)$", message = "{validation.driver.imageUrl.pattern}")
     private String imageUrl;
+
+    private boolean isModifiable = false;
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/header :: head(#{page.driver.edit.title})}"></head>
 <body>
 <nav th:replace="~{fragments/navbar :: navbar}"></nav>
@@ -7,7 +7,7 @@
 
 <h1 class="mb-4" th:text="#{page.driver.edit.heading}"></h1>
 
-<form class="row g-3" th:action="@{/drivers/edit/{id}(id=${driverDTO.id})}" th:object="${driverDTO}" method="post">
+<form class="row g-3" th:action="@{/drivers/edit/{id}(id=${driverId})}" th:object="${driverDTO}" method="post">
 
     <div class="col-md-6">
         <label class="form-label" th:text="#{label.name} + ':'"></label>
@@ -16,12 +16,12 @@
         <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-6" sec:authorize="hasRole('ADMIN')">
         <label class="form-label" th:text="#{label.setTeam} + ':'"></label>
-        <select class="form-select" th:field="*{teamDTO}">
+        <select class="form-select" th:field="*{teamId}">
             <option th:value="0" th:text="#{option.noTeam}"></option>
             <option th:each="team : ${teams}"
-                    th:value="${team}"
+                    th:value="${team.id}"
                     th:text="${team.name}">
             </option>
         </select>

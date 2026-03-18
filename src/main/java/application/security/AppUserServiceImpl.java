@@ -2,11 +2,16 @@ package application.security;
 
 import application.domain.AppUser;
 import application.repository.IAppUserRepository;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class AppUserServiceImpl implements UserDetailsService {
@@ -20,10 +25,10 @@ public class AppUserServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        AppUser appUser = appUserRepository.findByUsername(username)
+        return appUserRepository
+                .findByUsername(username)
+                .map(CustomUser::buildUser)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
-
-        return User.withUsername(username).password(appUser.getPassword()).build();
 
     }
 }

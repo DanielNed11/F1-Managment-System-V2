@@ -50,7 +50,7 @@
                         <li><a class="dropdown-item" th:href="@{/drivers/add}">
                             <i class="bi bi-person-plus me-2"></i><span th:text="#{menu.addDriver}">Add Driver</span>
                         </a></li>
-                        <li><a class="dropdown-item" th:href="@{/teams/add}">
+                        <li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item" th:href="@{/teams/add}">
                             <i class="bi bi-plus-circle me-2"></i><span th:text="#{menu.addTeam}">Add Team</span>
                         </a></li>
                         <li><a class="dropdown-item" th:href="@{/tracks/add(trackType='PERMANENT')}">

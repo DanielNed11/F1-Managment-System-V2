@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
 <head th:replace="~{fragments/header :: head(#{page.team.title})}"></head>
 <body>
 <div th:replace="~{fragments/navbar :: navbar}"></div>
@@ -16,7 +18,7 @@
             <th th:text="#{table.header.league}"></th>
             <th th:text="#{table.header.founded}"></th>
             <th th:text="#{table.header.budget}"></th>
-            <th th:text="#{table.header.edit}"></th>
+            <th sec:authorize="hasRole('ADMIN')" th:text="#{table.header.edit}"></th>
         </tr>
         </thead>
 
@@ -45,7 +47,7 @@
                 <span class="badge text-bg-success" th:text="${team.budgetInMillions} + 'M'"></span>
             </td>
 
-            <td>
+            <td sec:authorize="hasRole('ADMIN')">
                 <a class="btn btn-sm btn-outline-primary"
                    th:href="@{/teams/edit/{id}(id=${team.id})}">
                     <i class="bi bi-pencil-square"></i>
