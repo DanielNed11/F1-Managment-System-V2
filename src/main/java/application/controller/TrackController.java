@@ -1,11 +1,13 @@
 package application.controller;
 
 import application.domain.PermanentCircuit;
+import application.domain.Race;
 import application.domain.StreetCircuit;
 import application.domain.Track;
+import application.mapper.RaceMapper;
 import application.service.IRaceService;
 import application.service.impl.TrackService;
-import application.viewmodel.RaceDTO;
+import application.controller.viewmodel.RaceViewModel;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,11 +27,13 @@ public class TrackController {
     private final TrackService trackService;
     private final IRaceService raceService;
     private final Log log = LogFactory.getLog(this.getClass());
+    private final RaceMapper raceMapper;
 
     @Autowired
-    public TrackController(TrackService trackService, IRaceService raceService) {
+    public TrackController(TrackService trackService, IRaceService raceService, RaceMapper raceMapper) {
         this.trackService = trackService;
         this.raceService = raceService;
+        this.raceMapper = raceMapper;
     }
 
     private String getTrackType(Track track) {
@@ -57,9 +61,10 @@ public class TrackController {
     @GetMapping("/{id}")
     public String getTrack( Model model, @PathVariable Integer id) {
         Track track = trackService.getById(id);
-        List<RaceDTO> races = raceService.findByTrackId(id);
+        List<Race> races = raceService.findByTrackId(id);
+        List<RaceViewModel> raceViewModelList = raceMapper.toRaceViewModelList(races);
         model.addAttribute("track", track);
-        model.addAttribute("races", races);
+        model.addAttribute("races", raceViewModelList);
         model.addAttribute("trackType", getTrackType(track));
         log.info("Getting track with id " + id);
         return "tracks/track";

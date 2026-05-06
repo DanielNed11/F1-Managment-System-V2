@@ -60,9 +60,15 @@ public class Race {
         }
     }
 
-    public void addRaceDriver(RaceDriver raceDrivers) {
-        this.raceDrivers.add(raceDrivers);
-        raceDrivers.setRace(this);
+    public void addRaceDriver(RaceDriver raceDriver) {
+        this.raceDrivers.add(raceDriver);
+        raceDriver.setRace(this);
+    }
+
+    public void addRaceDriver(Driver driver) {
+        RaceDriver raceDriver = new RaceDriver();
+        raceDriver.setDriver(driver);
+        addRaceDriver(raceDriver);
     }
 
     @Override

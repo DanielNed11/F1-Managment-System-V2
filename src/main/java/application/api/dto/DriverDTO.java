@@ -1,6 +1,5 @@
-package application.viewmodel;
+package application.api.dto;
 
-import application.domain.Team;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,10 +29,9 @@ public class DriverDTO {
     @Max(value = 10, message = "{validation.driver.worldChampionships.max}")
     private int worldChampionships;
 
-    private TeamDTO teamDTO;
+    private SimpleTeamDTO simpleTeamDTO;
 
     @Pattern(regexp = "^(https?://.*|/img/.*)$", message = "{validation.driver.imageUrl.pattern}")
     private String imageUrl;
 
-    private boolean isModifiable = false;
 }

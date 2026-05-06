@@ -1,9 +1,9 @@
-package application.viewmodel;
+package application.controller.viewmodel;
 
 import lombok.Data;
 
 @Data
-public class RaceDriverSelectionDTO {
+public class RaceDriverSelectionViewModel {
 
     private Integer driverId;
     private String driverName;

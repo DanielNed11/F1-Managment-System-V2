@@ -1,12 +1,12 @@
 package application.controller;
 
+import application.controller.viewmodel.TeamViewModel;
 import application.domain.Driver;
 import application.domain.League;
+import application.domain.Team;
 import application.mapper.DriverMapper;
-import application.service.IDriverService;
-import application.service.impl.TeamService;
-import application.viewmodel.DriverDTO;
-import application.viewmodel.TeamDTO;
+import application.mapper.TeamMapper;
+import application.service.ITeamService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.apache.commons.logging.Log;
@@ -19,21 +19,24 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/teams")
 public class TeamController {
 
-    private final TeamService teamService;
-    private final IDriverService driverService;
+    private final ITeamService teamService;
     private final Log log = LogFactory.getLog(this.getClass());
     private final DriverMapper driverMapper;
+    private final TeamMapper teamMapper;
 
     @Autowired
-    public TeamController(TeamService teamService, IDriverService driverService, DriverMapper driverMapper) {
+    public TeamController(ITeamService teamService,
+                          DriverMapper driverMapper,
+                          TeamMapper teamMapper) {
         this.teamService = teamService;
-        this.driverService = driverService;
         this.driverMapper = driverMapper;
+        this.teamMapper = teamMapper;
     }
 
     @GetMapping
@@ -41,26 +44,31 @@ public class TeamController {
                            @RequestParam(required = false)
                            League league) {
 
-        List<TeamDTO> teamDTOS = teamService.filterTeams(league);
+        List<TeamViewModel> teamViewModels = teamMapper.toViewModelList
+                (teamService.filterTeams(league));
 
         model.addAttribute("league", league);
-        model.addAttribute("teams", teamDTOS);
+        model.addAttribute("teams", teamViewModels);
         log.info("Getting teams");
         return "teams/teams";
     }
 
     @GetMapping("/{id}")
     public String getTeam(Model model, @PathVariable Integer id) {
-        TeamDTO teamDTO = teamService.getById(id);
-        if (teamDTO == null) {
+
+        Team team = teamService.getByIdWithDrivers(id);
+
+        TeamViewModel teamViewModel = teamMapper.toViewModel(team);
+
+        if (teamViewModel == null) {
             log.warn("Team with id " + id + " not found");
             return "redirect:/teams";
         }
 
-        List<Driver> drivers = driverService.findByTeamId(id);
+        List<Driver> drivers = team.getDrivers();
 
-        model.addAttribute("team", teamDTO);
-        model.addAttribute("drivers", driverMapper.toDriverDTOList(drivers));
+        model.addAttribute("team", teamViewModel);
+        model.addAttribute("drivers", driverMapper.toDriverViewModelList(drivers));
         log.info("Getting team with id " + id);
         return "teams/team";
     }
@@ -69,14 +77,14 @@ public class TeamController {
     @PreAuthorize("hasRole('ADMIN')")
     public String showAddTeamForm(Model model) {
 
-        model.addAttribute("teamDTO", new TeamDTO());
+        model.addAttribute("teamViewModel", new TeamViewModel());
         log.info("Showing add team form");
         return "teams/add-team";
     }
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('ADMIN')")
-    public String addTeam(@Valid @ModelAttribute TeamDTO teamDTO,
+    public String addTeam(@Valid @ModelAttribute TeamViewModel teamViewModel,
                           BindingResult bindingResult
                          ) {
         if (bindingResult.hasErrors()) {
@@ -84,20 +92,23 @@ public class TeamController {
             return "teams/add-team";
         }
 
-        teamService.add(teamDTO);
-        log.info("Added team with id " + teamDTO.getId());
+        teamService.add(teamMapper.toTeam(teamViewModel));
+
+        log.info("Added team with id " + teamViewModel.getId());
         return "redirect:/teams";
     }
 
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public String showUpdateTeamForm(Model model, @PathVariable Integer id) {
-        TeamDTO teamDTO = teamService.getById(id);
-        if (teamDTO == null) {
+
+        TeamViewModel teamViewModel = teamMapper.toViewModel(teamService.getById(id));
+
+        if (teamViewModel == null) {
             return "redirect:/teams";
         }
 
-        model.addAttribute("teamDTO", teamDTO);
+        model.addAttribute("teamViewModel", teamViewModel);
         log.info("Show edit form for team with id " + id);
         return "teams/edit-team";
     }
@@ -105,20 +116,19 @@ public class TeamController {
     @PostMapping("/edit/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public String updateTeam(@PathVariable Integer id,
-                             @Valid @ModelAttribute TeamDTO teamDTO,
+                             @Valid @ModelAttribute TeamViewModel teamViewModel,
                              BindingResult bindingResult) {
-        TeamDTO oldTeam = teamService.getById(id);
-        if (oldTeam == null) {
-            log.warn("Team with id " + id + " not found");
-            return "redirect:/teams";
-        }
 
         if (bindingResult.hasErrors()) {
             log.warn("Validation errors when updating team with id " + id);
             return "teams/edit-team";
         }
 
-        teamService.update(teamDTO);
+        Team team = teamMapper.toTeam(teamViewModel);
+
+        team.setId(id);
+
+        teamService.update(team);
         log.info("Updated team with id " + id);
         return "redirect:/teams";
     }

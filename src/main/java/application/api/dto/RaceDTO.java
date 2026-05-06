@@ -1,6 +1,5 @@
-package application.viewmodel;
+package application.api.dto;
 
-import application.domain.Track;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +22,6 @@ public class RaceDTO {
     private LocalDate date;
 
     private Integer trackId;
-    private Track track;
 
     private String trackName;
 

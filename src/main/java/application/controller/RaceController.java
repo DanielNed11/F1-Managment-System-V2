@@ -1,10 +1,14 @@
 package application.controller;
 
+import application.controller.helper.RaceFormFactory;
+import application.controller.viewmodel.RaceViewModel;
+import application.domain.Race;
+import application.mapper.RaceMapper;
 import application.service.IRaceService;
 import application.service.ITrackService;
-import application.viewmodel.AddRaceDTO;
-import application.viewmodel.EditRaceDTO;
-import application.viewmodel.RaceDTO;
+import application.controller.viewmodel.AddRaceViewModel;
+import application.controller.viewmodel.EditRaceViewModel;
+import application.service.command.UpdateRaceCommand;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +30,18 @@ public class RaceController {
     private final IRaceService raceService;
     private final ITrackService trackService;
     private final Log log = LogFactory.getLog(this.getClass());
+    private final RaceMapper raceMapper;
+    private final RaceFormFactory raceFormFactory;
 
     @Autowired
-    public RaceController(IRaceService raceService, ITrackService trackService) {
+    public RaceController(IRaceService raceService,
+                          ITrackService trackService,
+                          RaceMapper raceMapper,
+                          RaceFormFactory raceFormFactory) {
         this.raceService = raceService;
         this.trackService = trackService;
+        this.raceMapper = raceMapper;
+        this.raceFormFactory = raceFormFactory;
     }
 
     @GetMapping
@@ -49,34 +60,35 @@ public class RaceController {
 
     @GetMapping("/add")
     public String showAddRaceForm(Model model) {
-        model.addAttribute("addRaceDTO", raceService.getAddRaceForm());
+        model.addAttribute("addRaceViewModel", raceFormFactory.buildAddRaceForm());
         model.addAttribute("tracks", trackService.getAll());
         log.info("Show Add Race Form");
         return "races/add-race";
     }
 
     @PostMapping("/add")
-    public String addRace(@ModelAttribute AddRaceDTO addRaceDTO) {
-        raceService.addRace(addRaceDTO);
+    public String addRace(@ModelAttribute AddRaceViewModel addRaceViewModel) {
+        raceService.addRace(raceMapper.toAddRaceCommand(addRaceViewModel));
         return "redirect:/races";
     }
 
     @GetMapping("/edit/{id}")
     public String showEditRaceForm(@PathVariable Integer id, Model model) {
-        EditRaceDTO editRaceDTO = raceService.getEditRaceForm(id);
-        if (editRaceDTO == null) {
-            return "redirect:/races";
-        }
-        model.addAttribute("editRaceDTO", editRaceDTO);
+        EditRaceViewModel editRaceViewModel = raceFormFactory.buildEditRaceForm(id);
+
+        model.addAttribute("editRaceViewModel", editRaceViewModel);
         model.addAttribute("tracks", trackService.getAll());
         log.info("Show Edit Race Form");
         return "races/edit-race";
     }
 
     @PostMapping("/edit/{id}")
-    public String updateRace(@PathVariable Integer id, @ModelAttribute EditRaceDTO editRaceDTO) {
-        editRaceDTO.setId(id);
-        raceService.updateRace(editRaceDTO);
+    public String updateRace(@PathVariable Integer id, @ModelAttribute EditRaceViewModel editRaceViewModel) {
+        UpdateRaceCommand updateRaceCommand = raceMapper.toUpdateRaceCommand(editRaceViewModel);
+
+        updateRaceCommand.setId(id);
+
+        raceService.updateRace(updateRaceCommand);
         log.info("Updated Race with id " + id);
         return "redirect:/races";
     }
@@ -107,7 +119,8 @@ public class RaceController {
 
     @GetMapping("/upcoming")
     public String showUpcomingRaces(Model model) {
-        List<RaceDTO> upcomingRaces = raceService.findUpcomingRaces();
+        List<Race> races = raceService.findUpcomingRaces();
+        List<RaceViewModel> upcomingRaces = raceMapper.toRaceViewModelList(races);
         model.addAttribute("races", upcomingRaces);
         log.info("Showing upcoming races");
         return "races/upcoming-races";

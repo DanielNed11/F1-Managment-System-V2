@@ -27,15 +27,6 @@ public class StreetCircuit extends Track {
     @Setter
     private Boolean hasTemporaryBarriers;
 
-    public StreetCircuit(String name, String location, double lengthKm, int openedYear,
-                         String cityName, Integer daysToSetup, Double annualRentalCost, Boolean hasTemporaryBarriers) {
-        super(name, location, lengthKm, openedYear);
-        this.cityName = cityName;
-        this.daysToSetup = daysToSetup;
-        this.annualRentalCost = annualRentalCost;
-        this.hasTemporaryBarriers = hasTemporaryBarriers;
-    }
-
     @Override
     public String toString() {
         return super.toString() + " [Street Circuit in " + cityName + "]";

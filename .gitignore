@@ -23,6 +23,8 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+docs
+htmlReport
 
 /nbproject/private/
 /nbbuild/

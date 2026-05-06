@@ -6,7 +6,7 @@
 
 <h1 th:text="#{page.race.add.heading}"></h1>
 
-<form th:action="@{/races/add}" th:object="${addRaceDTO}" method="post">
+<form th:action="@{/races/add}" th:object="${addRaceViewModel}" method="post">
 
     <label th:text="#{label.name} + ':'"></label>
     <input type="text" th:field="*{name}" required>

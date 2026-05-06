@@ -166,8 +166,7 @@ function updateDriversCount() {
     const counter = document.getElementById("driversCount");
     if (!counter) return;
 
-    const currentDrivers = document.querySelectorAll("[data-driver-id]").length;
-    counter.textContent = String(currentDrivers);
+    counter.textContent = document.querySelectorAll("[data-driver-id]").length;
 }
 
 function addDriverToDom(driver) {
@@ -296,7 +295,7 @@ async function showEditForm(button) {
 
     const teams = await getTeams();
 
-    const selectedTeamId = driver.teamDTO?.id ?? null;
+    const selectedTeamId = driver.simpleTeamDTO?.id ?? null;
 
     const teamOptions = (teams || []).map(team => `
       <option value="${team.id}" ${String(team.id) === String(selectedTeamId) ? "selected" : ""}>
@@ -406,3 +405,4 @@ function buildPatchBody(formContainer) {
         teamId
     };
 }
+

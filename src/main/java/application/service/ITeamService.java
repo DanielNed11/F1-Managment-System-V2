@@ -1,19 +1,24 @@
 package application.service;
 
 import application.domain.League;
-import application.viewmodel.TeamDTO;
+import application.domain.Team;
 
 import java.util.List;
 
 public interface ITeamService {
-    List<TeamDTO> getAll();
+    List<Team> getAllWithDrivers();
 
-    TeamDTO getById(Integer id);
+    Team getByIdWithDrivers(Integer id);
 
-    void add(TeamDTO entity);
+    Team getById(Integer id);
 
-    void update(TeamDTO entity);
+    List<Team> getAll();
+
+    void add(Team entity);
+
+    void update(Team entity);
 
     void delete(Integer id);
-    List<TeamDTO> filterTeams(League league);
+
+    List<Team> filterTeams(League league);
 }

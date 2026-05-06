@@ -1,34 +1,28 @@
 package application.service;
 
-import application.viewmodel.AddRaceDTO;
-import application.viewmodel.EditRaceDTO;
-import application.viewmodel.RaceDTO;
+import application.domain.Race;
+import application.service.command.AddRaceCommand;
+import application.service.command.UpdateRaceCommand;
 
 import java.util.List;
 
 public interface IRaceService {
 
-    RaceDTO getById(Integer id);
-
-    void update(RaceDTO entity);
+    Race getById(Integer id);
 
     void delete(Integer id);
 
-    List<RaceDTO> findRacesByDriverId(Integer driverId);
+    List<Race> findRacesByDriverId(Integer driverId);
 
-    List<RaceDTO> findUpcomingRaces();
+    List<Race> findUpcomingRaces();
 
-    List<RaceDTO> findByTrackId(Integer trackId);
+    List<Race> findByTrackId(Integer trackId);
 
-    List<RaceDTO> getAllRaces();
+    List<Race> getAllRaces();
 
-    AddRaceDTO getAddRaceForm();
+    void addRace(AddRaceCommand addRaceCommand);
 
-    EditRaceDTO getEditRaceForm(Integer id);
-
-    void addRace(AddRaceDTO addRaceDTO);
-
-    void updateRace(EditRaceDTO editRaceDTO);
+    Race updateRace(UpdateRaceCommand updateRaceCommand);
 
     void removeDriverFromRace(Integer raceId, Integer driverId);
 

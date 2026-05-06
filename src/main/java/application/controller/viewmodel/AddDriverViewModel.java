@@ -1,4 +1,4 @@
-package application.viewmodel;
+package application.controller.viewmodel;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddDriverDto {
+public class AddDriverViewModel {
 
     @NotBlank
     @Size(min = 2, max = 30)

@@ -1,7 +1,8 @@
 package application.mapper;
 
+import application.api.dto.SimpleTeamDTO;
 import application.domain.Team;
-import application.viewmodel.TeamDTO;
+import application.controller.viewmodel.TeamViewModel;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -9,7 +10,9 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface TeamMapper {
 
-    TeamDTO toTeamDTO(Team team);
-    Team toTeam(TeamDTO teamDTO);
-    List<TeamDTO> toTeamDTOList(List<Team> teams);
+    TeamViewModel toViewModel(Team team);
+    Team toTeam(TeamViewModel teamViewModel);
+    List<TeamViewModel> toViewModelList(List<Team> teams);
+    SimpleTeamDTO toDTO(Team team);
+    List<SimpleTeamDTO> toDTOList(List<Team> teams);
 }

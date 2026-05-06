@@ -1,15 +1,18 @@
 package application.controller;
 
+import application.controller.viewmodel.AddDriverViewModel;
 import application.domain.Driver;
+import application.domain.Race;
+import application.domain.RaceDriver;
 import application.mapper.DriverMapper;
 import application.security.CustomUser;
 import application.service.IDriverService;
 import application.service.IRaceService;
 import application.service.ITeamService;
-import application.viewmodel.AddDriverDto;
-import application.viewmodel.DriverDTO;
-import application.viewmodel.PatchDriverDTO;
-import application.viewmodel.RaceDTO;
+import application.controller.viewmodel.DriverViewModel;
+import application.controller.viewmodel.PatchDriverViewModel;
+import application.controller.viewmodel.RaceViewModel;
+import application.service.command.UpdateDriverCommand;
 import jakarta.validation.Valid;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,12 +56,11 @@ public class DriverController {
 
         List<Driver> drivers = driverService.filterDrivers(nationality, dateOfBirth);
 
-        List<DriverDTO> driverDTOList = drivers.stream().map(driver -> {
-
+        List<DriverViewModel> driverDTOList = drivers.stream().map(driver -> {
             boolean canModifyDriver = customUser != null &&
                     customUser.getAppUserId() != null &&
                     driverService.canModifyDriver(driver.getId(), customUser.getAppUserId());
-            DriverDTO driverDTO = driverMapper.toDriverDTO(driver);
+            DriverViewModel driverDTO = driverMapper.toDriverViewModel(driver);
             driverDTO.setModifiable(canModifyDriver);
             return driverDTO;
         }).toList();
@@ -82,9 +84,9 @@ public class DriverController {
             return "redirect:/drivers";
         }
 
-        List<RaceDTO> races = raceService.findRacesByDriverId(id);
+        List<Race> races = driver.getRaceDrivers().stream().map(RaceDriver::getRace).toList();
 
-        DriverDTO driverDTO = driverMapper.toDriverDTO(driver);
+        DriverViewModel driverDTO = driverMapper.toDriverViewModel(driver);
         driverDTO.setModifiable(
                 customUser != null
                         && customUser.getAppUserId() != null
@@ -98,22 +100,25 @@ public class DriverController {
     @GetMapping("/drivers/add")
     public String showAddForm(Model model) {
 
-        model.addAttribute("driverDTO", new AddDriverDto());
-        model.addAttribute("teams", teamService.getAll());
+        model.addAttribute("driverDTO", new AddDriverViewModel());
+        model.addAttribute("teams", teamService.getAllWithDrivers());
         return "drivers/add-driver";
     }
 
     @PostMapping("/drivers/add")
-    public String addDriver(@Valid @ModelAttribute AddDriverDto driverDto,
+    public String addDriver(@Valid @ModelAttribute AddDriverViewModel driverDto,
                             BindingResult bindingResult,
                             @AuthenticationPrincipal CustomUser customUser,
                             Model model) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("teams", teamService.getAll());
+            model.addAttribute("teams", teamService.getAllWithDrivers());
             return "drivers/add-driver";
         }
 
-        Driver driver = driverService.add(driverDto, customUser.getAppUserId());
+        Driver driver = driverMapper.toDriver(driverDto);
+
+        driverService.add(driver, customUser.getAppUserId());
+
         log.info("Adding driver with id " + driver.getId());
         return "redirect:/drivers";
     }
@@ -127,7 +132,7 @@ public class DriverController {
             return "redirect:/drivers";
         }
 
-        model.addAttribute("driverDTO",driverMapper.toPatchDriverDTO(driver));
+        model.addAttribute("driverDTO",driverMapper.toPatchDriverViewModel(driver));
         model.addAttribute("driverId", id);
         model.addAttribute("teams", teamService.getAll());
         return "drivers/edit-driver";
@@ -135,19 +140,23 @@ public class DriverController {
 
     @PostMapping("/drivers/edit/{id}")
     public String updateDriver(@PathVariable Integer id,
-                               @Valid @ModelAttribute PatchDriverDTO patchDriverDTO,
+                               @Valid @ModelAttribute PatchDriverViewModel patchDriverViewModel,
                                @AuthenticationPrincipal CustomUser customUser,
                                BindingResult bindingResult,
                                Model model) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("driverId", id);
-            model.addAttribute("teams", teamService.getAll());
+            model.addAttribute("teams", teamService.getAllWithDrivers());
             log.warn("Validation errors when updating driver with id " + id);
             return "drivers/edit-driver";
         }
 
-        driverService.update(id, patchDriverDTO, customUser.getAppUserId());
+        UpdateDriverCommand command = driverMapper.toUpdateDriverCommand(patchDriverViewModel);
+
+        command.setId(id);
+
+        driverService.update(command, customUser.getAppUserId());
         log.info("Updating driver with id " + id);
         return "redirect:/drivers";
     }
@@ -161,11 +170,9 @@ public class DriverController {
 
     @GetMapping("/drivers/champions")
     public String showChampions(Model model) {
-
         List<Driver> champions = driverService.findChampions();
 
-
-        model.addAttribute("drivers", driverMapper.toDriverDTOList(champions));
+        model.addAttribute("drivers", driverMapper.toDriverViewModelList(champions));
         log.info("Showing champion drivers");
         return "drivers/champions";
     }

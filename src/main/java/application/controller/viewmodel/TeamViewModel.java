@@ -1,4 +1,4 @@
-package application.viewmodel;
+package application.controller.viewmodel;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeamDTO {
+public class TeamViewModel {
     private Integer id;
 
     @NotBlank(message = "{validation.team.name.notblank}")

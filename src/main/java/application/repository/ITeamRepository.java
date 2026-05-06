@@ -14,10 +14,13 @@ public interface ITeamRepository extends JpaRepository<Team, Integer> {
 
     @Query("SELECT DISTINCT t FROM Team t " +
             "LEFT JOIN FETCH t.drivers")
-    List<Team> findAll();
+    List<Team> findAllWithDrivers();
 
     @Query("SELECT t FROM Team t " +
             "LEFT JOIN FETCH t.drivers " +
             "WHERE t.id = :id")
-    Optional<Team> findById(@Param("id") Integer id);
+    Optional<Team> findByIdWithDrivers(@Param("id") Integer id);
+
+
+
 }

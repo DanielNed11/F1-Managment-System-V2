@@ -1,4 +1,4 @@
-package application.viewmodel;
+package application.controller.viewmodel;
 
 import lombok.Data;
 
@@ -7,12 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class EditRaceDTO {
+public class AddRaceViewModel {
 
-    private Integer id;
     private String name;
     private LocalDate date;
     private Integer trackId;
     private Integer winnerId;
-    private List<RaceDriverSelectionDTO> driverSelections = new ArrayList<>();
+    private List<RaceDriverSelectionViewModel> driverSelections = new ArrayList<>();
 }

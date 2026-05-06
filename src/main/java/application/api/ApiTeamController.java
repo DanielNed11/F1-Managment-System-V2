@@ -1,10 +1,8 @@
 package application.api;
 
+import application.api.dto.SimpleTeamDTO;
 import application.mapper.TeamMapper;
 import application.service.ITeamService;
-import application.service.impl.TeamService;
-import application.viewmodel.DriverDTO;
-import application.viewmodel.TeamDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,13 +15,15 @@ import java.util.List;
 public class ApiTeamController {
 
     private final ITeamService teamService;
+    private final TeamMapper teamMapper;
 
-    public ApiTeamController(ITeamService teamService) {
+    public ApiTeamController(ITeamService teamService, TeamMapper teamMapper) {
         this.teamService = teamService;
+        this.teamMapper = teamMapper;
     }
 
     @GetMapping
-    public ResponseEntity<List<TeamDTO>> getTeams() {
-        return ResponseEntity.ok(teamService.getAll());
+    public ResponseEntity<List<SimpleTeamDTO>> getTeams() {
+        return ResponseEntity.ok(teamMapper.toDTOList(teamService.getAllWithDrivers()));
     }
 }

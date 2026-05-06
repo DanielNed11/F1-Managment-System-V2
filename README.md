@@ -65,11 +65,12 @@ Track (Single Table Inheritance)
    cd Client
    ```
 
-2. **Start the PostgreSQL database using Docker:**
+2. **Start the development PostgreSQL database using Docker:**
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
-   This will start a PostgreSQL database on port 5432.
+   This starts the `f1Management` PostgreSQL database on host port `5050`.
+   The default Spring configuration loads `src/main/resources/sql/data.sql`.
 
 3. **Build the application:**
    ```bash
@@ -84,12 +85,65 @@ Track (Single Table Inheritance)
 5. **Access the application:**
    - Open your browser: `http://localhost:8080`
 
+### Spring Profiles and Testing
+
+- The default profile uses `src/main/resources/application.properties` and loads the normal seed data from `classpath:sql/data.sql`.
+- Tests use the `test` profile through `@ActiveProfiles("test")`.
+- The `test` profile is configured in `src/test/resources/application-test.properties`.
+- Test data seeding is disabled with `spring.sql.init.mode=never`, so tests arrange their own data and do not depend on development seed data.
+- Tests use a separate PostgreSQL database, `f1Management-test`, on host port `5435`.
+
+Start the test database:
+```bash
+docker compose -f docker-compose.test.yml up -d
+```
+
+Run the test suite:
+```bash
+./gradlew test
+```
+
+The tests are configured with `@ActiveProfiles("test")`, so the single command above runs the full test suite against the test-specific PostgreSQL database.
+
+Presentation-layer integration test classes:
+
+- MVC integration tests: `DriverControllerTest`, `TeamControllerTest`
+- API integration tests: `ApiDriverControllerTest`
+- Role verification tests: `ApiDriverControllerTest`
+
+Code coverage screenshot from IntelliJ:
+
+![Code coverage report](coverageReport.png)
+
+Unit tests with mocking:
+
+- Mocking tests: `ApiDriverControllerUnitTest`, `DriverServiceUnitTest`
+- `verify` tests: `ApiDriverControllerUnitTest`, `DriverServiceUnitTest`
+
+Continuous integration:
+
+- The GitLab CI pipeline is configured in `.gitlab-ci.yml`.
+- The pipeline runs automatically when changes are pushed to GitLab.
+- The pipeline has two stages: `build` and `test`.
+- The `build` job runs `./gradlew --build-cache assemble`.
+- The `test` job runs `./gradlew test`.
+- The `test` job starts a PostgreSQL service and sets `CI_DB_HOST_PORT=postgres:5432`, so Spring tests connect to the CI database service.
+- Locally, the same tests still use the Docker Compose test database through the fallback `localhost:5435` value in `application-test.properties`.
+- The test job publishes a JUnit report from `build/test-results/test/**/TEST-*.xml`.
+
+GitLab test report:
+
+Stop the test database:
+```bash
+docker compose -f docker-compose.test.yml down
+```
+
 ### Stopping the Application
 
 - **Stop Spring Boot:** Press `Ctrl+C` in the terminal
 - **Stop PostgreSQL:**
   ```bash
-  docker-compose down
+  docker compose down
   ```
 
 ### Useful Commands
@@ -98,17 +152,23 @@ Track (Single Table Inheritance)
 # Clean and rebuild
 ./gradlew clean build
 
-# Run tests
+# Start the development database
+docker compose up -d
+
+# Start the test database
+docker compose -f docker-compose.test.yml up -d
+
+# Run tests with the test profile
 ./gradlew test
 
 # Check Docker containers status
-docker-compose ps
+docker compose ps
 
 # View database logs
-docker-compose logs postgres
+docker compose logs postgres_boardgames_db
 
 # Access PostgreSQL CLI
-docker exec -it programming5-postgres psql -U f1user -d f1db
+docker compose exec postgres_boardgames_db psql -U spring -d f1Management
 ```
 
 ---
@@ -138,9 +198,14 @@ src/main/java/application/
 src/main/resources/
 ├── templates/           # Thymeleaf HTML templates
 ├── static/              # Static assets (CSS, JS, images)
+├── sql/data.sql         # Development seed data
 └── application.properties
 
-docker-compose.yml       # PostgreSQL database configuration
+src/test/resources/
+└── application-test.properties # Test profile datasource configuration
+
+docker-compose.yml       # Development PostgreSQL database configuration
+docker-compose.test.yml  # Test PostgreSQL database configuration
 ```
 
 ---

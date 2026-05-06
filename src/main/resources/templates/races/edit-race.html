@@ -6,10 +6,10 @@
 
 <h1 th:text="#{page.race.edit.heading}"></h1>
 
-<form th:action="@{/races/edit/{id}(id=${editRaceDTO.id})}" th:object="${editRaceDTO}" method="post">
+<form th:action="@{/races/edit/{id}(id=${editRaceViewModel.id})}" th:object="${editRaceViewModel}" method="post">
 
     <label th:text="#{label.name} + ':'"></label>
-    <input type="text" th:field="*{name}" />
+    <input type="text" th:field="*{name}"/>
 
     <br>
 

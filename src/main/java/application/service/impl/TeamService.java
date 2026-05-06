@@ -1,10 +1,9 @@
 package application.service.impl;
 
 import application.domain.League;
-import application.mapper.TeamMapper;
+import application.domain.Team;
 import application.repository.ITeamRepository;
 import application.service.ITeamService;
-import application.viewmodel.TeamDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,32 +16,42 @@ import java.util.stream.Collectors;
 public class TeamService implements ITeamService {
 
     private final ITeamRepository teamRepository;
-    private final TeamMapper teamMapper;
 
     @Autowired
-    public TeamService(ITeamRepository teamRepository, TeamMapper teamMapper) {
+    public TeamService(ITeamRepository teamRepository) {
         this.teamRepository = teamRepository;
-        this.teamMapper = teamMapper;
     }
 
     @Override
-    public List<TeamDTO> getAll() {
-        return teamMapper.toTeamDTOList(teamRepository.findAll());
+    public List<Team> getAllWithDrivers() {
+        return teamRepository.findAllWithDrivers();
+    }
+
+
+
+    @Override
+    public Team getByIdWithDrivers(Integer id) {
+        return teamRepository.findByIdWithDrivers(id).orElse(null);
     }
 
     @Override
-    public TeamDTO getById(Integer id) {
-        return teamMapper.toTeamDTO(teamRepository.findById(id).get());
+    public Team getById(Integer id) {
+        return teamRepository.findById(id).orElse(null);
     }
 
     @Override
-    public void add(TeamDTO team) {
-        teamRepository.save(teamMapper.toTeam(team));
+    public List<Team> getAll() {
+        return teamRepository.findAll();
     }
 
     @Override
-    public void update(TeamDTO team) {
-        teamRepository.save(teamMapper.toTeam(team));
+    public void add(Team team) {
+        teamRepository.save(team);
+    }
+
+    @Override
+    public void update(Team team) {
+        teamRepository.save(team);
     }
 
     @Override
@@ -51,10 +60,10 @@ public class TeamService implements ITeamService {
     }
 
     @Override
-    public List<TeamDTO> filterTeams(League league) {
-        return teamMapper.toTeamDTOList(teamRepository.findAll().stream()
+    public List<Team> filterTeams(League league) {
+        return teamRepository.findAllWithDrivers().stream()
                 .filter(t -> league == null || t.getLeague() == league)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
     }
 
 
