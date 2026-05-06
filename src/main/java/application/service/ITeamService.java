@@ -14,7 +14,7 @@ public interface ITeamService {
 
     List<Team> getAll();
 
-    void add(Team entity);
+    Team add(Team entity);
 
     void update(Team entity);
 

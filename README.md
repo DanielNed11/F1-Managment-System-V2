@@ -61,8 +61,8 @@ Track (Single Table Inheritance)
 
 1. **Clone the repository:**
    ```bash
-   git clone https://gitlab.com/kdg-ti/programming-5/projects-25-26/acs201/daniel.nedyalkov/Client.git
-   cd Client
+   git clone https://gitlab.com/kdg-ti/programming-5/projects-25-26/acs201/daniel.nedyalkov/spring-backend.git
+   cd spring-backend
    ```
 
 2. **Start the development PostgreSQL database using Docker:**
@@ -84,6 +84,48 @@ Track (Single Table Inheritance)
 
 5. **Access the application:**
    - Open your browser: `http://localhost:8080`
+
+### Separate Client Project
+
+Week 10 adds a separate frontend Client project. The Spring Boot backend must run on `http://localhost:8080`, and the Client webpack dev server runs on `http://localhost:9000`.
+
+The Client provides a small single-page interface with two views:
+
+- **Search:** searches drivers by nationality.
+- **Add:** adds a new team through the backend REST API.
+
+Backend endpoints used by the Client:
+
+```text
+GET /api/drivers/search?nationality=...
+POST /api/teams
+```
+
+Security configuration for the Client:
+
+- `GET /api/drivers/search` is public so the Client can search drivers.
+- `POST /api/teams` is public only so the separate Client project can test adding teams without logging in.
+- CSRF is disabled only for `POST /api/teams`.
+- CORS allows only the Client origin: `http://localhost:9000`.
+
+Run the Client:
+
+```bash
+cd /Users/daniel/IdeaProjects/Client
+npm install
+npm run start
+```
+
+Then open `http://localhost:9000` in the browser. Keep the Spring Boot backend running at the same time, because the Client sends requests to `http://localhost:8080`.
+
+Useful Client checks:
+
+```bash
+cd /Users/daniel/IdeaProjects/Client
+npm run lint
+npm run format:check
+npm run build
+```
 
 ### Spring Profiles and Testing
 
@@ -132,6 +174,8 @@ Continuous integration:
 - The test job publishes a JUnit report from `build/test-results/test/**/TEST-*.xml`.
 
 GitLab test report:
+
+- [Recent successful GitLab test report](https://gitlab.com/kdg-ti/programming-5/projects-25-26/acs201/daniel.nedyalkov/spring-backend/-/pipelines/2505132563/test_report)
 
 Stop the test database:
 ```bash
@@ -562,6 +606,36 @@ Content-Length: 0
 
 ---
 
+## Week 4
+
+### Spring Security and authentication
+
+Spring Security is enabled with a persisted `AppUser` entity, a custom login page, logout support, and BCrypt-hashed passwords in the database.
+
+The application seeds these users:
+
+| Username | Password | Notes |
+|----------|----------|-------|
+| `Daniel` | `Dani` | Seeded administrator user |
+| `Ivan` | `Ivan` | Seeded normal user |
+| `Viki` | `Viki` | Seeded normal user |
+
+The login page also displays these dummy credentials for testing:
+
+- [Login page](http://localhost:8080/login)
+
+### Public and protected pages
+
+- Public page: [All Drivers](http://localhost:8080/drivers)
+- Public driver details example: [Driver 1](http://localhost:8080/drivers/1)
+- Authentication required page: [All Teams](http://localhost:8080/teams)
+
+Authenticated users can see application-specific actions that anonymous users cannot see, such as the ability to add or manage drivers. The username is shown in the navbar after login.
+
+CSRF was temporarily disabled when Spring Security was first introduced for Week 4. It is enabled again in the Week 5 implementation.
+
+---
+
 ## Week 5
 
 ### Seeded users
@@ -625,3 +699,235 @@ This can be observed on:
 - Public driver details example: [Driver 1](http://localhost:8080/drivers/1)
 - Authentication required page: [All Teams](http://localhost:8080/teams)
 - Login page: [Login](http://localhost:8080/login)
+
+---
+
+## Week 6
+
+### Spring profiles and test database
+
+Tests use a separate Spring profile and a separate PostgreSQL database so test data does not interfere with development seed data.
+
+- Test profile: `test`
+- Test configuration: `src/test/resources/application-test.properties`
+- Development seed data: `src/main/resources/sql/data.sql`
+- Test seeding: arranged inside tests with `TestHelper`, `@BeforeEach`, and test-specific setup
+- Test database: `f1Management-test`
+- Test database Docker Compose file: `docker-compose.test.yml`
+
+Start the test database:
+
+```bash
+docker compose -f docker-compose.test.yml up -d
+```
+
+Run all tests:
+
+```bash
+./gradlew test
+```
+
+### Repository integration tests
+
+Repository tests are in:
+
+- `RaceRepositoryTest`
+- `AppUserRepositoryTest`
+
+Covered behavior:
+
+- `RaceRepositoryTest.deletingRaceDeletesRaceDrivers` verifies delete behavior for associated `RaceDriver` records.
+- `RaceRepositoryTest.findByIdFetchesRaceDetails` verifies fetching mapped race details.
+- `RaceRepositoryTest.findRacesByDriverIdReturnsOnlyRacesForThatDriver` verifies query behavior.
+- `AppUserRepositoryTest.duplicateUsernamesIsNotAllowed` verifies the username uniqueness mapping.
+
+### Service integration tests
+
+Service integration tests are in:
+
+- `DriverServiceTest`
+- `RaceServiceTest`
+
+Covered behavior:
+
+- `DriverServiceTest` verifies successful driver update by the manager of the driver's team and forbidden update by another manager.
+- `RaceServiceTest` verifies updating race details, winner, and driver selection data.
+
+---
+
+## Week 8
+
+### Presentation-layer integration tests
+
+All presentation-layer tests run with Spring Security enabled and use MockMVC.
+
+Run all tests:
+
+```bash
+./gradlew test
+```
+
+MVC integration test classes:
+
+- `DriverControllerTest`
+- `TeamControllerTest`
+
+API integration test classes:
+
+- `ApiDriverControllerTest`
+
+Role verification test class:
+
+- `ApiDriverControllerTest`
+
+### Authorization tests
+
+The authorization requirement is tested on controller endpoints that receive the authenticated user through `@AuthenticationPrincipal`.
+
+`ApiDriverControllerTest` verifies:
+
+- A manager can patch a driver from the manager's own team.
+- A manager cannot patch a driver from another team.
+- An admin can patch a driver from any team and can change the driver's team.
+- A manager can delete a driver from the manager's own team.
+- A manager cannot delete a driver from another team.
+- An admin can delete a driver from any team.
+
+### Code coverage
+
+Code coverage screenshot from IntelliJ:
+
+![Code coverage report](coverageReport.png)
+
+---
+
+## Week 9
+
+### Unit tests with mocking
+
+Mocking tests are in:
+
+- `ApiDriverControllerUnitTest`
+- `DriverServiceUnitTest`
+
+`ApiDriverControllerUnitTest` tests the `POST /api/drivers` controller method with mocked controller dependencies:
+
+- `IDriverService`
+- `DriverMapper`
+
+`DriverServiceUnitTest` tests driver update and delete service logic with mocked repositories:
+
+- `IDriverRepository`
+- `IAppUserRepository`
+- `ITeamRepository`
+- `IDriverRaceRepository`
+
+### Verify tests
+
+Tests using Mockito `verify` are in:
+
+- `ApiDriverControllerUnitTest`
+- `DriverServiceUnitTest`
+
+Examples:
+
+- `ApiDriverControllerUnitTest.addDriverReturnsCreated` verifies that the controller calls the mapper and service with the expected objects.
+- `DriverServiceUnitTest.managerCanUpdateDriverFromManagedTeam` verifies that `driverRepository.save(driver)` is called.
+- `DriverServiceUnitTest.managerCannotUpdateDriverFromDifferentTeam` verifies that `driverRepository.save(driver)` is not called.
+- `DriverServiceUnitTest.managerCanDeleteDriverFromManagedTeam` verifies that `driverRepository.deleteById(driver.getId())` is called.
+
+### Continuous integration
+
+The GitLab CI pipeline is configured in `.gitlab-ci.yml`.
+
+- The pipeline triggers automatically when changes are pushed.
+- Stages: `build`, `test`
+- Build job: `./gradlew --build-cache assemble`
+- Test job: `./gradlew test`
+- CI database service: `postgres:18-alpine`
+- CI database name: `f1Management-test`
+- CI connection host: `postgres:5432`
+- Local test database fallback: `localhost:5435`
+- JUnit test report artifact: `build/test-results/test/**/TEST-*.xml`
+
+GitLab test report:
+
+- [Recent successful GitLab test report](https://gitlab.com/kdg-ti/programming-5/projects-25-26/acs201/daniel.nedyalkov/spring-backend/-/pipelines/2505132563/test_report)
+
+---
+
+## Week 10
+
+### Separate Client project
+
+Week 10 uses a separate Client repository for the frontend code. Java backend changes remain in this Spring Boot repository.
+
+Client repository:
+
+```bash
+git clone git@gitlab.com:kdg-ti/programming-5/projects-25-26/acs201/daniel.nedyalkov/Client.git
+cd Client
+npm install
+npm run start
+```
+
+The backend must also be running:
+
+```bash
+./gradlew bootRun
+```
+
+Open the Client at:
+
+```text
+http://localhost:9000
+```
+
+The Client uses npm, webpack, ESLint, dprint, Sass, and Bootstrap. It contains one HTML page with SPA-style navigation between `Search` and `Add` sections using custom JavaScript.
+
+Useful Client checks:
+
+```bash
+npm run lint
+npm run format:check
+npm run build
+```
+
+### Backend API endpoints for the Client
+
+Search endpoint:
+
+```http
+GET http://localhost:8080/api/drivers/search?nationality=Bul
+Accept: application/json
+```
+
+This endpoint searches drivers by nationality and is public so the separate Client project can use it.
+
+Add endpoint:
+
+```http
+POST http://localhost:8080/api/teams
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "McLaren",
+  "foundedYear": 1963,
+  "league": "Formula_1",
+  "teamLogoUrl": "https://example.com/mclaren.png",
+  "budgetInMillions": 25.0
+}
+```
+
+This endpoint creates a team and is public only for testing the separate Client project.
+
+### CORS and CSRF for the Client
+
+Security configuration for Week 10:
+
+- CORS allows only the Client origin: `http://localhost:9000`.
+- `GET /api/drivers/search` is public.
+- `POST /api/teams` is public only for the separate Client project.
+- CSRF is disabled only for `POST /api/teams`.
+- Comments in `SecurityConfig` explain both the `permitAll` rule and the CSRF exception for the Client assignment.

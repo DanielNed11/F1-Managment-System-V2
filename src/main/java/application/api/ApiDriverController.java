@@ -82,15 +82,20 @@ public class ApiDriverController {
     public ResponseEntity<DriverDTO> updateDriver(@PathVariable Integer id,
                                                         @Valid @RequestBody PatchDriverDTO patchDriverDTO,
                                                         @AuthenticationPrincipal CustomUser customUser) {
-
         if (driverService.getById(id) == null) return ResponseEntity.notFound().build();
 
         UpdateDriverCommand command = driverMapper.toUpdateDriverCommand(patchDriverDTO);
-
         command.setId(id);
-
         Driver updated = driverService.update(command, customUser.getAppUserId());
 
         return ResponseEntity.ok(driverMapper.toDriverDTO(updated));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<DriverDTO>> getDriversByNationality(@RequestParam(required = false) String nationality) {
+
+        List<Driver> drivers = driverService.filterDrivers(nationality);
+
+        return ResponseEntity.ok(driverMapper.toDriverDTOList(drivers));
     }
 }

@@ -20,6 +20,8 @@ public interface IDriverService {
 
     List<Driver> filterDrivers(String nationality, LocalDate dateOfBirth);
 
+    List<Driver> filterDrivers(String nationality);
+
     List<Driver> findChampions();
 
     List<Race> getRacesByDriver(Integer id);

@@ -1,12 +1,15 @@
 package application.api;
 
+import application.api.dto.AddTeamDTO;
 import application.api.dto.SimpleTeamDTO;
+import application.api.dto.TeamDTO;
+import application.domain.Team;
 import application.mapper.TeamMapper;
 import application.service.ITeamService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,5 +28,13 @@ public class ApiTeamController {
     @GetMapping
     public ResponseEntity<List<SimpleTeamDTO>> getTeams() {
         return ResponseEntity.ok(teamMapper.toDTOList(teamService.getAllWithDrivers()));
+    }
+
+    @PostMapping
+    public ResponseEntity<TeamDTO> addTeams(@Valid @RequestBody AddTeamDTO team) {
+
+        Team added = teamService.add(teamMapper.toTeam(team));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(teamMapper.toTeamDTO(added));
     }
 }

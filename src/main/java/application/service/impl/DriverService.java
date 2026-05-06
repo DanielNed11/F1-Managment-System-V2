@@ -109,6 +109,11 @@ public class DriverService implements IDriverService {
     }
 
     @Override
+    public List<Driver> filterDrivers(String nationality) {
+        return filterDrivers(nationality, null);
+    }
+
+    @Override
     public void delete(Integer id, int appUserId) {
         if (canModifyDriver(id, appUserId)) driverRepository.deleteById(id);
         else throw new AccessDeniedException("Access denied");

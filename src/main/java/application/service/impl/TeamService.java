@@ -45,8 +45,8 @@ public class TeamService implements ITeamService {
     }
 
     @Override
-    public void add(Team team) {
-        teamRepository.save(team);
+    public Team add(Team team) {
+        return teamRepository.save(team);
     }
 
     @Override
