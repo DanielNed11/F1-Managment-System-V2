@@ -6,6 +6,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,6 +29,7 @@ class SecurityConfig {
     @Order(1)
     SecurityFilterChain apiSecurityFilterChain(HttpSecurity security) throws Exception {
         return security.securityMatcher("/api/**")
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(HttpMethod.GET, "/api/drivers/search").permitAll()
                         // permitAll is used so the separate Client project can test adding teams without logging in.
