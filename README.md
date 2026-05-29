@@ -1128,3 +1128,90 @@ Example:
 - Function: `buildCsrfHeader`
 - Used by: `src/main/js/drivers.js`
 - Purpose: reads the CSRF token and header name from the page metadata and builds the fetch headers for protected API requests.
+
+---
+
+## Week 12
+
+### Asynchronous CSV upload
+
+Week 12 adds an admin-only CSV upload page for importing drivers in bulk.
+
+Upload page:
+
+```text
+http://localhost:8080/drivers/upload
+```
+
+Access control:
+
+- The upload page is protected with `@PreAuthorize("hasRole('ADMIN')")`.
+- The link is shown in the navigation only for admins.
+
+Implementation files:
+
+- MVC controller: `src/main/java/application/controller/DriverController.java`
+- Async service method: `src/main/java/application/service/impl/DriverService.java`
+- Upload template: `src/main/resources/templates/drivers/upload.html`
+- Sample CSV file: `src/main/resources/sample-drivers.csv`
+
+CSV format:
+
+```text
+name;nationality;worldChampionships;dateOfBirth;imageUrl
+```
+
+Example:
+
+```text
+Oscar Piastri;Australian;0;2001-04-06;https://media.formula1.com/image/upload/c_lfill%2Cw_384/q_auto/d_common%3Af1%3A2025%3Afallback%3Adriver%3A2025fallbackdriverright.webp/v1740000000/common/f1/2025/mclaren/oscpia01/2025mclarenoscpia01right.webp
+```
+
+The controller receives the uploaded `MultipartFile`, starts CSV processing through the service, and immediately returns the upload page with an `inProgress` message. The CSV parsing and database inserts happen in a separate thread through `@Async`, so the browser does not wait until all rows are imported.
+
+### Caching
+
+Driver search results are cached.
+
+Cached methods:
+
+- `DriverService.filterDrivers(String nationality)`
+- `DriverService.filterDrivers(String nationality, LocalDate dateOfBirth)`
+
+Cache name:
+
+```text
+filterDrivers
+```
+
+Cache eviction:
+
+- Adding a driver evicts the driver search cache.
+- Updating a driver evicts the driver search cache.
+- Deleting a driver evicts the driver search cache.
+- Importing drivers from CSV evicts the driver search cache.
+
+Configuration:
+
+- `spring-boot-starter-cache` is included in `build.gradle.kts`.
+- `@EnableCaching` and `@EnableAsync` are configured in `src/main/java/application/config/ApplicationConfig.java`.
+
+### Exam hand-in checklist
+
+Before handing in:
+
+```bash
+./gradlew test
+git status
+git tag exam
+git push origin master
+git push origin exam
+```
+
+Also check the GitLab website:
+
+- The README renders correctly.
+- The `exam` tag is visible on GitLab.
+- The latest version is on the main project branch.
+- There is only one default branch, either `master` or `main`, not both.
+- Download the repository zip from GitLab using the download button next to the clone button.

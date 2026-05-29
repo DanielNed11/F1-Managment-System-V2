@@ -1,6 +1,8 @@
 package application.controller;
 
 import application.controller.viewmodel.AddDriverViewModel;
+import application.controller.viewmodel.DriverViewModel;
+import application.controller.viewmodel.PatchDriverViewModel;
 import application.domain.Driver;
 import application.domain.Race;
 import application.domain.RaceDriver;
@@ -9,21 +11,21 @@ import application.security.CustomUser;
 import application.service.IDriverService;
 import application.service.IRaceService;
 import application.service.ITeamService;
-import application.controller.viewmodel.DriverViewModel;
-import application.controller.viewmodel.PatchDriverViewModel;
-import application.controller.viewmodel.RaceViewModel;
 import application.service.command.UpdateDriverCommand;
 import jakarta.validation.Valid;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -132,7 +134,7 @@ public class DriverController {
             return "redirect:/drivers";
         }
 
-        model.addAttribute("driverDTO",driverMapper.toPatchDriverViewModel(driver));
+        model.addAttribute("driverDTO", driverMapper.toPatchDriverViewModel(driver));
         model.addAttribute("driverId", id);
         model.addAttribute("teams", teamService.getAll());
         return "drivers/edit-driver";
@@ -175,6 +177,26 @@ public class DriverController {
         model.addAttribute("drivers", driverMapper.toDriverViewModelList(champions));
         log.info("Showing champion drivers");
         return "drivers/champions";
+    }
+
+    @GetMapping("/drivers/upload")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String showUploadForm(Model model) {
+        model.addAttribute("inProgress", false);
+        return "drivers/upload";
+    }
+
+    @PostMapping("/drivers/upload")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String uploadDrivers(@RequestParam("driversCsv")
+                                MultipartFile file,
+                                Model model,
+                                @AuthenticationPrincipal
+                                CustomUser customUser) throws IOException {
+
+        driverService.uploadDrivers(file.getInputStream(), customUser.getAppUserId());
+        model.addAttribute("inProgress", true);
+        return "drivers/upload";
     }
 
 }

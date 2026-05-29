@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+  <head th:replace="~{fragments/header :: head('Upload Drivers CSV')}"></head>
+  <body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+
+    <main class="container my-4">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+              <h1 class="mb-1">Upload Drivers CSV</h1>
+              <p class="text-muted mb-0">
+                Import multiple drivers from a CSV file. Processing will
+                continue in the background.
+              </p>
+            </div>
+            <a class="btn btn-outline-secondary" th:href="@{/drivers}">
+              <i class="bi bi-arrow-left me-1"></i>Drivers
+            </a>
+          </div>
+
+          <div class="alert alert-info" th:if="${inProgress}">
+            <i class="bi bi-hourglass-split me-2"></i>
+            CSV processing has started. You can keep using the application while
+            the import runs.
+          </div>
+
+          <form
+            class="border rounded p-4 bg-light"
+            enctype="multipart/form-data"
+            method="post"
+            th:action="@{/drivers/upload}"
+          >
+            <div class="mb-3">
+              <label class="form-label" for="driversCsv">CSV file</label>
+              <input
+                accept=".csv, text/csv"
+                class="form-control"
+                id="driversCsv"
+                name="driversCsv"
+                required
+                type="file"
+              >
+              <div class="form-text">
+                Expected columns:
+                name;nationality;worldChampionships;dateOfBirth;imageUrl.
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+              <a class="btn btn-outline-secondary" th:href="@{/drivers}">
+                Cancel
+              </a>
+              <button class="btn btn-primary" type="submit">
+                <i class="bi bi-upload me-1"></i>Upload
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+  </body>
+</html>

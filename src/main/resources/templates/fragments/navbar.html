@@ -83,6 +83,13 @@
                   </a>
                 </li>
                 <li sec:authorize="hasRole('ADMIN')">
+                  <a class="dropdown-item" th:href="@{/drivers/upload}">
+                    <i class="bi bi-filetype-csv me-2"></i><span>
+                      Upload Drivers CSV
+                    </span>
+                  </a>
+                </li>
+                <li sec:authorize="hasRole('ADMIN')">
                   <a class="dropdown-item" th:href="@{/teams/add}">
                     <i class="bi bi-plus-circle me-2"></i><span
                       th:text="#{menu.addTeam}"

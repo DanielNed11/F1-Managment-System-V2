@@ -4,6 +4,7 @@ import application.domain.Driver;
 import application.domain.Race;
 import application.service.command.UpdateDriverCommand;
 
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -27,4 +28,6 @@ public interface IDriverService {
     List<Race> getRacesByDriver(Integer id);
 
     boolean canModifyDriver(Integer driverId, int appUserId);
+
+    void uploadDrivers(InputStream inputStream, Integer appUserId);
 }

@@ -8,14 +8,19 @@ import application.repository.ITeamRepository;
 import application.service.IDriverService;
 import application.service.command.UpdateDriverCommand;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Scanner;
 
 // TODO Throw exceptions
 @Service
@@ -48,6 +53,7 @@ public class DriverService implements IDriverService {
     }
 
     @Override
+    @CacheEvict(value = "filterDrivers", allEntries = true)
     public Driver add(Driver driver, int appUserId) {
 
         AppUser appUser = iAppUserRepository.findById(appUserId)
@@ -63,6 +69,7 @@ public class DriverService implements IDriverService {
     }
 
     @Override
+    @CacheEvict(value = "filterDrivers", allEntries = true)
     public Driver update(UpdateDriverCommand updateDriver, int appUserId) {
         Driver existing = driverRepository.findById(updateDriver.getId()).orElse(null);
 
@@ -99,6 +106,7 @@ public class DriverService implements IDriverService {
     }
 
     @Override
+    @Cacheable("filterDrivers")
     public List<Driver> filterDrivers(String nationality, LocalDate dateOfBirth) {
         return driverRepository.findAll().stream()
                 .filter(d -> nationality == null || nationality.isBlank() ||
@@ -108,11 +116,13 @@ public class DriverService implements IDriverService {
     }
 
     @Override
+    @Cacheable("filterDrivers")
     public List<Driver> filterDrivers(String nationality) {
         return filterDrivers(nationality, null);
     }
 
     @Override
+    @CacheEvict(value = "filterDrivers", allEntries = true)
     public void delete(Integer id, int appUserId) {
         if (canModifyDriver(id, appUserId)) driverRepository.deleteById(id);
         else throw new AccessDeniedException("Access denied");
@@ -147,6 +157,36 @@ public class DriverService implements IDriverService {
 
         return managedTeam != null && driversTeam != null
                 && Objects.equals(managedTeam.getId(), driversTeam.getId());
+    }
+
+    @Async
+    @CacheEvict(value = "filterDrivers", allEntries = true)
+    @Override
+    public void uploadDrivers(InputStream inputStream, Integer appUserId) {
+        final Scanner scanner = new Scanner(inputStream);
+        while (scanner.hasNextLine()) {
+            final String line = scanner.nextLine();
+            importLine(line, appUserId);
+        }
+
+    }
+
+    private void importLine(final String line, Integer appUserId) {
+        if (line.trim().isEmpty()) {
+            return;
+        }
+        final String[] parts = line.split(";");
+        if (parts.length != 5) {
+            return;
+        }
+        Driver driver = new Driver();
+        driver.setName(parts[0]);
+        driver.setNationality(parts[1]);
+        driver.setWorldChampionships(Integer.parseInt(parts[2]));
+        driver.setDateOfBirth(LocalDate.parse(parts[3]));
+        driver.setImageUrl(parts[4]);
+
+        add(driver, appUserId);
     }
 
 }
