@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateRaceCommand {
-    private Integer id;
+    private int id;
     private String name;
     private LocalDate date;
     private Integer trackId;

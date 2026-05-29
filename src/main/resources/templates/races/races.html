@@ -1,102 +1,143 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head th:replace="~{fragments/header :: head(#{page.races.title})}"></head>
-<body>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+  <head th:replace="~{fragments/header :: head(#{page.races.title})}"></head>
+  <body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<div class="hero-section">
-    <div class="container">
+    <div class="hero-section">
+      <div class="container">
         <h1 class="display-4">
-            <i class="bi bi-trophy-fill me-3"></i><span th:text="#{page.races.title}">Races</span>
+          <i class="bi bi-trophy-fill me-3"></i><span
+            th:text="#{page.races.title}"
+          >Races</span>
         </h1>
-        <p class="lead mb-4" th:text="#{page.races.description}">View all Formula 1 races and championship events</p>
+        <p class="lead mb-4" th:text="#{page.races.description}">
+          View all Formula 1 races and championship events
+        </p>
         <a th:href="@{/races/add}" class="btn btn-warning btn-lg">
-            <i class="bi bi-plus-circle me-2"></i><span th:text="#{button.addRace}">Add New Race</span>
+          <i class="bi bi-plus-circle me-2"></i><span
+            th:text="#{button.addRace}"
+          >Add New Race</span>
         </a>
+      </div>
     </div>
-</div>
 
-<div class="container">
-    <div class="row mb-4">
+    <div class="container">
+      <div class="row mb-4">
         <div class="col-md-4 col-lg-3">
-            <div class="stats-card shadow-custom">
-                <div class="card-body text-center">
-                    <i class="bi bi-trophy-fill"></i>
-                    <h3 class="mt-2 mb-0" th:text="${#lists.size(races)}">0</h3>
-                    <p class="mb-0" th:text="#{label.totalRaces}">Total Races</p>
-                </div>
+          <div class="stats-card shadow-custom">
+            <div class="card-body text-center">
+              <i class="bi bi-trophy-fill"></i>
+              <h3 class="mt-2 mb-0" th:text="${#lists.size(races)}">0</h3>
+              <p class="mb-0" th:text="#{label.totalRaces}">Total Races</p>
             </div>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <div class="row g-4">
+      <div class="row g-4">
         <div class="col-md-6 col-lg-4" th:each="race : ${races}">
-            <div class="card h-100 shadow-custom">
-                <div class="card-header bg-danger text-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-flag-checkered me-2"></i><span th:text="${race.name}">Race Name</span>
-                    </h5>
-                </div>
-
-                <div class="card-body">
-                    <div class="mb-3">
-                        <i class="bi bi-calendar3 text-primary me-2"></i>
-                        <strong th:text="${race.date}">2024-01-01</strong>
-                    </div>
-
-                    <div class="mb-3" th:if="${race.track != null}">
-                        <i class="bi bi-flag-fill text-success me-2"></i>
-                        <span class="text-muted">Track:</span>
-                        <strong th:text="${race.track.name}">Track Name</strong>
-                    </div>
-
-                    <div class="mb-3" th:if="${race.winner != null}">
-                        <i class="bi bi-trophy-fill text-warning me-2"></i>
-                        <span class="text-muted">Winner:</span>
-                        <strong th:text="${race.winner.name}">Winner Name</strong>
-                    </div>
-
-                    <div class="mb-3">
-                        <details class="mt-2">
-                            <summary class="text-primary fw-bold" style="cursor: pointer;">
-                                <i class="bi bi-people me-1"></i><span th:text="#{details.showDrivers}">Show Drivers</span>
-                                (<span th:text="${#lists.size(race.raceDrivers)}">0</span>)
-                            </summary>
-                            <ul class="list-unstyled mt-2 ms-4">
-                                <li th:each="raceDrivers : ${race.raceDrivers}" class="mb-1">
-                                    <span th:if="${raceDrivers.position != null}" class="badge bg-secondary me-1" th:text="${raceDrivers.position}">1</span>
-                                    <span th:if="${raceDrivers.position == null}" class="badge bg-light text-dark me-1">TBD</span>
-                                    <i class="bi bi-person-circle text-muted me-1"></i>
-                                    <span th:text="${raceDrivers.driver.name}">Driver Name</span>
-                                </li>
-                            </ul>
-                        </details>
-                    </div>
-
-                    <div class="d-flex gap-2 mt-3">
-                        <a th:href="@{/races/{id}(id=${race.id})}" class="btn btn-sm btn-outline-primary flex-fill">
-                            <i class="bi bi-eye me-1"></i><span th:text="#{button.viewDetails}">View</span>
-                        </a>
-                        <a th:href="@{/races/edit/{id}(id=${race.id})}" class="btn btn-sm btn-outline-secondary flex-fill">
-                            <i class="bi bi-pencil-square me-1"></i><span th:text="#{table.header.edit}">Edit</span>
-                        </a>
-                        <form th:action="@{/races/{id}/delete(id=${race.id})}" method="post" class="flex-fill"
-                              th:attr="onsubmit='return confirm(\'' + #{confirm.delete.race} + '\');'">
-                            <button type="submit" class="btn btn-sm btn-outline-danger w-100">
-                                <i class="bi bi-trash me-1"></i><span th:text="#{button.delete}">Delete</span>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="card-footer text-muted">
-                    <i class="bi bi-hash me-1"></i>ID: <span th:text="${race.id}">1</span>
-                </div>
+          <div class="card h-100 shadow-custom">
+            <div class="card-header bg-danger text-white">
+              <h5 class="mb-0">
+                <i class="bi bi-flag-checkered me-2"></i><span
+                  th:text="${race.name}"
+                >Race Name</span>
+              </h5>
             </div>
-        </div>
-    </div>
-</div>
 
-<div th:replace="~{fragments/footer :: footer}"></div>
-</body>
+            <div class="card-body">
+              <div class="mb-3">
+                <i class="bi bi-calendar3 text-primary me-2"></i>
+                <strong th:text="${race.date}">2024-01-01</strong>
+              </div>
+
+              <div class="mb-3" th:if="${race.track != null}">
+                <i class="bi bi-flag-fill text-success me-2"></i>
+                <span class="text-muted">Track:</span>
+                <strong th:text="${race.track.name}">Track Name</strong>
+              </div>
+
+              <div class="mb-3" th:if="${race.winner != null}">
+                <i class="bi bi-trophy-fill text-warning me-2"></i>
+                <span class="text-muted">Winner:</span>
+                <strong th:text="${race.winner.name}">Winner Name</strong>
+              </div>
+
+              <div class="mb-3">
+                <details class="mt-2">
+                  <summary class="text-primary fw-bold" style="cursor: pointer">
+                    <i class="bi bi-people me-1"></i><span
+                      th:text="#{details.showDrivers}"
+                    >Show Drivers</span>
+                    (<span th:text="${#lists.size(race.raceDrivers)}">0</span>)
+                  </summary>
+                  <ul class="list-unstyled mt-2 ms-4">
+                    <li
+                      th:each="raceDrivers : ${race.raceDrivers}"
+                      class="mb-1"
+                    >
+                      <span
+                        th:if="${raceDrivers.position != null}"
+                        class="badge bg-secondary me-1"
+                        th:text="${raceDrivers.position}"
+                      >1</span>
+                      <span
+                        th:if="${raceDrivers.position == null}"
+                        class="badge bg-light text-dark me-1"
+                      >TBD</span>
+                      <i class="bi bi-person-circle text-muted me-1"></i>
+                      <span th:text="${raceDrivers.driver.name}"
+                      >Driver Name</span>
+                    </li>
+                  </ul>
+                </details>
+              </div>
+
+              <div class="d-flex gap-2 mt-3">
+                <a
+                  th:href="@{/races/{id}(id=${race.id})}"
+                  class="btn btn-sm btn-outline-primary flex-fill"
+                >
+                  <i class="bi bi-eye me-1"></i><span
+                    th:text="#{button.viewDetails}"
+                  >View</span>
+                </a>
+                <a
+                  th:href="@{/races/edit/{id}(id=${race.id})}"
+                  class="btn btn-sm btn-outline-secondary flex-fill"
+                >
+                  <i class="bi bi-pencil-square me-1"></i><span
+                    th:text="#{table.header.edit}"
+                  >Edit</span>
+                </a>
+                <form
+                  th:action="@{/races/{id}/delete(id=${race.id})}"
+                  method="post"
+                  class="flex-fill"
+                  th:attr="onsubmit='return confirm(\'' + #{confirm.delete.race} + '\');'"
+                >
+                  <button
+                    type="submit"
+                    class="btn btn-sm btn-outline-danger w-100"
+                  >
+                    <i class="bi bi-trash me-1"></i><span
+                      th:text="#{button.delete}"
+                    >Delete</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <div class="card-footer text-muted">
+              <i class="bi bi-hash me-1"></i>ID: <span th:text="${race.id}"
+              >1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
 </html>

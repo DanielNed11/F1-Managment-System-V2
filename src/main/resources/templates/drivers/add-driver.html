@@ -1,66 +1,130 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-<head th:replace="~{fragments/header :: head(#{page.driver.add.title})}"></head>
-<body>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
-<main class="container my-4">
+  <head th:replace="~{fragments/header :: head(#{page.driver.add.title})}">
+  </head>
+  <body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    <main class="container my-4">
+      <h1 class="mb-4" th:text="#{page.driver.add.heading}"></h1>
 
-<h1 class="mb-4" th:text="#{page.driver.add.heading}"></h1>
+      <form
+        class="row g-3"
+        th:action="@{/drivers/add}"
+        th:object="${driverDTO}"
+        method="post"
+      >
+        <div class="col-md-6">
+          <label class="form-label" th:text="#{label.name} + ':'"></label>
+          <input
+            type="text"
+            class="form-control"
+            th:field="*{name}"
+            th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
+          />
+          <div
+            class="invalid-feedback"
+            th:if="${#fields.hasErrors('name')}"
+            th:errors="*{name}"
+          >
+          </div>
+        </div>
 
-<form class="row g-3" th:action="@{/drivers/add}" th:object="${driverDTO}" method="post">
-
-    <div class="col-md-6">
-        <label class="form-label" th:text="#{label.name} + ':'"></label>
-        <input type="text" class="form-control" th:field="*{name}"
-               th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''" />
-        <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
-    </div>
-
-    <div class="col-md-6">
-        <label class="form-label" th:text="#{label.setTeam} + ':'"></label>
-        <select class="form-select" th:field="*{teamId}">
+        <div class="col-md-6">
+          <label class="form-label" th:text="#{label.setTeam} + ':'"></label>
+          <select class="form-select" th:field="*{teamId}">
             <option th:value="0" selected th:text="#{option.noTeam}"></option>
-            <option th:each="team : ${teams}"
-                    th:value="${team.id}"
-                    th:text="${team.name}">
+            <option
+              th:each="team : ${teams}"
+              th:value="${team.id}"
+              th:text="${team.name}"
+            >
             </option>
-        </select>
-    </div>
+          </select>
+        </div>
 
-    <div class="col-md-6">
-        <label class="form-label" th:text="#{label.nationality} + ':'"></label>
-        <input type="text" class="form-control" th:field="*{nationality}"
-               th:classappend="${#fields.hasErrors('nationality')} ? 'is-invalid' : ''" />
-        <div class="invalid-feedback" th:if="${#fields.hasErrors('nationality')}" th:errors="*{nationality}"></div>
-    </div>
+        <div class="col-md-6">
+          <label
+            class="form-label"
+            th:text="#{label.nationality} + ':'"
+          ></label>
+          <input
+            type="text"
+            class="form-control"
+            th:field="*{nationality}"
+            th:classappend="${#fields.hasErrors('nationality')} ? 'is-invalid' : ''"
+          />
+          <div
+            class="invalid-feedback"
+            th:if="${#fields.hasErrors('nationality')}"
+            th:errors="*{nationality}"
+          >
+          </div>
+        </div>
 
-    <div class="col-md-6">
-        <label class="form-label" th:text="#{label.dateOfBirth} + ':'"></label>
-        <input type="date" class="form-control" th:field="*{dateOfBirth}"
-               th:classappend="${#fields.hasErrors('dateOfBirth')} ? 'is-invalid' : ''" />
-        <div class="invalid-feedback" th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}"></div>
-    </div>
+        <div class="col-md-6">
+          <label
+            class="form-label"
+            th:text="#{label.dateOfBirth} + ':'"
+          ></label>
+          <input
+            type="date"
+            class="form-control"
+            th:field="*{dateOfBirth}"
+            th:classappend="${#fields.hasErrors('dateOfBirth')} ? 'is-invalid' : ''"
+          />
+          <div
+            class="invalid-feedback"
+            th:if="${#fields.hasErrors('dateOfBirth')}"
+            th:errors="*{dateOfBirth}"
+          >
+          </div>
+        </div>
 
-    <div class="col-md-6">
-        <label class="form-label" th:text="#{label.worldChampionships} + ':'"></label>
-        <input type="number" class="form-control" th:field="*{worldChampionships}"
-               th:classappend="${#fields.hasErrors('worldChampionships')} ? 'is-invalid' : ''" />
-        <div class="invalid-feedback" th:if="${#fields.hasErrors('worldChampionships')}" th:errors="*{worldChampionships}"></div>
-    </div>
+        <div class="col-md-6">
+          <label
+            class="form-label"
+            th:text="#{label.worldChampionships} + ':'"
+          ></label>
+          <input
+            type="number"
+            class="form-control"
+            th:field="*{worldChampionships}"
+            th:classappend="${#fields.hasErrors('worldChampionships')} ? 'is-invalid' : ''"
+          />
+          <div
+            class="invalid-feedback"
+            th:if="${#fields.hasErrors('worldChampionships')}"
+            th:errors="*{worldChampionships}"
+          >
+          </div>
+        </div>
 
-    <div class="col-md-6">
-        <label class="form-label" th:text="'Image URL:'"></label>
-        <input type="text" class="form-control" th:field="*{imageUrl}"
-               th:classappend="${#fields.hasErrors('imageUrl')} ? 'is-invalid' : ''"
-               placeholder="/img/driver.png" />
-        <div class="invalid-feedback" th:if="${#fields.hasErrors('imageUrl')}" th:errors="*{imageUrl}"></div>
-    </div>
+        <div class="col-md-6">
+          <label class="form-label" th:text="'Image URL:'"></label>
+          <input
+            type="text"
+            class="form-control"
+            th:field="*{imageUrl}"
+            th:classappend="${#fields.hasErrors('imageUrl')} ? 'is-invalid' : ''"
+            placeholder="/img/driver.png"
+          />
+          <div
+            class="invalid-feedback"
+            th:if="${#fields.hasErrors('imageUrl')}"
+            th:errors="*{imageUrl}"
+          >
+          </div>
+        </div>
 
-    <div class="col-12 d-flex justify-content-end">
-        <button type="submit" class="btn btn-primary" th:text="#{button.addDriver}"></button>
-    </div>
-</form>
-
-</main>
-</body>
+        <div class="col-12 d-flex justify-content-end">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            th:text="#{button.addDriver}"
+          >
+          </button>
+        </div>
+      </form>
+    </main>
+  </body>
 </html>

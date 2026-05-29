@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateDriverCommand {
-    private Integer id;
+    private int id;
     private String name;
     private LocalDate dateOfBirth;
     private String nationality;

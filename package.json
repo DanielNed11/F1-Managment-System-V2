@@ -1,0 +1,45 @@
+{
+  "name": "programming_5",
+  "version": "1.0.0",
+  "description": "- **Course:** Programming 5 - **Name:** Daniel Nedyalkov - **Email:** daniel.nedyalkov@student.kdg.be - **Student ID:** 0172599-36 - **Academic Year:** 2025-2026 - **Group:** ACS201",
+  "homepage": "https://gitlab.com/kdg-ti/programming-5/projects-25-26/acs201/daniel.nedyalkov/spring-backend#readme",
+  "bugs": {
+    "url": "https://gitlab.com/kdg-ti/programming-5/projects-25-26/acs201/daniel.nedyalkov/spring-backend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/kdg-ti/programming-5/projects-25-26/acs201/daniel.nedyalkov/spring-backend.git"
+  },
+  "directories": {
+    "doc": "docs"
+  },
+  "type": "module",
+  "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "animejs": "^4.4.1",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
+    "canvas-confetti": "^1.9.4",
+    "joi": "^18.2.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "css-loader": "^7.1.4",
+    "dprint": "^0.54.0",
+    "eslint": "^10.2.1",
+    "globals": "^17.5.0",
+    "html-webpack-plugin": "^5.6.7",
+    "mini-css-extract-plugin": "^2.10.2",
+    "sass": "1.78.0",
+    "sass-loader": "^16.0.7",
+    "webpack": "^5.106.2",
+    "webpack-cli": "^7.0.2",
+    "webpack-dev-server": "^5.2.3"
+  },
+  "scripts": {
+    "build": "webpack",
+    "lint": "eslint",
+    "check": "dprint check",
+    "fmt": "dprint fmt"
+  }
+}

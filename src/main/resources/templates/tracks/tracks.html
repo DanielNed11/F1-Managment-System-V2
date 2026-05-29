@@ -1,98 +1,153 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: head(#{page.tracks.title})}"></head>
+  <head th:replace="~{fragments/header :: head(#{page.tracks.title})}"></head>
 
-<body>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+  <body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<div class="hero-section">
-    <div class="container">
+    <div class="hero-section">
+      <div class="container">
         <h1 class="display-4">
-            <i class="bi bi-flag-fill me-3"></i><span th:text="#{page.tracks.heading}">Tracks</span>
+          <i class="bi bi-flag-fill me-3"></i><span
+            th:text="#{page.tracks.heading}"
+          >Tracks</span>
         </h1>
-        <p class="lead mb-4" th:text="#{page.tracks.description}">Explore our collection of Formula 1 racing circuits from around the world</p>
+        <p class="lead mb-4" th:text="#{page.tracks.description}">
+          Explore our collection of Formula 1 racing circuits from around the
+          world
+        </p>
         <div class="d-flex gap-3 flex-wrap">
-            <a th:href="@{/tracks/add(trackType='STREET')}" class="btn btn-warning btn-lg">
-                <i class="bi bi-buildings me-2"></i><span th:text="#{button.add.streetcircuit}">Add Street Circuit</span>
-            </a>
-            <a th:href="@{/tracks/add(trackType='PERMANENT')}" class="btn btn-success btn-lg">
-                <i class="bi bi-flag-fill me-2"></i><span th:text="#{button.add.permanentcircuit}">Add Permanent Circuit</span>
-            </a>
+          <a
+            th:href="@{/tracks/add(trackType='STREET')}"
+            class="btn btn-warning btn-lg"
+          >
+            <i class="bi bi-buildings me-2"></i><span
+              th:text="#{button.add.streetcircuit}"
+            >Add Street Circuit</span>
+          </a>
+          <a
+            th:href="@{/tracks/add(trackType='PERMANENT')}"
+            class="btn btn-success btn-lg"
+          >
+            <i class="bi bi-flag-fill me-2"></i><span
+              th:text="#{button.add.permanentcircuit}"
+            >Add Permanent Circuit</span>
+          </a>
         </div>
+      </div>
     </div>
-</div>
 
-<div class="container">
-    <div class="row mb-4">
+    <div class="container">
+      <div class="row mb-4">
         <div class="col-md-4 col-lg-3">
-            <div class="stats-card shadow-custom">
-                <div class="card-body text-center">
-                    <i class="bi bi-flag-fill"></i>
-                    <h3 class="mt-2 mb-0" th:text="${#lists.size(tracks)}">0</h3>
-                    <p class="mb-0" th:text="#{label.totalTracks}">Total Tracks</p>
-                </div>
+          <div class="stats-card shadow-custom">
+            <div class="card-body text-center">
+              <i class="bi bi-flag-fill"></i>
+              <h3 class="mt-2 mb-0" th:text="${#lists.size(tracks)}">0</h3>
+              <p class="mb-0" th:text="#{label.totalTracks}">Total Tracks</p>
             </div>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <div class="row g-4">
+      <div class="row g-4">
         <div class="col-md-6 col-lg-4" th:each="track : ${tracks}">
-            <div class="card h-100 shadow-custom">
-                <div th:if="${trackTypes[track.id] == 'STREET'}" class="card-header bg-warning text-dark">
-                    <i class="bi bi-buildings me-2"></i><span th:text="#{track.street}">Street Circuit</span>
-                </div>
-                <div th:if="${trackTypes[track.id] == 'PERMANENT'}" class="card-header bg-success text-white">
-                    <i class="bi bi-flag-fill me-2"></i><span th:text="#{track.permanent}">Permanent Circuit</span>
-                </div>
-                <div th:if="${trackTypes[track.id] == 'BASIC'}" class="card-header bg-secondary text-white">
-                    <i class="bi bi-flag me-2"></i><span th:text="#{track.basic}">Basic Track</span>
-                </div>
-
-                <div class="card-body">
-                    <h5 class="card-title text-primary mb-3">
-                        <a th:href="@{/tracks/{id}(id=${track.id})}" class="text-decoration-none text-primary fw-bold"
-                           th:text="${track.name}">Track Name</a>
-                    </h5>
-
-                    <div class="mb-2">
-                        <i class="bi bi-geo-alt-fill text-danger me-2"></i>
-                        <span class="text-muted" th:text="${track.location}">Location</span>
-                    </div>
-
-                    <div class="mb-2">
-                        <i class="bi bi-rulers text-info me-2"></i>
-                        <strong th:text="${track.lengthKm} + ' km'">5.0 km</strong>
-                    </div>
-
-                    <div class="mb-3">
-                        <i class="bi bi-calendar-check text-success me-2"></i>
-                        <span th:text="#{table.header.opened} + ': ' + ${track.openedYear}">Opened: 1950</span>
-                    </div>
-
-                    <div class="d-flex gap-2 mt-3">
-                        <a th:href="@{/tracks/{id}(id=${track.id})}" class="btn btn-sm btn-outline-primary flex-fill">
-                            <i class="bi bi-eye me-1"></i><span th:text="#{button.viewDetails}">View</span>
-                        </a>
-                        <a th:href="@{/tracks/edit/{id}(id=${track.id})}" class="btn btn-sm btn-outline-secondary flex-fill">
-                            <i class="bi bi-pencil-square me-1"></i><span th:text="#{table.header.edit}">Edit</span>
-                        </a>
-                        <form th:action="@{/tracks/{id}/delete(id=${track.id})}" method="post" class="flex-fill"
-                              th:attr="onsubmit='return confirm(\'' + #{confirm.delete.track} + '\');'">
-                            <button type="submit" class="btn btn-sm btn-outline-danger w-100">
-                                <i class="bi bi-trash me-1"></i><span th:text="#{button.delete}">Delete</span>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="card-footer text-muted">
-                    <i class="bi bi-hash me-1"></i>ID: <span th:text="${track.id}">1</span>
-                </div>
+          <div class="card h-100 shadow-custom">
+            <div
+              th:if="${trackTypes[track.id] == 'STREET'}"
+              class="card-header bg-warning text-dark"
+            >
+              <i class="bi bi-buildings me-2"></i><span
+                th:text="#{track.street}"
+              >Street Circuit</span>
             </div>
-        </div>
-    </div>
-</div>
+            <div
+              th:if="${trackTypes[track.id] == 'PERMANENT'}"
+              class="card-header bg-success text-white"
+            >
+              <i class="bi bi-flag-fill me-2"></i><span
+                th:text="#{track.permanent}"
+              >Permanent Circuit</span>
+            </div>
+            <div
+              th:if="${trackTypes[track.id] == 'BASIC'}"
+              class="card-header bg-secondary text-white"
+            >
+              <i class="bi bi-flag me-2"></i><span th:text="#{track.basic}"
+              >Basic Track</span>
+            </div>
 
-<div th:replace="~{fragments/footer :: footer}"></div>
-</body>
+            <div class="card-body">
+              <h5 class="card-title text-primary mb-3">
+                <a
+                  th:href="@{/tracks/{id}(id=${track.id})}"
+                  class="text-decoration-none text-primary fw-bold"
+                  th:text="${track.name}"
+                >Track Name</a>
+              </h5>
+
+              <div class="mb-2">
+                <i class="bi bi-geo-alt-fill text-danger me-2"></i>
+                <span class="text-muted" th:text="${track.location}"
+                >Location</span>
+              </div>
+
+              <div class="mb-2">
+                <i class="bi bi-rulers text-info me-2"></i>
+                <strong th:text="${track.lengthKm} + ' km'">5.0 km</strong>
+              </div>
+
+              <div class="mb-3">
+                <i class="bi bi-calendar-check text-success me-2"></i>
+                <span
+                  th:text="#{table.header.opened} + ': ' + ${track.openedYear}"
+                >Opened: 1950</span>
+              </div>
+
+              <div class="d-flex gap-2 mt-3">
+                <a
+                  th:href="@{/tracks/{id}(id=${track.id})}"
+                  class="btn btn-sm btn-outline-primary flex-fill"
+                >
+                  <i class="bi bi-eye me-1"></i><span
+                    th:text="#{button.viewDetails}"
+                  >View</span>
+                </a>
+                <a
+                  th:href="@{/tracks/edit/{id}(id=${track.id})}"
+                  class="btn btn-sm btn-outline-secondary flex-fill"
+                >
+                  <i class="bi bi-pencil-square me-1"></i><span
+                    th:text="#{table.header.edit}"
+                  >Edit</span>
+                </a>
+                <form
+                  th:action="@{/tracks/{id}/delete(id=${track.id})}"
+                  method="post"
+                  class="flex-fill"
+                  th:attr="onsubmit='return confirm(\'' + #{confirm.delete.track} + '\');'"
+                >
+                  <button
+                    type="submit"
+                    class="btn btn-sm btn-outline-danger w-100"
+                  >
+                    <i class="bi bi-trash me-1"></i><span
+                      th:text="#{button.delete}"
+                    >Delete</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <div class="card-footer text-muted">
+              <i class="bi bi-hash me-1"></i>ID: <span th:text="${track.id}"
+              >1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
 </html>

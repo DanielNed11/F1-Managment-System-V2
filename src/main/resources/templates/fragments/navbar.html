@@ -1,90 +1,152 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      xmlns:th="http://www.thymeleaf.org">
-<body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top" th:fragment="navbar">
-    <div class="container">
+<html
+  lang="en"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  xmlns:th="http://www.thymeleaf.org"
+>
+  <body>
+    <nav
+      class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top"
+      th:fragment="navbar"
+    >
+      <div class="container">
         <a class="navbar-brand fw-bold" th:href="@{/}">
-            <i class="bi bi-flag-checkered me-2 text-danger"></i>
-            <span class="text-white" th:text="#{brand.appName}">F1 Manager</span>
-
+          <i class="bi bi-flag-checkered me-2 text-danger"></i>
+          <span class="text-white" th:text="#{brand.appName}">F1 Manager</span>
         </a>
-        <span class="text-white-50 small"
-              sec:authentication="name"
-              sec:authorize="isAuthenticated()">
+        <span
+          class="text-white-50 small"
+          sec:authentication="name"
+          sec:authorize="isAuthenticated()"
+        >
         </span>
-        <button aria-controls="nav" aria-expanded="false" class="navbar-toggler" data-bs-target="#nav"
-                data-bs-toggle="collapse" th:attr="aria-label=#{aria.toggleNav}" type="button">
-            <span class="navbar-toggler-icon"></span>
+        <button
+          aria-controls="nav"
+          aria-expanded="false"
+          class="navbar-toggler"
+          data-bs-target="#nav"
+          data-bs-toggle="collapse"
+          th:attr="aria-label=#{aria.toggleNav}"
+          type="button"
+        >
+          <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="nav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/drivers}">
-                        <i class="bi bi-person-circle me-1"></i><span th:text="#{menu.allDrivers}">Drivers</span>
-                    </a>
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/drivers}">
+                <i class="bi bi-person-circle me-1"></i><span
+                  th:text="#{menu.allDrivers}"
+                >Drivers</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/teams}">
+                <i class="bi bi-people-fill me-1"></i><span
+                  th:text="#{menu.allTeams}"
+                >Teams</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/tracks}">
+                <i class="bi bi-flag-fill me-1"></i><span
+                  th:text="#{menu.allTracks}"
+                >Tracks</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/races}">
+                <i class="bi bi-trophy-fill me-1"></i><span
+                  th:text="#{menu.allRaces}"
+                >Races</span>
+              </a>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                aria-expanded="false"
+                class="nav-link dropdown-toggle"
+                data-bs-toggle="dropdown"
+                href="#"
+                role="button"
+              >
+                <i class="bi bi-plus-circle me-1"></i><span
+                  th:text="#{menu.quickAdd}"
+                >Quick Add</span>
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item" th:href="@{/drivers/add}">
+                    <i class="bi bi-person-plus me-2"></i><span
+                      th:text="#{menu.addDriver}"
+                    >Add Driver</span>
+                  </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/teams}">
-                        <i class="bi bi-people-fill me-1"></i><span th:text="#{menu.allTeams}">Teams</span>
-                    </a>
+                <li sec:authorize="hasRole('ADMIN')">
+                  <a class="dropdown-item" th:href="@{/teams/add}">
+                    <i class="bi bi-plus-circle me-2"></i><span
+                      th:text="#{menu.addTeam}"
+                    >Add Team</span>
+                  </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/tracks}">
-                        <i class="bi bi-flag-fill me-1"></i><span th:text="#{menu.allTracks}">Tracks</span>
-                    </a>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    th:href="@{/tracks/add(trackType='PERMANENT')}"
+                  >
+                    <i class="bi bi-flag me-2"></i><span
+                      th:text="#{menu.addTrack}"
+                    >Add Track</span>
+                  </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/races}">
-                        <i class="bi bi-trophy-fill me-1"></i><span th:text="#{menu.allRaces}">Races</span>
-                    </a>
+                <li>
+                  <a class="dropdown-item" th:href="@{/races/add}">
+                    <i class="bi bi-trophy me-2"></i><span
+                      th:text="#{menu.addRace}"
+                    >Add Race</span>
+                  </a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a aria-expanded="false" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
-                       role="button">
-                        <i class="bi bi-plus-circle me-1"></i><span th:text="#{menu.quickAdd}">Quick Add</span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" th:href="@{/drivers/add}">
-                            <i class="bi bi-person-plus me-2"></i><span th:text="#{menu.addDriver}">Add Driver</span>
-                        </a></li>
-                        <li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item" th:href="@{/teams/add}">
-                            <i class="bi bi-plus-circle me-2"></i><span th:text="#{menu.addTeam}">Add Team</span>
-                        </a></li>
-                        <li><a class="dropdown-item" th:href="@{/tracks/add(trackType='PERMANENT')}">
-                            <i class="bi bi-flag me-2"></i><span th:text="#{menu.addTrack}">Add Track</span>
-                        </a></li>
-                        <li><a class="dropdown-item" th:href="@{/races/add}">
-                            <i class="bi bi-trophy me-2"></i><span th:text="#{menu.addRace}">Add Race</span>
-                        </a></li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/session-history}">
-                        <i class="bi bi-clock-history me-1"></i><span th:text="#{menu.history}">History</span>
-                    </a>
-                </li>
-            </ul>
-            <div class="d-flex gap-2">
-                <a class="btn btn-outline-light btn-sm" sec:authorize="isAnonymous()" th:href="@{/login}">
-                    <i class="bi bi-box-arrow-in-right me-1"></i>Login
-                </a>
-                <form class="d-inline" method="post" sec:authorize="isAuthenticated()" th:action="@{/logout}">
-                    <button class="btn btn-outline-light btn-sm" type="submit">
-                        <i class="bi bi-box-arrow-right me-1"></i>Logout
-                    </button>
-                </form>
-                <a class="btn btn-outline-light btn-sm" href="?lang=en">
-                    <i class="bi bi-translate me-1"></i><span th:text="#{menu.lang.en}">EN</span>
-                </a>
-                <a class="btn btn-outline-light btn-sm" href="?lang=bg">
-                    <i class="bi bi-translate me-1"></i><span th:text="#{menu.lang.bg}">BG</span>
-                </a>
-            </div>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/session-history}">
+                <i class="bi bi-clock-history me-1"></i><span
+                  th:text="#{menu.history}"
+                >History</span>
+              </a>
+            </li>
+          </ul>
+          <div class="d-flex gap-2">
+            <a
+              class="btn btn-outline-light btn-sm"
+              sec:authorize="isAnonymous()"
+              th:href="@{/login}"
+            >
+              <i class="bi bi-box-arrow-in-right me-1"></i>Login
+            </a>
+            <form
+              class="d-inline"
+              method="post"
+              sec:authorize="isAuthenticated()"
+              th:action="@{/logout}"
+            >
+              <button class="btn btn-outline-light btn-sm" type="submit">
+                <i class="bi bi-box-arrow-right me-1"></i>Logout
+              </button>
+            </form>
+            <a class="btn btn-outline-light btn-sm" href="?lang=en">
+              <i class="bi bi-translate me-1"></i><span
+                th:text="#{menu.lang.en}"
+              >EN</span>
+            </a>
+            <a class="btn btn-outline-light btn-sm" href="?lang=bg">
+              <i class="bi bi-translate me-1"></i><span
+                th:text="#{menu.lang.bg}"
+              >BG</span>
+            </a>
+          </div>
         </div>
-    </div>
-</nav>
-</body>
+      </div>
+    </nav>
+  </body>
 </html>

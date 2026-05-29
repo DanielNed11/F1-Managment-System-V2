@@ -1,99 +1,145 @@
 <!DOCTYPE html>
-<html xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      xmlns:th="http://www.thymeleaf.org"
-      lang="en">
-<head th:replace="~{fragments/header :: head(#{page.teams.title})}"></head>
-<body>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<html
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  xmlns:th="http://www.thymeleaf.org"
+  lang="en"
+>
+  <head th:replace="~{fragments/header :: head(#{page.teams.title})}"></head>
+  <body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<div class="hero-section">
-    <div class="container">
+    <div class="hero-section">
+      <div class="container">
         <h1 class="display-4">
-            <i class="bi bi-people-fill me-3"></i><span th:text="#{page.teams.heading}">Teams</span>
+          <i class="bi bi-people-fill me-3"></i><span
+            th:text="#{page.teams.heading}"
+          >Teams</span>
         </h1>
-        <p class="lead mb-4" th:text="#{page.teams.description}">Discover all Formula 1 racing teams and their legacy</p>
-        <a th:href="@{/teams/add}" sec:authorize="hasRole('ADMIN')" class="btn btn-success btn-lg">
-            <i class="bi bi-plus-circle me-2"></i><span th:text="#{button.addTeam}">Add New Team</span>
+        <p class="lead mb-4" th:text="#{page.teams.description}">
+          Discover all Formula 1 racing teams and their legacy
+        </p>
+        <a
+          th:href="@{/teams/add}"
+          sec:authorize="hasRole('ADMIN')"
+          class="btn btn-success btn-lg"
+        >
+          <i class="bi bi-plus-circle me-2"></i><span
+            th:text="#{button.addTeam}"
+          >Add New Team</span>
         </a>
+      </div>
     </div>
-</div>
 
-<div class="container">
-    <div class="filter-section">
-        <h5 class="mb-3"><i class="bi bi-funnel me-2"></i><span th:text="#{filter.teams.heading}">Filter Teams</span></h5>
+    <div class="container">
+      <div class="filter-section">
+        <h5 class="mb-3">
+          <i class="bi bi-funnel me-2"></i><span
+            th:text="#{filter.teams.heading}"
+          >Filter Teams</span>
+        </h5>
         <form class="row g-3" th:action="@{/teams}" method="get">
-            <div class="col-md-6">
-                <label class="form-label" th:text="#{label.league}">League</label>
-                <select id="league-select" class="form-select" name="league" th:value="${league}">
-                    <option value="" th:text="#{option.allLeagues}">All Leagues</option>
-                    <option th:each="l : ${T(application.domain.League).values()}"
-                            th:value="${l.name()}"
-                            th:text="${l.name().replace('_', ' ')}">
-                    </option>
-                </select>
-            </div>
+          <div class="col-md-6">
+            <label class="form-label" th:text="#{label.league}">League</label>
+            <select
+              id="league-select"
+              class="form-select"
+              name="league"
+              th:value="${league}"
+            >
+              <option value="" th:text="#{option.allLeagues}">
+                All Leagues
+              </option>
+              <option
+                th:each="l : ${T(application.domain.League).values()}"
+                th:value="${l.name()}"
+                th:text="${l.name().replace('_', ' ')}"
+              >
+              </option>
+            </select>
+          </div>
 
-            <div class="col-md-6 d-flex align-items-end gap-2">
-                <button type="submit" class="btn btn-primary flex-fill">
-                    <i class="bi bi-search me-1"></i><span th:text="#{button.filter}">Filter</span>
-                </button>
-                <a class="btn btn-outline-secondary flex-fill" th:href="@{/teams}">
-                    <i class="bi bi-x-circle me-1"></i><span th:text="#{button.clear}">Clear</span>
-                </a>
-            </div>
+          <div class="col-md-6 d-flex align-items-end gap-2">
+            <button type="submit" class="btn btn-primary flex-fill">
+              <i class="bi bi-search me-1"></i><span th:text="#{button.filter}"
+              >Filter</span>
+            </button>
+            <a class="btn btn-outline-secondary flex-fill" th:href="@{/teams}">
+              <i class="bi bi-x-circle me-1"></i><span th:text="#{button.clear}"
+              >Clear</span>
+            </a>
+          </div>
         </form>
-    </div>
+      </div>
 
-    <div class="row mb-4">
+      <div class="row mb-4">
         <div class="col-md-4 col-lg-3">
-            <div class="stats-card shadow-custom">
-                <div class="card-body text-center">
-                    <i class="bi bi-people-fill"></i>
-                    <h3 class="mt-2 mb-0" th:text="${#lists.size(teams)}">0</h3>
-                    <p class="mb-0" th:text="#{label.totalTeams}">Total Teams</p>
-                </div>
+          <div class="stats-card shadow-custom">
+            <div class="card-body text-center">
+              <i class="bi bi-people-fill"></i>
+              <h3 class="mt-2 mb-0" th:text="${#lists.size(teams)}">0</h3>
+              <p class="mb-0" th:text="#{label.totalTeams}">Total Teams</p>
             </div>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
         <div class="col" th:each="team : ${teams}">
-            <div class="card h-100 shadow-custom">
-                <img class="card-img-top"
-                     th:src="${team.teamLogoUrl}"
-                     th:alt="${team.name}">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold" th:text="${team.name}">Mercedes</h5>
-                    <div class="mb-2">
-                        <span class="badge bg-primary" th:text="${team.league != null ? team.league.replace('_', ' ') : ''}">League</span>
-                    </div>
-                    <div class="mb-2">
-                        <i class="bi bi-calendar-event text-info me-1"></i>
-                        <span class="text-muted small" th:text="#{label.foundedYear}">Founded</span>:
-                        <strong th:text="${team.foundedYear}">1950</strong>
-                    </div>
-                    <div class="mb-2">
-                        <i class="bi bi-cash-coin text-success me-1"></i>
-                        <strong th:text="${team.budgetInMillions} + 'M'">100M</strong>
-                        <span class="text-muted small" th:text="#{label.budget}">Budget</span>
-                    </div>
-                </div>
-                <div class="card-footer d-flex gap-2">
-                    <a class="btn btn-sm btn-outline-primary flex-fill"
-                       th:href="@{/teams/{id}(id=${team.id})}">
-                        <i class="bi bi-eye me-1"></i><span th:text="#{button.viewDetails}">View</span>
-                    </a>
-                    <form th:action="@{/teams/{id}/delete(id=${team.id})}" method="post" sec:authorize="hasRole('ADMIN')">
-                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                            <i class="bi bi-trash me-1"></i><span th:text="#{button.delete}">Delete</span>
-                        </button>
-                    </form>
-                </div>
+          <div class="card h-100 shadow-custom">
+            <img
+              class="card-img-top"
+              th:src="${team.teamLogoUrl}"
+              th:alt="${team.name}"
+            >
+            <div class="card-body">
+              <h5 class="card-title fw-bold" th:text="${team.name}">
+                Mercedes
+              </h5>
+              <div class="mb-2">
+                <span
+                  class="badge bg-primary"
+                  th:text="${team.league != null ? team.league.replace('_', ' ') : ''}"
+                >League</span>
+              </div>
+              <div class="mb-2">
+                <i class="bi bi-calendar-event text-info me-1"></i>
+                <span class="text-muted small" th:text="#{label.foundedYear}"
+                >Founded</span>:
+                <strong th:text="${team.foundedYear}">1950</strong>
+              </div>
+              <div class="mb-2">
+                <i class="bi bi-cash-coin text-success me-1"></i>
+                <strong th:text="${team.budgetInMillions} + 'M'">100M</strong>
+                <span class="text-muted small" th:text="#{label.budget}"
+                >Budget</span>
+              </div>
             </div>
+            <div class="card-footer d-flex gap-2">
+              <a
+                class="btn btn-sm btn-outline-primary flex-fill"
+                th:href="@{/teams/{id}(id=${team.id})}"
+              >
+                <i class="bi bi-eye me-1"></i><span
+                  th:text="#{button.viewDetails}"
+                >View</span>
+              </a>
+              <form
+                th:action="@{/teams/{id}/delete(id=${team.id})}"
+                method="post"
+                sec:authorize="hasRole('ADMIN')"
+              >
+                <button type="submit" class="btn btn-sm btn-outline-danger">
+                  <i class="bi bi-trash me-1"></i><span
+                    th:text="#{button.delete}"
+                  >Delete</span>
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 
-<div th:replace="~{fragments/footer :: footer}"></div>
-</body>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
 </html>

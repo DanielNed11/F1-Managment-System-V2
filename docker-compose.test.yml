@@ -3,8 +3,8 @@ services:
     image: postgres:18.1-alpine
     restart: always
     environment:
-      POSTGRES_DB: 'f1Management-test'
-      POSTGRES_USER: 'spring'
-      POSTGRES_PASSWORD: 'spring'
+      POSTGRES_DB: "f1Management-test"
+      POSTGRES_USER: "spring"
+      POSTGRES_PASSWORD: "spring"
     ports:
-      - '5435:5432'
+      - "5435:5432"

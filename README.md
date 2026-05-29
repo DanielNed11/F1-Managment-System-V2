@@ -1,6 +1,7 @@
 # Programming 5 - Formula 1 Management System
 
 ## Student Information
+
 - **Course:** Programming 5
 - **Name:** Daniel Nedyalkov
 - **Email:** daniel.nedyalkov@student.kdg.be
@@ -15,18 +16,22 @@
 This is a **Formula 1 Management System** with the following entities:
 
 ### 1. Driver
+
 - **Properties:** id, name, dateOfBirth, nationality, worldChampionships, imageUrl
 - **Relationships:** ManyToOne with Team, ManyToMany with Race
 
 ### 2. Team
+
 - **Properties:** id, name, foundedYear, league (enum), teamLogoUrl, budgetInMillions
 - **Relationships:** OneToMany with Driver
 
 ### 3. Race
+
 - **Properties:** id, name, date, hasEnded
 - **Relationships:** ManyToOne with Track, ManyToOne with Driver (winner), ManyToMany with Driver
 
 ### 4. Track (Base class with inheritance)
+
 - **Properties:** id, name, location, lengthKm, openedYear
 - **Inheritance Strategy:** Single Table
 - **Subtypes:**
@@ -34,9 +39,11 @@ This is a **Formula 1 Management System** with the following entities:
   - **StreetCircuit:** cityName, daysToSetup, annualRentalCost, hasTemporaryBarriers
 
 ### 5. League (Enum)
+
 - **Values:** Formula_1, Formula_2, Formula_3, Formula_4, Formula_E
 
 ### Entity Relationships Diagram
+
 ```
 Team (1) ----< (many) Driver
 Driver (many) >----< (many) Race
@@ -53,9 +60,11 @@ Track (Single Table Inheritance)
 ## Build and Run Instructions
 
 ### Prerequisites
+
 - Java 21 or higher
 - Docker and Docker Compose
 - Git
+- Node.js and npm
 
 ### Setup Steps
 
@@ -84,6 +93,47 @@ Track (Single Table Inheritance)
 
 5. **Access the application:**
    - Open your browser: `http://localhost:8080`
+
+### Embedded Frontend Build
+
+Week 11 adds an embedded npm/webpack frontend build to this Spring Boot project.
+
+Frontend source files:
+
+- JavaScript: `src/main/js`
+- SCSS: `src/main/scss`
+- Generated Spring static assets: `src/main/resources/static/js` and `src/main/resources/static/css`
+
+Install npm dependencies:
+
+```bash
+npm install
+```
+
+Build the embedded frontend manually:
+
+```bash
+npm run build
+```
+
+Run frontend checks:
+
+```bash
+npm run lint
+npm run check
+```
+
+Format frontend files:
+
+```bash
+npm run fmt
+```
+
+Gradle integration:
+
+- `processResources` depends on `npm_run_build`.
+- Running `./gradlew build`, `./gradlew bootRun`, or `./gradlew processResources` builds the frontend bundles before Spring serves the static assets.
+- On macOS, `build.gradle.kts` contains a Homebrew npm command fix for `/opt/homebrew/bin/npm`.
 
 ### Separate Client Project
 
@@ -136,11 +186,13 @@ npm run build
 - Tests use a separate PostgreSQL database, `f1Management-test`, on host port `5435`.
 
 Start the test database:
+
 ```bash
 docker compose -f docker-compose.test.yml up -d
 ```
 
 Run the test suite:
+
 ```bash
 ./gradlew test
 ```
@@ -178,6 +230,7 @@ GitLab test report:
 - [Recent successful GitLab test report](https://gitlab.com/kdg-ti/programming-5/projects-25-26/acs201/daniel.nedyalkov/spring-backend/-/pipelines/2505132563/test_report)
 
 Stop the test database:
+
 ```bash
 docker compose -f docker-compose.test.yml down
 ```
@@ -261,12 +314,14 @@ This section contains HTTP requests and responses for the REST API endpoints imp
 ### Fetching all drivers - OK (200)
 
 **Request:**
+
 ```
 GET http://localhost:8080/api/drivers
 Accept: application/json
 ```
 
 **Response:**
+
 ```
 HTTP/1.1 200
 Content-Type: application/json
@@ -330,12 +385,14 @@ Content-Type: application/json
 ### Fetching single driver by ID - OK (200)
 
 **Request:**
+
 ```
 GET http://localhost:8080/api/drivers/1
 Accept: application/json
 ```
 
 **Response:**
+
 ```
 HTTP/1.1 200
 Content-Type: application/json
@@ -357,12 +414,14 @@ Content-Type: application/json
 ### Fetching single driver by ID - Not Found (404)
 
 **Request:**
+
 ```
 GET http://localhost:8080/api/drivers/999
 Accept: application/json
 ```
 
 **Response:**
+
 ```
 HTTP/1.1 404
 Content-Length: 0
@@ -373,12 +432,14 @@ Content-Length: 0
 ### Fetching races for a specific driver - OK (200)
 
 **Request:**
+
 ```
 GET http://localhost:8080/api/drivers/1/races
 Accept: application/json
 ```
 
 **Response:**
+
 ```
 HTTP/1.1 200
 Content-Type: application/json
@@ -412,12 +473,14 @@ Content-Type: application/json
 ### Fetching races for a specific driver - Not Found (404)
 
 **Request:**
+
 ```
 GET http://localhost:8080/api/drivers/999/races
 Accept: application/json
 ```
 
 **Response:**
+
 ```
 HTTP/1.1 404
 Content-Length: 0
@@ -428,11 +491,13 @@ Content-Length: 0
 ### Deleting a driver - No Content (204)
 
 **Request:**
+
 ```
 DELETE http://localhost:8080/api/drivers/5
 ```
 
 **Response:**
+
 ```
 HTTP/1.1 204
 ```
@@ -442,11 +507,13 @@ HTTP/1.1 204
 ### Deleting a driver - Not Found (404)
 
 **Request:**
+
 ```
 DELETE http://localhost:8080/api/drivers/999
 ```
 
 **Response:**
+
 ```
 HTTP/1.1 404
 Content-Length: 0
@@ -459,6 +526,7 @@ Content-Length: 0
 ### Creating a driver - Created (201)
 
 **Request:**
+
 ```http
 POST http://localhost:8080/api/drivers
 Accept: application/json
@@ -474,6 +542,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```http
 HTTP/1.1 201
 Content-Type: application/json
@@ -491,6 +560,7 @@ Content-Type: application/json
 ### Creating a driver - Bad Request (400)
 
 **Request:**
+
 ```http
 POST http://localhost:8080/api/drivers
 Accept: application/json
@@ -506,6 +576,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```http
 HTTP/1.1 400
 Content-Type: application/json
@@ -514,6 +585,7 @@ Content-Type: application/json
 ### Updating a driver with PATCH - OK (200)
 
 **Request:**
+
 ```http
 PATCH http://localhost:8080/api/drivers/5
 Accept: application/json
@@ -525,6 +597,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```http
 HTTP/1.1 200
 Content-Type: application/json
@@ -542,6 +615,7 @@ Content-Type: application/json
 ### Updating a driver with PATCH - Bad Request (400)
 
 **Request:**
+
 ```http
 PATCH http://localhost:8080/api/drivers/5
 Accept: application/json
@@ -553,6 +627,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```http
 HTTP/1.1 400
 Content-Type: application/json
@@ -561,6 +636,7 @@ Content-Type: application/json
 ### Updating a driver with PATCH - Not Found (404)
 
 **Request:**
+
 ```http
 PATCH http://localhost:8080/api/drivers/999
 Accept: application/json
@@ -572,6 +648,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```http
 HTTP/1.1 404
 Content-Length: 0
@@ -580,12 +657,14 @@ Content-Length: 0
 ### Deleting a driver - No Content (204)
 
 **Request:**
+
 ```http
 DELETE http://localhost:8080/api/drivers/1
 Accept: application/json
 ```
 
 **Response:**
+
 ```http
 HTTP/1.1 204
 ```
@@ -593,12 +672,14 @@ HTTP/1.1 204
 ### Deleting a driver - Not Found (404)
 
 **Request:**
+
 ```http
 DELETE http://localhost:8080/api/drivers/999
 Accept: application/json
 ```
 
 **Response:**
+
 ```http
 HTTP/1.1 404
 Content-Length: 0
@@ -614,11 +695,11 @@ Spring Security is enabled with a persisted `AppUser` entity, a custom login pag
 
 The application seeds these users:
 
-| Username | Password | Notes |
-|----------|----------|-------|
-| `Daniel` | `Dani` | Seeded administrator user |
-| `Ivan` | `Ivan` | Seeded normal user |
-| `Viki` | `Viki` | Seeded normal user |
+| Username | Password | Notes                     |
+| -------- | -------- | ------------------------- |
+| `Daniel` | `Dani`   | Seeded administrator user |
+| `Ivan`   | `Ivan`   | Seeded normal user        |
+| `Viki`   | `Viki`   | Seeded normal user        |
 
 The login page also displays these dummy credentials for testing:
 
@@ -642,21 +723,21 @@ CSRF was temporarily disabled when Spring Security was first introduced for Week
 
 The application seeds three persisted users in the `app_users` table. Passwords are stored as BCrypt hashes in the database, but the following credentials can be used to log in:
 
-| Username | Password | Role  | Managed team |
-|----------|----------|-------|--------------|
-| `Daniel` | `Dani`   | `ADMIN` | Mercedes |
-| `Ivan`   | `Ivan`   | `USER`  | Ferrari |
+| Username | Password | Role    | Managed team    |
+| -------- | -------- | ------- | --------------- |
+| `Daniel` | `Dani`   | `ADMIN` | Mercedes        |
+| `Ivan`   | `Ivan`   | `USER`  | Ferrari         |
 | `Viki`   | `Viki`   | `USER`  | Red Bull Racing |
 
 ### Roles and access rights
 
 The application distinguishes between three access categories: unauthenticated visitors, signed-in `USER`s, and signed-in `ADMIN`s.
 
-| Category | Can access | Can create | Can update/delete | Notes |
-|----------|------------|------------|-------------------|-------|
-| Unauthenticated user | Public driver pages such as [All Drivers](http://localhost:8080/drivers) and the home page | No | No | Hidden from add/edit/delete actions and redirected to `/login` for protected pages |
-| `USER` | Public pages plus protected pages after login, including [All Teams](http://localhost:8080/teams) | Can create drivers | Can update/delete only drivers associated with the same managed team | Cannot manage teams |
-| `ADMIN` | All pages | Can create drivers and teams | Can update/delete any driver and can manage teams | Can also assign or reassign driver teams |
+| Category             | Can access                                                                                        | Can create                   | Can update/delete                                                    | Notes                                                                              |
+| -------------------- | ------------------------------------------------------------------------------------------------- | ---------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Unauthenticated user | Public driver pages such as [All Drivers](http://localhost:8080/drivers) and the home page        | No                           | No                                                                   | Hidden from add/edit/delete actions and redirected to `/login` for protected pages |
+| `USER`               | Public pages plus protected pages after login, including [All Teams](http://localhost:8080/teams) | Can create drivers           | Can update/delete only drivers associated with the same managed team | Cannot manage teams                                                                |
+| `ADMIN`              | All pages                                                                                         | Can create drivers and teams | Can update/delete any driver and can manage teams                    | Can also assign or reassign driver teams                                           |
 
 ### Hidden UI elements
 
@@ -931,3 +1012,119 @@ Security configuration for Week 10:
 - `POST /api/teams` is public only for the separate Client project.
 - CSRF is disabled only for `POST /api/teams`.
 - Comments in `SecurityConfig` explain both the `permitAll` rule and the CSRF exception for the Client assignment.
+
+---
+
+## Week 11
+
+### Embedded npm and webpack frontend
+
+Week 11 uses an embedded frontend build inside this Spring Boot repository.
+
+The frontend build is configured with:
+
+- npm and `package.json`
+- webpack and `webpack.config.js`
+- ESLint and `eslint.config.js`
+- dprint and `dprint.json`
+- Sass/SCSS in `src/main/scss`
+- generated bundles in `src/main/resources/static`
+
+Build and check commands:
+
+```bash
+npm install
+npm run build
+npm run lint
+npm run check
+```
+
+The Gradle task `processResources` depends on `npm_run_build`, so the embedded frontend is also built when running:
+
+```bash
+./gradlew build
+./gradlew bootRun
+./gradlew processResources
+```
+
+### SCSS and Bootstrap customization
+
+SCSS source files:
+
+- `src/main/scss/site.scss`
+- `src/main/scss/style.scss`
+
+Implemented SCSS features:
+
+- Variables, for example `$app-radius`, `$app-surface`, `$app-shadow`, and `$app-transition` in `style.scss`.
+- Nesting and parent selectors, for example `.hero-section h1`, `.card:hover`, `.alert-info`, and `.navbar-brand` are written using nested SCSS.
+- Bootstrap customization through Sass variables in `site.scss`, including `$primary`, `$secondary`, and `$border-radius`.
+
+Bootstrap is imported through Sass in `src/main/scss/site.scss`.
+
+### Bootstrap Icons
+
+Bootstrap Icons are installed through npm with the `bootstrap-icons` package and imported in:
+
+```text
+src/main/scss/site.scss
+```
+
+Example icon:
+
+- Icon: `bi-person-circle`
+- Page URL: `http://localhost:8080/drivers`
+- Source file: `src/main/resources/templates/drivers/drivers.html`
+- Usage: the Drivers page heading and statistics card use Bootstrap Icons.
+
+### Client-side form validation
+
+Client-side validation uses the `joi` package.
+
+Validated form:
+
+- Form: Add Driver form
+- Page URL: `http://localhost:8080/drivers`
+- Source file: `src/main/js/drivers.js`
+- Schema: `addDriverSchema`
+
+Validation rules:
+
+- Driver name is required and must have at least 2 characters.
+- Nationality is required and must have at least 2 characters.
+- Date of birth is required and must match the HTML date format `yyyy-MM-dd`.
+- World championships must be an integer from 0 through 10.
+- Image URL must be a valid `http` or `https` URL.
+
+### Extra JavaScript dependencies
+
+The two extra JavaScript dependencies are `canvas-confetti` and `animejs`.
+
+`canvas-confetti`:
+
+- Source file: `src/main/js/drivers.js`
+- Page URL: `http://localhost:8080/drivers`
+- User action: log in and successfully submit the Add Driver form.
+- Behavior: confetti is shown after the driver is created and inserted into the page.
+
+`animejs`:
+
+- Source file: `src/main/js/drivers.js`
+- Page URL: `http://localhost:8080/drivers`
+- User actions:
+  - Drag driver cards inside the driver grid.
+  - Delete a driver card.
+- Behavior:
+  - `createDraggable` makes driver cards draggable.
+  - `animate` fades and scales a driver card before it is removed after a successful delete.
+
+### Reusable JavaScript modules
+
+Reusable JavaScript was moved into ECMAScript modules.
+
+Example:
+
+- Module: `src/main/js/lib/csrf.js`
+- Function: `buildCsrfHeader`
+- Used by: `src/main/js/drivers.js`
+- Purpose: reads the CSRF token and header name from the page metadata and builds the fetch headers for protected API requests.

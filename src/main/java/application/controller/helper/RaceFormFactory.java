@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 @Component
 public class RaceFormFactory {
@@ -26,7 +25,7 @@ public class RaceFormFactory {
         this.raceService = raceService;
     }
 
-    public AddRaceViewModel buildAddRaceForm() {
+    public AddRaceViewModel buildAdd() {
         AddRaceViewModel form = new AddRaceViewModel();
 
         List<RaceDriverSelectionViewModel> selections = driverService.getAll()
@@ -41,7 +40,7 @@ public class RaceFormFactory {
         return form;
     }
 
-    public EditRaceViewModel buildEditRaceForm(Integer id) {
+    public EditRaceViewModel buildEdit(Integer id) {
         Race existing = raceService.getById(id);
 
         EditRaceViewModel form = new EditRaceViewModel();

@@ -1,125 +1,275 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: head(#{page.track.add.title})}"></head>
+  <head th:replace="~{fragments/header :: head(#{page.track.add.title})}">
+  </head>
 
-<body>
-<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+  <body>
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<main class="container my-4">
-    <h1 class="mb-4" th:text="#{page.track.add.heading}">Add Track</h1>
+    <main class="container my-4">
+      <h1 class="mb-4" th:text="#{page.track.add.heading}">Add Track</h1>
 
-    <div class="mb-3">
-        <span th:if="${trackType == 'STREET'}" class="badge bg-warning text-dark fs-6">
-            <i class="bi bi-buildings"></i> <span th:text="#{track.street}">Street Circuit</span>
+      <div class="mb-3">
+        <span
+          th:if="${trackType == 'STREET'}"
+          class="badge bg-warning text-dark fs-6"
+        >
+          <i class="bi bi-buildings"></i> <span th:text="#{track.street}"
+          >Street Circuit</span>
         </span>
         <span th:if="${trackType == 'PERMANENT'}" class="badge bg-success fs-6">
-            <i class="bi bi-flag-fill"></i> <span th:text="#{track.permanent}">Permanent Circuit</span>
+          <i class="bi bi-flag-fill"></i> <span th:text="#{track.permanent}"
+          >Permanent Circuit</span>
         </span>
-    </div>
+      </div>
 
-    <form th:action="@{/tracks/add}" method="post"
-          th:object="${track}" class="needs-validation" novalidate>
+      <form
+        th:action="@{/tracks/add}"
+        method="post"
+        th:object="${track}"
+        class="needs-validation"
+        novalidate
+      >
         <input type="hidden" name="trackType" th:value="${trackType}" />
 
         <div class="mb-3">
-            <label th:text="#{label.trackName}" class="form-label">Name</label>
-            <input type="text" th:field="*{name}" class="form-control"
-                   th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''" required />
-            <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}"
-                 th:errors="*{name}">Name error</div>
+          <label th:text="#{label.trackName}" class="form-label">Name</label>
+          <input
+            type="text"
+            th:field="*{name}"
+            class="form-control"
+            th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
+            required
+          />
+          <div
+            class="invalid-feedback"
+            th:if="${#fields.hasErrors('name')}"
+            th:errors="*{name}"
+          >
+            Name error
+          </div>
         </div>
 
         <div class="mb-3">
-            <label th:text="#{label.trackLocation}" class="form-label">Location</label>
-            <input type="text" th:field="*{location}" class="form-control"
-                   th:classappend="${#fields.hasErrors('location')} ? 'is-invalid' : ''" required />
-            <div class="invalid-feedback" th:if="${#fields.hasErrors('location')}"
-                 th:errors="*{location}">Location error</div>
+          <label th:text="#{label.trackLocation}" class="form-label"
+          >Location</label>
+          <input
+            type="text"
+            th:field="*{location}"
+            class="form-control"
+            th:classappend="${#fields.hasErrors('location')} ? 'is-invalid' : ''"
+            required
+          />
+          <div
+            class="invalid-feedback"
+            th:if="${#fields.hasErrors('location')}"
+            th:errors="*{location}"
+          >
+            Location error
+          </div>
         </div>
 
         <div class="mb-3">
-            <label th:text="#{label.length}" class="form-label">Length (km)</label>
-            <input type="number" th:field="*{lengthKm}" step="0.001" class="form-control"
-                   th:classappend="${#fields.hasErrors('lengthKm')} ? 'is-invalid' : ''" required />
-            <div class="invalid-feedback" th:if="${#fields.hasErrors('lengthKm')}"
-                 th:errors="*{lengthKm}">Length error</div>
+          <label th:text="#{label.length}" class="form-label"
+          >Length (km)</label>
+          <input
+            type="number"
+            th:field="*{lengthKm}"
+            step="0.001"
+            class="form-control"
+            th:classappend="${#fields.hasErrors('lengthKm')} ? 'is-invalid' : ''"
+            required
+          />
+          <div
+            class="invalid-feedback"
+            th:if="${#fields.hasErrors('lengthKm')}"
+            th:errors="*{lengthKm}"
+          >
+            Length error
+          </div>
         </div>
 
         <div class="mb-3">
-            <label th:text="#{label.openedYear}" class="form-label">Opened Year</label>
-            <input type="number" th:field="*{openedYear}" class="form-control"
-                   th:classappend="${#fields.hasErrors('openedYear')} ? 'is-invalid' : ''" required />
-            <div class="invalid-feedback" th:if="${#fields.hasErrors('openedYear')}"
-                 th:errors="*{openedYear}">Opened year error</div>
+          <label th:text="#{label.openedYear}" class="form-label"
+          >Opened Year</label>
+          <input
+            type="number"
+            th:field="*{openedYear}"
+            class="form-control"
+            th:classappend="${#fields.hasErrors('openedYear')} ? 'is-invalid' : ''"
+            required
+          />
+          <div
+            class="invalid-feedback"
+            th:if="${#fields.hasErrors('openedYear')}"
+            th:errors="*{openedYear}"
+          >
+            Opened year error
+          </div>
         </div>
 
         <div th:if="${trackType == 'STREET'}">
-            <hr class="my-4" />
-            <h4 class="mb-3"><i class="bi bi-buildings"></i> <span th:text="#{streetcircuit.details}">Street Circuit Details</span></h4>
+          <hr class="my-4" />
+          <h4 class="mb-3">
+            <i class="bi bi-buildings"></i> <span
+              th:text="#{streetcircuit.details}"
+            >Street Circuit Details</span>
+          </h4>
 
-            <div class="mb-3">
-                <label th:text="#{streetcircuit.cityName}" class="form-label">City Name</label>
-                <input type="text" th:field="*{cityName}" class="form-control"
-                       th:classappend="${#fields.hasErrors('cityName')} ? 'is-invalid' : ''" required />
-                <div class="invalid-feedback" th:if="${#fields.hasErrors('cityName')}"
-                     th:errors="*{cityName}">City name error</div>
+          <div class="mb-3">
+            <label th:text="#{streetcircuit.cityName}" class="form-label"
+            >City Name</label>
+            <input
+              type="text"
+              th:field="*{cityName}"
+              class="form-control"
+              th:classappend="${#fields.hasErrors('cityName')} ? 'is-invalid' : ''"
+              required
+            />
+            <div
+              class="invalid-feedback"
+              th:if="${#fields.hasErrors('cityName')}"
+              th:errors="*{cityName}"
+            >
+              City name error
             </div>
+          </div>
 
-            <div class="mb-3">
-                <label th:text="#{streetcircuit.daysToSetup}" class="form-label">Days to Setup</label>
-                <input type="number" th:field="*{daysToSetup}" class="form-control"
-                       th:classappend="${#fields.hasErrors('daysToSetup')} ? 'is-invalid' : ''" required />
-                <div class="invalid-feedback" th:if="${#fields.hasErrors('daysToSetup')}"
-                     th:errors="*{daysToSetup}">Days to setup error</div>
+          <div class="mb-3">
+            <label th:text="#{streetcircuit.daysToSetup}" class="form-label"
+            >Days to Setup</label>
+            <input
+              type="number"
+              th:field="*{daysToSetup}"
+              class="form-control"
+              th:classappend="${#fields.hasErrors('daysToSetup')} ? 'is-invalid' : ''"
+              required
+            />
+            <div
+              class="invalid-feedback"
+              th:if="${#fields.hasErrors('daysToSetup')}"
+              th:errors="*{daysToSetup}"
+            >
+              Days to setup error
             </div>
+          </div>
 
-            <div class="mb-3">
-                <label th:text="#{streetcircuit.annualRentalCost}" class="form-label">Annual Rental Cost (millions)</label>
-                <input type="number" th:field="*{annualRentalCost}" step="0.1" class="form-control"
-                       th:classappend="${#fields.hasErrors('annualRentalCost')} ? 'is-invalid' : ''" required />
-                <div class="invalid-feedback" th:if="${#fields.hasErrors('annualRentalCost')}"
-                     th:errors="*{annualRentalCost}">Annual rental cost error</div>
+          <div class="mb-3">
+            <label
+              th:text="#{streetcircuit.annualRentalCost}"
+              class="form-label"
+            >Annual Rental Cost (millions)</label>
+            <input
+              type="number"
+              th:field="*{annualRentalCost}"
+              step="0.1"
+              class="form-control"
+              th:classappend="${#fields.hasErrors('annualRentalCost')} ? 'is-invalid' : ''"
+              required
+            />
+            <div
+              class="invalid-feedback"
+              th:if="${#fields.hasErrors('annualRentalCost')}"
+              th:errors="*{annualRentalCost}"
+            >
+              Annual rental cost error
             </div>
+          </div>
 
-            <div class="mb-3 form-check">
-                <input type="checkbox" th:field="*{hasTemporaryBarriers}" class="form-check-input" id="hasTemporaryBarriers" />
-                <label th:text="#{streetcircuit.hasTemporaryBarriers}" class="form-check-label" for="hasTemporaryBarriers">Has Temporary Barriers</label>
-            </div>
+          <div class="mb-3 form-check">
+            <input
+              type="checkbox"
+              th:field="*{hasTemporaryBarriers}"
+              class="form-check-input"
+              id="hasTemporaryBarriers"
+            />
+            <label
+              th:text="#{streetcircuit.hasTemporaryBarriers}"
+              class="form-check-label"
+              for="hasTemporaryBarriers"
+            >Has Temporary Barriers</label>
+          </div>
         </div>
 
         <div th:if="${trackType == 'PERMANENT'}">
-            <hr class="my-4" />
-            <h4 class="mb-3"><i class="bi bi-flag-fill"></i> <span th:text="#{permanentcircuit.details}">Permanent Circuit Details</span></h4>
+          <hr class="my-4" />
+          <h4 class="mb-3">
+            <i class="bi bi-flag-fill"></i> <span
+              th:text="#{permanentcircuit.details}"
+            >Permanent Circuit Details</span>
+          </h4>
 
-            <div class="mb-3 form-check">
-                <input type="checkbox" th:field="*{hasMuseum}" class="form-check-input" id="hasMuseum" />
-                <label th:text="#{permanentcircuit.hasMuseum}" class="form-check-label" for="hasMuseum">Has Museum</label>
-            </div>
+          <div class="mb-3 form-check">
+            <input
+              type="checkbox"
+              th:field="*{hasMuseum}"
+              class="form-check-input"
+              id="hasMuseum"
+            />
+            <label
+              th:text="#{permanentcircuit.hasMuseum}"
+              class="form-check-label"
+              for="hasMuseum"
+            >Has Museum</label>
+          </div>
 
-            <div class="mb-3">
-                <label th:text="#{permanentcircuit.testDaysPerYear}" class="form-label">Test Days Per Year</label>
-                <input type="number" th:field="*{testDaysPerYear}" class="form-control"
-                       th:classappend="${#fields.hasErrors('testDaysPerYear')} ? 'is-invalid' : ''" required />
-                <div class="invalid-feedback" th:if="${#fields.hasErrors('testDaysPerYear')}"
-                     th:errors="*{testDaysPerYear}">Test days error</div>
+          <div class="mb-3">
+            <label
+              th:text="#{permanentcircuit.testDaysPerYear}"
+              class="form-label"
+            >Test Days Per Year</label>
+            <input
+              type="number"
+              th:field="*{testDaysPerYear}"
+              class="form-control"
+              th:classappend="${#fields.hasErrors('testDaysPerYear')} ? 'is-invalid' : ''"
+              required
+            />
+            <div
+              class="invalid-feedback"
+              th:if="${#fields.hasErrors('testDaysPerYear')}"
+              th:errors="*{testDaysPerYear}"
+            >
+              Test days error
             </div>
+          </div>
 
-            <div class="mb-3">
-                <label th:text="#{permanentcircuit.facilities}" class="form-label">Facilities</label>
-                <textarea th:field="*{facilities}" class="form-control" rows="3"
-                          th:classappend="${#fields.hasErrors('facilities')} ? 'is-invalid' : ''"></textarea>
-                <div class="invalid-feedback" th:if="${#fields.hasErrors('facilities')}"
-                     th:errors="*{facilities}">Facilities error</div>
+          <div class="mb-3">
+            <label th:text="#{permanentcircuit.facilities}" class="form-label"
+            >Facilities</label>
+            <textarea
+              th:field="*{facilities}"
+              class="form-control"
+              rows="3"
+              th:classappend="${#fields.hasErrors('facilities')} ? 'is-invalid' : ''"
+            ></textarea>
+            <div
+              class="invalid-feedback"
+              th:if="${#fields.hasErrors('facilities')}"
+              th:errors="*{facilities}"
+            >
+              Facilities error
             </div>
+          </div>
         </div>
 
         <div class="mt-4">
-            <button type="submit" class="btn btn-primary" th:text="#{button.addTrack}">Add Track</button>
-            <a th:href="@{/tracks}" class="btn btn-secondary" th:text="#{button.cancel}">Cancel</a>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            th:text="#{button.addTrack}"
+          >
+            Add Track
+          </button>
+          <a
+            th:href="@{/tracks}"
+            class="btn btn-secondary"
+            th:text="#{button.cancel}"
+          >Cancel</a>
         </div>
-    </form>
-</main>
+      </form>
+    </main>
 
-<div th:replace="~{fragments/footer :: footer}"></div>
-</body>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+  </body>
 </html>

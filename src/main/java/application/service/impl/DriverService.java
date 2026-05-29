@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.webjars.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -67,7 +66,7 @@ public class DriverService implements IDriverService {
     public Driver update(UpdateDriverCommand updateDriver, int appUserId) {
         Driver existing = driverRepository.findById(updateDriver.getId()).orElse(null);
 
-        if (existing == null) throw new NotFoundException("Driver not found");
+        if (existing == null) throw new NoSuchElementException("Driver not found");
 
         Integer id = existing.getId();
 

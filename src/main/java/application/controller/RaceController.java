@@ -60,7 +60,7 @@ public class RaceController {
 
     @GetMapping("/add")
     public String showAddRaceForm(Model model) {
-        model.addAttribute("addRaceViewModel", raceFormFactory.buildAddRaceForm());
+        model.addAttribute("addRaceViewModel", raceFormFactory.buildAdd());
         model.addAttribute("tracks", trackService.getAll());
         log.info("Show Add Race Form");
         return "races/add-race";
@@ -74,7 +74,7 @@ public class RaceController {
 
     @GetMapping("/edit/{id}")
     public String showEditRaceForm(@PathVariable Integer id, Model model) {
-        EditRaceViewModel editRaceViewModel = raceFormFactory.buildEditRaceForm(id);
+        EditRaceViewModel editRaceViewModel = raceFormFactory.buildEdit(id);
 
         model.addAttribute("editRaceViewModel", editRaceViewModel);
         model.addAttribute("tracks", trackService.getAll());

@@ -56,7 +56,7 @@ class SecurityConfig {
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(HttpMethod.GET, "/").permitAll()
                         .requestMatchers(HttpMethod.GET, "/drivers/**").permitAll()
-                        .requestMatchers("/js/**", "/css/**", "/img/**", "/webjars/**").permitAll()
+                        .requestMatchers("/js/**", "/css/**", "/img/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")

@@ -2,6 +2,7 @@ plugins {
     java
     id("org.springframework.boot") version "3.5.6"
     id("io.spring.dependency-management") version "1.1.7"
+    id("com.github.node-gradle.node") version "7.1.0"
 }
 
 group = "org.example"
@@ -13,6 +14,14 @@ java {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
+
+val npmFile = file("/opt/homebrew/bin/npm")
+if (npmFile.exists()) {
+    node {
+        npmCommand.set(npmFile.absolutePath)
+    }
+}
+
 
 repositories {
     mavenCentral()
@@ -32,15 +41,16 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 
-    implementation("org.webjars:bootstrap:5.3.3")
-    implementation("org.webjars:webjars-locator-core")
-
     implementation ("org.mapstruct:mapstruct:1.6.3")
     annotationProcessor ("org.mapstruct:mapstruct-processor:1.6.3")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("org.springframework.boot:spring-boot-docker-compose")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+tasks.named<Copy>("processResources") {
+    dependsOn("npm_run_build")
 }
 
 tasks.withType<Test> {
