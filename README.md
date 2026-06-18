@@ -5,7 +5,6 @@
 - **Course:** Programming 5
 - **Name:** Daniel Nedyalkov
 - **Email:** daniel.nedyalkov@student.kdg.be
-- **Student ID:** 0172599-36
 - **Academic Year:** 2025-2026
 - **Group:** ACS201
 
